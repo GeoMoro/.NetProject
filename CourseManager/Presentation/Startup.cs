@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Data.Persistance;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +20,15 @@ namespace Presentation
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+
+            services.AddTransient<IDatabaseContext, DatabaseContext>();
+            //services.AddTransient<IUserRepository, UserRepository>();
+
+            const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
+
+            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,6 +45,7 @@ namespace Presentation
             }
 
             app.UseStaticFiles();
+            app.UseSession();
 
             app.UseMvc(routes =>
             {

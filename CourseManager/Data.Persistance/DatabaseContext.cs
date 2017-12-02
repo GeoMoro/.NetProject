@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Data.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Persistance
 {
@@ -8,5 +9,7 @@ namespace Data.Persistance
         {
             Database.EnsureCreated();
         }
+
+        public DbSet<UserAccount> UserAccounts { get; set; }
     }
 }
