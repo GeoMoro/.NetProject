@@ -1,5 +1,4 @@
-﻿using Data.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Data.Persistance
 {
@@ -10,6 +9,8 @@ namespace Data.Persistance
             Database.EnsureCreated();
         }
 
-        public DbSet<UserAccount> UserAccounts { get; set; }
+        // Use entire link to entity for Scaffolding to work
+
+        public DbSet<Data.Domain.Entities.UserAccount> UserAccounts { get; set; }
     }
 }
