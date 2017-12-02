@@ -1,4 +1,6 @@
-﻿using Data.Persistance;
+﻿using Business;
+using Data.Domain.Interfaces;
+using Data.Persistance;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +26,7 @@ namespace Presentation
             services.AddSession();
 
             services.AddTransient<IDatabaseContext, DatabaseContext>();
-            //services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserAccountRepository, UserAccountRepository>();
 
             const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 

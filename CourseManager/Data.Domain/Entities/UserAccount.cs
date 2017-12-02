@@ -29,5 +29,46 @@ namespace Data.Domain.Entities
         public int Rank { get; set; }
 
         public bool Validated { get; set; }
+
+        public static UserAccount CreateStudentAccount(string firstName, string lastName, string registrationNumber,
+            string group, string password, string email)
+        {
+            var instance = new UserAccount
+            {
+                Id = Guid.NewGuid(),
+                Rank = 2,
+                Validated = false
+            };
+            instance.UpdateStudent(firstName, lastName, registrationNumber, group, password, email);
+
+            return instance;
+        }
+
+        public static UserAccount CreateAdministratorAccount(string firstName, string lastName, string password,
+            string email)
+        {
+            var instance = new UserAccount { Id = Guid.NewGuid() };
+            instance.UpdateAdministrator(firstName, lastName, password, email);
+
+            return instance;
+        }
+
+        private void UpdateStudent(string firstName, string lastName, string registrationNumber, string group, string password, string email)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            RegistrationNumber = registrationNumber;
+            Group = group;
+            Password = password;
+            Email = email;
+        }
+
+        private void UpdateAdministrator(string firstName, string lastName, string password, string email)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Password = password;
+            Email = email;
+        }
     }
 }

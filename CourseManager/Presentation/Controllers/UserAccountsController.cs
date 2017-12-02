@@ -1,40 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
-using Data.Persistance;
+using Data.Domain.Interfaces;
+using Presentation.Models;
 
 namespace Presentation.Controllers
 {
     public class UserAccountsController : Controller
     {
-        private readonly DatabaseContext _context;
+        private readonly IUserAccountRepository _repository;
 
-        public UserAccountsController(DatabaseContext context)
+        public UserAccountsController(IUserAccountRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: UserAccounts
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.UserAccounts.ToListAsync());
+            return View(_repository.GetAllUsers());
         }
 
         // GET: UserAccounts/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var userAccount = await _context.UserAccounts
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var userAccount = _repository.GetUserById(id.Value);
             if (userAccount == null)
             {
                 return NotFound();
@@ -54,31 +51,41 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,RegistrationNumber,Group,Password,Email,Rank,Validated")] UserAccount userAccount)
+        public IActionResult Create([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountStudentCreateModel userAccountStudentCreateModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                userAccount.Id = Guid.NewGuid();
-                _context.Add(userAccount);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(userAccountStudentCreateModel);
             }
-            return View(userAccount);
+
+            _repository.CreateUser(
+                UserAccount.CreateStudentAccount(
+                    userAccountStudentCreateModel.FirstName,
+                    userAccountStudentCreateModel.LastName,
+                    userAccountStudentCreateModel.RegistrationNumber,
+                    userAccountStudentCreateModel.Group,
+                    userAccountStudentCreateModel.Password,
+                    userAccountStudentCreateModel.Email
+                )
+            );
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: UserAccounts/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var userAccount = await _context.UserAccounts.SingleOrDefaultAsync(m => m.Id == id);
+            var userAccount = _repository.GetUserById(id.Value);
             if (userAccount == null)
             {
                 return NotFound();
             }
+
             return View(userAccount);
         }
 
@@ -87,46 +94,45 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FirstName,LastName,RegistrationNumber,Group,Password,Email,Rank,Validated")] UserAccount userAccount)
+        public IActionResult Edit(Guid id, [Bind("Id,FirstName,LastName,RegistrationNumber,Group,Password,Email,Rank,Validated")] UserAccount userAccount)
         {
             if (id != userAccount.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(userAccount);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserAccountExists(userAccount.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(userAccount);
             }
-            return View(userAccount);
+
+            try
+            {
+                _repository.EditUser(userAccount);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserAccountExists(userAccount.Id))
+                {
+                    return NotFound();
+                }
+
+                throw;
+
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: UserAccounts/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var userAccount = await _context.UserAccounts
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var userAccount = _repository.GetUserById(id.Value);
             if (userAccount == null)
             {
                 return NotFound();
@@ -138,17 +144,18 @@ namespace Presentation.Controllers
         // POST: UserAccounts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var userAccount = await _context.UserAccounts.SingleOrDefaultAsync(m => m.Id == id);
-            _context.UserAccounts.Remove(userAccount);
-            await _context.SaveChangesAsync();
+            var userAccount = _repository.GetUserById(id);
+
+            _repository.DeleteUser(userAccount);
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool UserAccountExists(Guid id)
         {
-            return _context.UserAccounts.Any(e => e.Id == id);
+            return _repository.GetAllUsers().Any(e => e.Id == id);
         }
     }
 }
