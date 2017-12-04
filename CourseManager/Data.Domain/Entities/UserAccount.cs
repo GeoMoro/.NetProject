@@ -47,7 +47,12 @@ namespace Data.Domain.Entities
         public static UserAccount CreateAssistantAccount(string firstName, string lastName, string password,
             string email)
         {
-            var instance = new UserAccount { Id = Guid.NewGuid() };
+            var instance = new UserAccount
+            {
+                Id = Guid.NewGuid(),
+                Rank = 1,
+                Validated = false
+            };
             instance.UpdateAssistant(firstName, lastName, password, email);
 
             return instance;
