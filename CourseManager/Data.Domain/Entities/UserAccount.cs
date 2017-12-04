@@ -44,11 +44,11 @@ namespace Data.Domain.Entities
             return instance;
         }
 
-        public static UserAccount CreateAdministratorAccount(string firstName, string lastName, string password,
+        public static UserAccount CreateAssistantAccount(string firstName, string lastName, string password,
             string email)
         {
             var instance = new UserAccount { Id = Guid.NewGuid() };
-            instance.UpdateAdministrator(firstName, lastName, password, email);
+            instance.UpdateAssistant(firstName, lastName, password, email);
 
             return instance;
         }
@@ -63,7 +63,7 @@ namespace Data.Domain.Entities
             Email = email;
         }
 
-        private void UpdateAdministrator(string firstName, string lastName, string password, string email)
+        private void UpdateAssistant(string firstName, string lastName, string password, string email)
         {
             FirstName = firstName;
             LastName = lastName;

@@ -40,18 +40,18 @@ namespace Presentation.Controllers
             return View(userAccount);
         }
 
-        // GET: UserAccounts/Create
-        public IActionResult Create()
+        // GET: UserAccounts/CreateStudent
+        public IActionResult Createstudent()
         {
             return View();
         }
 
-        // POST: UserAccounts/Create
+        // POST: UserAccounts/CreateStudent
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountStudentCreateModel userAccountStudentCreateModel)
+        public IActionResult Createstudent([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountStudentCreateModel userAccountStudentCreateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -66,6 +66,36 @@ namespace Presentation.Controllers
                     userAccountStudentCreateModel.Group,
                     userAccountStudentCreateModel.Password,
                     userAccountStudentCreateModel.Email
+                )
+            );
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: UserAccounts/CreateStudent
+        public IActionResult CreateAssistant()
+        {
+            return View();
+        }
+
+        // POST: UserAccounts/CreateAssistant
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateAssistant([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountAssistantCreateModel userAccountAssistantCreateModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(userAccountAssistantCreateModel);
+            }
+
+            _repository.CreateUser(
+                UserAccount.CreateAssistantAccount(
+                    userAccountAssistantCreateModel.FirstName,
+                    userAccountAssistantCreateModel.LastName,
+                    userAccountAssistantCreateModel.Password,
+                    userAccountAssistantCreateModel.Email
                 )
             );
 
