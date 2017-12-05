@@ -51,7 +51,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Createstudent([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountStudentCreateModel userAccountStudentCreateModel)
+        public IActionResult CreateStudent([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountStudentCreateModel userAccountStudentCreateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -79,8 +79,6 @@ namespace Presentation.Controllers
         }
 
         // POST: UserAccounts/CreateAssistant
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateAssistant([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountAssistantCreateModel userAccountAssistantCreateModel)
@@ -102,8 +100,8 @@ namespace Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: UserAccounts/Edit/5
-        public IActionResult Edit(Guid? id)
+        // GET: UserAccounts/EditStudent/5
+        public IActionResult EditStudent(Guid? id)
         {
             if (id == null)
             {
@@ -116,39 +114,113 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            return View(userAccount);
+            var studentEditModel = new UserAccountStudentEditModel(
+                userAccount.FirstName,
+                userAccount.LastName,
+                userAccount.RegistrationNumber,
+                userAccount.Group,
+                userAccount.Email
+            );
+
+            return View(studentEditModel);
         }
 
-        // POST: UserAccounts/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: UserAccounts/EditStudent/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, [Bind("Id,FirstName,LastName,RegistrationNumber,Group,Password,Email,Rank,Validated")] UserAccount userAccount)
+        public IActionResult EditStudent(Guid id, [Bind("FirstName,LastName,RegistrationNumber,Group,Email")] UserAccountStudentEditModel userAccountStudentEditModel)
         {
-            if (id != userAccount.Id)
+            var studentToBeEdited = _repository.GetUserById(id);
+
+            if (studentToBeEdited == null)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(userAccount);
+                return View(userAccountStudentEditModel);
             }
+
+            studentToBeEdited.FirstName = userAccountStudentEditModel.FirstName;
+            studentToBeEdited.LastName = userAccountStudentEditModel.LastName;
+            studentToBeEdited.RegistrationNumber = userAccountStudentEditModel.RegistrationNumber;
+            studentToBeEdited.Email = userAccountStudentEditModel.Email;
+            studentToBeEdited.Group = userAccountStudentEditModel.Group;
 
             try
             {
-                _repository.EditUser(userAccount);
+                _repository.EditUser(studentToBeEdited);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserAccountExists(userAccount.Id))
+                if (!UserAccountExists(_repository.GetUserById(id).Id))
                 {
                     return NotFound();
                 }
 
                 throw;
+            }
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: UserAccounts/EditAdmin/5
+        public IActionResult EditAdmin(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var userAccount = _repository.GetUserById(id.Value);
+            if (userAccount == null)
+            {
+                return NotFound();
+            }
+
+            var adminEditModel = new UserAccountAdminEditModel(
+                userAccount.FirstName,
+                userAccount.LastName,
+                userAccount.Email
+            );
+
+            return View(adminEditModel);
+        }
+
+        // POST: UserAccounts/EditAdmin/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditAdmin(Guid id, [Bind("FirstName,LastName,Email")] UserAccountAdminEditModel userAccountAdminEditModel)
+        {
+            var adminToBeEdited = _repository.GetUserById(id);
+
+            if (id != adminToBeEdited.Id)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(userAccountAdminEditModel);
+            }
+
+            adminToBeEdited.FirstName = userAccountAdminEditModel.FirstName;
+            adminToBeEdited.LastName = userAccountAdminEditModel.LastName;
+            adminToBeEdited.Email = userAccountAdminEditModel.Email;
+
+            try
+            {
+                _repository.EditUser(adminToBeEdited);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserAccountExists(adminToBeEdited.Id))
+                {
+                    return NotFound();
+                }
+
+                throw;
             }
 
             return RedirectToAction(nameof(Index));
