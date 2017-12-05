@@ -7,6 +7,8 @@ namespace Data.Persistance
     {
         DbSet<UserAccount> UserAccounts { get; set; }
 
+        DbSet<Answer> Answers { get; set; }
+
         int SaveChanges();
     }
 }
