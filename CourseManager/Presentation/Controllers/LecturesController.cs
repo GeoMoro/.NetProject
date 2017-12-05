@@ -82,7 +82,12 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            return View(lecture);
+            var lectureEditModel = new LectureEditModel(
+                lecture.Title,
+                lecture.Description
+            );
+
+            return View(lectureEditModel);
         }
 
         // POST: Lectures/Edit/5
@@ -90,31 +95,35 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, [Bind("Id,Title,Description")] Lecture lecture)
+        public IActionResult Edit(Guid id, [Bind("Title,Description")] LectureEditModel lectureModel)
         {
-            if (id != lecture.Id)
+            var lectureEdited = _repository.GetLectureById(id);
+
+            if (lectureEdited == null)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(lecture);
+                return View(lectureModel);
             }
+
+            lectureEdited.Title = lectureModel.Title;
+            lectureEdited.Description = lectureModel.Description;
 
             try
             {
-                _repository.EditLecture(lecture);
+                _repository.EditLecture(lectureEdited);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!LectureExists(lecture.Id))
+                if (!LectureExists(_repository.GetLectureById(id).Id))
                 {
                     return NotFound();
                 }
 
                 throw;
-
             }
 
             return RedirectToAction(nameof(Index));
