@@ -27,6 +27,7 @@ namespace Presentation
 
             services.AddTransient<IDatabaseContext, DatabaseContext>();
             services.AddTransient<IUserAccountRepository, UserAccountRepository>();
+            services.AddTransient<ILectureRepository, LectureRepository>();
 
             const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 

@@ -6,6 +6,7 @@ namespace Data.Persistance
     public interface IDatabaseContext
     {
         DbSet<UserAccount> UserAccounts { get; set; }
+        DbSet<Lecture> Lectures { get; set; }
 
         int SaveChanges();
     }
