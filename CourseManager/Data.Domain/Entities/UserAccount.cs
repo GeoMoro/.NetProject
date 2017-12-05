@@ -5,6 +5,12 @@ namespace Data.Domain.Entities
 {
     public class UserAccount
     {
+        // ReSharper disable once EmptyConstructor
+        public UserAccount()
+        {
+            // EF
+        }
+
         [Key]
         public Guid Id { get; set; }
 
@@ -18,7 +24,7 @@ namespace Data.Domain.Entities
         [MaxLength(100, ErrorMessage = "Last name cannot exceed 100 characters.")]
         public string LastName { get; set; }
 
-        [StringLength(16, ErrorMessage = "Registration number must have 16 characters.")]
+        [StringLength(16, ErrorMessage = "Registration number must have 16 characters.", MinimumLength = 16)]
         public string RegistrationNumber { get; set; }
 
         [RegularExpression(@"([AB][1-9])|X")]

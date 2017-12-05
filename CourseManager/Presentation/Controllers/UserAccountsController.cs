@@ -79,8 +79,6 @@ namespace Presentation.Controllers
         }
 
         // POST: UserAccounts/CreateAssistant
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateAssistant([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountAssistantCreateModel userAccountAssistantCreateModel)
@@ -128,8 +126,6 @@ namespace Presentation.Controllers
         }
 
         // POST: UserAccounts/EditStudent/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult EditStudent(Guid id, [Bind("FirstName,LastName,RegistrationNumber,Group,Email")] UserAccountStudentEditModel userAccountStudentEditModel)
@@ -193,8 +189,6 @@ namespace Presentation.Controllers
         }
 
         // POST: UserAccounts/EditAdmin/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult EditAdmin(Guid id, [Bind("FirstName,LastName,Email")] UserAccountAdminEditModel userAccountAdminEditModel)

@@ -4,6 +4,11 @@ namespace Presentation.Models
 {
     public class UserAccountAdminEditModel
     {
+        public UserAccountAdminEditModel()
+        {
+            // EF
+        }
+
         [Required(ErrorMessage = "First name is required.")]
         [MinLength(1, ErrorMessage = "First name must have at least 1 character.")]
         [MaxLength(100, ErrorMessage = "First name cannot exceed 100 characters.")]
