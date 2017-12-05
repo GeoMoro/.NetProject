@@ -19,6 +19,24 @@ namespace Data.Domain.Entities
         [MinLength(1, ErrorMessage = "Laboratory must have at least 1 character")]
         public string Laboratory { get; set; }
 
+        [Required(ErrorMessage = "A student must be marked as present or not")]
         public bool Present { get; set; }
+
+        public static Presence CreatePresence(string laboratory, bool present)
+        {
+            var instance = new Presence
+            {
+                Id = Guid.NewGuid()
+            };
+            instance.UpdatePresence(laboratory, present);
+
+            return instance;
+        }
+
+        private void UpdatePresence(string laboratory, bool present)
+        {
+            Laboratory = laboratory;
+            Present = present;
+        }
     }
 }
