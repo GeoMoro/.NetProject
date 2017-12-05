@@ -41,7 +41,7 @@ namespace Presentation.Controllers
         }
 
         // GET: UserAccounts/CreateStudent
-        public IActionResult Createstudent()
+        public IActionResult CreateStudent()
         {
             return View();
         }

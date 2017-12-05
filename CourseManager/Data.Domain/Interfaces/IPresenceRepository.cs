@@ -6,7 +6,7 @@ namespace Data.Domain.Interfaces
 {
     public interface IPresenceRepository
     {
-        IReadOnlyList<Presence> GetAllPresence();
+        IReadOnlyList<Presence> GetAllPresences();
         Presence GetPresenceById(Guid id);
         void CreatePresence(Presence presence);
         void UpdatePresence(Presence presence);
