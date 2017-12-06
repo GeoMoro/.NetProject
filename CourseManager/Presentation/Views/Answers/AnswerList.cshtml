@@ -1,18 +1,19 @@
 ﻿@model IEnumerable<Data.Domain.Entities.Answer>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "AnswerList";
 }
 
-<h2>Index</h2>
+
+<h2>AnswerList</h2>
 
 <p>
-    <a asp-action="Create">Create New Answer</a>
+    <a asp-action="CreateNewAnswerForGivenQuestion">Create New Answer For This Question</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-                <!--<th>
+               <!-- <th>
                     @Html.DisplayNameFor(model => model.UserId)
                 </th>
                 <th>
@@ -28,7 +29,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <!--<td>
                 @Html.DisplayFor(modelItem => item.UserId)
@@ -48,6 +49,7 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
+   <!--@ViewData["QuestionId"] is THIS!!--> 
 </table>

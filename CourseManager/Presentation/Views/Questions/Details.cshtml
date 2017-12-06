@@ -1,4 +1,4 @@
-﻿@model Data.Domain.Entities.Answer
+﻿@model Data.Domain.Entities.Question
 
 @{
     ViewData["Title"] = "Details";
@@ -7,26 +7,26 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Answer</h4>
+    <h4>Question</h4>
     <hr />
     <dl class="dl-horizontal">
-       <!-- <dt>
+        <!--<dt>
             @Html.DisplayNameFor(model => model.UserId)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.QuestionId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.QuestionId)
         </dd>-->
         <dt>
-            @Html.DisplayNameFor(model => model.AnswerDate)
+            @Html.DisplayNameFor(model => model.CreatedDate)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AnswerDate)
+            @Html.DisplayFor(model => model.CreatedDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Topic)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Topic)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Text)

@@ -16,9 +16,14 @@ namespace Business
             _databaseService = databaseService;
         }
 
-        public IReadOnlyList<Answer> GetAllAnswers()
+        public List<Answer> GetAllAnswers()
         {
             return _databaseService.Answers.ToList();
+        }
+
+        public List<Answer> GetAllAnswersForGivenQuestion(Guid qid)
+        {
+            return _databaseService.Answers.Where(answer => answer.QuestionId == qid).ToList();
         }
 
         public Answer GetAnswerById(Guid id)
@@ -28,6 +33,15 @@ namespace Business
 
         public void CreateAnswer(Answer answer)
         {
+            _databaseService.Answers.Add(answer);
+
+            _databaseService.SaveChanges();
+        }
+
+        public void CreateAnswerForGivenQuestion(Guid qid, Answer answer)
+        {
+            answer.QuestionId = qid;
+
             _databaseService.Answers.Add(answer);
 
             _databaseService.SaveChanges();

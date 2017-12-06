@@ -13,5 +13,6 @@ namespace Data.Persistance
 
         public DbSet<Data.Domain.Entities.UserAccount> UserAccounts { get; set; }
         public DbSet<Data.Domain.Entities.Answer> Answers { get; set; }
+        public DbSet<Data.Domain.Entities.Question> Questions { get; set; }
     }
 }

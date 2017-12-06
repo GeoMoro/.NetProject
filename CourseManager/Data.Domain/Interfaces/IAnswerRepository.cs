@@ -6,9 +6,11 @@ namespace Data.Domain.Interfaces
 {
     public interface IAnswerRepository
     {
-        IReadOnlyList<Answer> GetAllAnswers();
+        List<Answer> GetAllAnswers();
+        List<Answer> GetAllAnswersForGivenQuestion(Guid qid);
         Answer GetAnswerById(Guid id);
         void CreateAnswer(Answer answer);
+        void CreateAnswerForGivenQuestion(Guid qid, Answer answer);
         void EditAnswer(Answer answer);
         void DeleteAnswer(Answer answer);
     }

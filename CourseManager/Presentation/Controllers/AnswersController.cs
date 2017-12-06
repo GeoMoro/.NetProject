@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Data.Persistance;
 using Presentation.Models;
 
 namespace Presentation.Controllers
@@ -25,6 +21,13 @@ namespace Presentation.Controllers
         public IActionResult Index()
         {
             return View(_repository.GetAllAnswers());
+        }
+
+        // Get: AnswerList
+        public IActionResult AnswerList(Guid QuestionId)
+        {
+            ViewData["QID"] = QuestionId;
+            return View(_repository.GetAllAnswersForGivenQuestion(QuestionId));
         }
 
         // GET: Answers/Details/5
@@ -71,7 +74,40 @@ namespace Presentation.Controllers
             );
 
             return RedirectToAction(nameof(Index));
+        }
+
+
+        // GET: Answers/CreateNewAnswerForGivenQuestion
+        public IActionResult CreateNewAnswerForGivenQuestion(Guid? QuestionId)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateNewAnswerForGivenQuestion(Guid? QuestionId,
+            [Bind("UserId,QuestionId,AnswerDate,Text")]AnswerCreateModel answerCreateModel)
+        {
             
+            if (!ModelState.IsValid)
+            {
+                return View(answerCreateModel);
+            }
+
+            var newAnswer = Answer.CreateAnswer(
+                answerCreateModel.UserId,
+                answerCreateModel.QuestionId,
+                answerCreateModel.Text
+            );
+            Guid qid = new Guid();
+            if (QuestionId.HasValue)
+                qid = QuestionId.Value;
+
+            _repository.CreateAnswerForGivenQuestion(
+                qid,
+                newAnswer
+            );
+            return RedirectToAction("AnswerList", "Answers", qid);
         }
 
         // GET: Answers/Edit/5
@@ -137,9 +173,7 @@ namespace Presentation.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-
             
-           
         }
 
         // GET: Answers/Delete/5
