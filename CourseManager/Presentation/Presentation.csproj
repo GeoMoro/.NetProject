@@ -22,4 +22,13 @@
     <ProjectReference Include="..\Data.Persistance\Data.Persistance.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Views\UserAccounts\FileSubmissionPage.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\UserAccounts\" />
+    <Folder Include="wwwroot\Files\" />
+  </ItemGroup>
+
 </Project>

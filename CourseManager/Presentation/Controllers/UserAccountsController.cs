@@ -1,19 +1,24 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Presentation.Models;
 
 namespace Presentation.Controllers
 {
     public class UserAccountsController : Controller
     {
+        private readonly IHostingEnvironment _env;
         private readonly IUserAccountRepository _repository;
 
-        public UserAccountsController(IUserAccountRepository repository)
+        public UserAccountsController(IUserAccountRepository repository,IHostingEnvironment env)
         {
+            _env = env;
             _repository = repository;
         }
 
@@ -259,5 +264,55 @@ namespace Presentation.Controllers
         {
             return _repository.GetAllUsers().Any(e => e.Id == id);
         }
-    }
-}
+
+        public IActionResult FileSubmissionPage()
+        {
+            return View();
+        }
+
+
+        public IActionResult KataSubmit()
+        {
+            return View();
+        }
+
+/*        public IActionResult SeminarSubmit()
+        {
+            return View();
+        }*/
+       /* protected void UploadButton_Click(object sender, EventArgs e)
+        {
+            if (FileUploadControl.HasFile)
+            {
+                try
+                {
+                    string filename = Path.GetFileName(FileUploadControl.FileName);
+                    FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
+                    StatusLabel.Text = "Upload status: File uploaded!";
+                }
+                catch (Exception ex)
+                {
+                    StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
+                }*/
+
+        [HttpPost]
+        public async Task<IActionResult> Upload(FileViewModel model)
+        {
+            var file = model.File;
+            if (file.Length > 0)
+            {
+                string path = Path.Combine(_env.WebRootPath, "Files");
+                using (var fs = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                {
+                    await file.CopyToAsync(fs);
+                }
+                model.Source = $"/Files{file.FileName}";
+                model.Extension = Path.GetExtension(file.FileName).Substring(1);
+                return View("~/Views/Home/Index.cshtml");
+            }
+            return BadRequest();
+        }
+
+            }
+        }
+

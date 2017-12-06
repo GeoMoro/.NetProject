@@ -1,0 +1,14 @@
+﻿@model Data.Domain.Entities.UserAccount
+
+
+@{
+    ViewBag.Title = "Homework Files";
+    Layout = "_Layout";
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="container">
+
+    <a asp-area="" asp-controller="UserAccounts" asp-action="KataSubmit">Katas</a>
+   @* <a asp-area="" asp-controller="UserAccounts" asp-action="SeminarSubmit">Seminars</a>*@
+</div>
