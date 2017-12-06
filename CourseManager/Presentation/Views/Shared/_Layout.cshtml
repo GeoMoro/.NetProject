@@ -26,11 +26,16 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Presentation</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">CourseManager</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Questions" asp-action="">Home</a></li>
+                    <li><a asp-area="" asp-controller="Lectures" asp-action="">Lectures</a></li>
+                    <li><a asp-area="" asp-controller="Presences" asp-action="">Presences</a></li>
+                    <li><a asp-area="" asp-controller="Factions" asp-action="">Factions</a></li>
+                    <li><a asp-area="" asp-controller="Questions" asp-action="">Questions</a></li>
+                    <li><a asp-area="" asp-controller="Answers" asp-action="">Answers</a></li>
+                    <li><a asp-area="" asp-controller="UserAccounts" asp-action="">Account</a></li>
                 </ul>
             </div>
         </div>
@@ -39,7 +44,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2017 - Presentation</p>
+            <p>&copy; CourseManager</p>
         </footer>
     </div>
 
