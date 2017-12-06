@@ -16,5 +16,8 @@ namespace Data.Persistance
         public DbSet<Data.Domain.Entities.Presence> Presences { get; set; }
 
         public DbSet<Data.Domain.Entities.Faction> Factions { get; set; }
+
+        public DbSet<Data.Domain.Entities.Lecture> Lectures { get; set; }
+
     }
 }
