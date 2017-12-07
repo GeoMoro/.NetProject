@@ -1,11 +1,15 @@
-﻿using Business;
-using Data.Domain.Interfaces;
-using Data.Persistance;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Presentation.Data;
+using Presentation.Models;
+using Presentation.Services;
+using Business;
+using Data.Domain.Interfaces;
+using Data.Persistance;
 
 namespace Presentation
 {
@@ -36,6 +40,17 @@ namespace Presentation
             const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            // Add application services.
+            services.AddTransient<IEmailSender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +60,7 @@ namespace Presentation
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
+                app.UseDatabaseErrorPage();
             }
             else
             {
@@ -52,7 +68,8 @@ namespace Presentation
             }
 
             app.UseStaticFiles();
-            app.UseSession();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
