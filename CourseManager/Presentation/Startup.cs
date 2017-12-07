@@ -26,8 +26,6 @@ namespace Presentation
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddDistributedMemoryCache();
-            services.AddSession();
 
             services.AddTransient<IDatabaseContext, DatabaseContext>();
             services.AddTransient<IUserAccountRepository, UserAccountRepository>();
@@ -41,8 +39,7 @@ namespace Presentation
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
 
 
             services.AddIdentity<ApplicationUser, IdentityRole>()

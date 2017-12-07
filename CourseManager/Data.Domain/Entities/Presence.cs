@@ -7,11 +7,6 @@ namespace Data.Domain.Entities
 {
     public class Presence
     {
-        public Presence()
-        {
-            //EF
-        }
-
         [Key]
         public Guid Id { get; set; }
 

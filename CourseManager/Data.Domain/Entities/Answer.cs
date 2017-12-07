@@ -5,12 +5,6 @@ namespace Data.Domain.Entities
 {
     public class Answer
     {
-        // ReSharper disable once EmptyConstructor
-        public Answer()
-        {
-            // EF
-        }
-
         [Key]
         public Guid Id { get; set; }
 
