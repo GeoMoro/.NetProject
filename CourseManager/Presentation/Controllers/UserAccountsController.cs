@@ -276,28 +276,34 @@ namespace Presentation.Controllers
             return View();
         }
 
-/*        public IActionResult SeminarSubmit()
+        public IActionResult Downloading()
         {
             return View();
-        }*/
-       /* protected void UploadButton_Click(object sender, EventArgs e)
-        {
-            if (FileUploadControl.HasFile)
-            {
-                try
+        }
+
+        /*        public IActionResult SeminarSubmit()
                 {
-                    string filename = Path.GetFileName(FileUploadControl.FileName);
-                    FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
-                    StatusLabel.Text = "Upload status: File uploaded!";
-                }
-                catch (Exception ex)
-                {
-                    StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
+                    return View();
                 }*/
+        /* protected void UploadButton_Click(object sender, EventArgs e)
+         {
+             if (FileUploadControl.HasFile)
+             {
+                 try
+                 {
+                     string filename = Path.GetFileName(FileUploadControl.FileName);
+                     FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
+                     StatusLabel.Text = "Upload status: File uploaded!";
+                 }
+                 catch (Exception ex)
+                 {
+                     StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
+                 }*/
 
         [HttpPost]
         public async Task<IActionResult> Upload(FileViewModel model)
         {
+ 
             var file = model.File;
             if (file.Length > 0)
             {
@@ -313,6 +319,17 @@ namespace Presentation.Controllers
             return BadRequest();
         }
 
-            }
+        [HttpPost]
+        public FileResult Download()
+        {
+            string file = "~/Files/bau.txt";
+            
+            string content_type = "application/msword";
+            
+
+            return File(file, content_type, Path.GetFileName(file));
+        }
+
+    }
         }
 
