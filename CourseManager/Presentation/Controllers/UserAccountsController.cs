@@ -314,7 +314,6 @@ namespace Presentation.Controllers
                 }
                 model.Source = $"/Files{file.FileName}";
                 model.Extension = Path.GetExtension(file.FileName).Substring(1);
-                return View("~/Views/Home/Index.cshtml");
             }
             return BadRequest();
         }
