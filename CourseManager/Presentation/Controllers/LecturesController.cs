@@ -8,6 +8,7 @@ using Presentation.Models;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using System.Collections.Generic;
 
 namespace Presentation.Controllers
 {
@@ -29,6 +30,26 @@ namespace Presentation.Controllers
             return View(_repository.GetAllLectures());
         }
 
+        public void GetFiles(Guid? id)
+        {
+            //ViewData.Clear();
+            var lecture = _repository.GetLectureById(id.Value);
+            List<string> fileList = new List<string>();
+            string path = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            foreach (var files in Directory.GetFiles(path))
+            {
+                fileList.Add(Path.GetFileName(files));
+            }
+
+            ViewData["Files"] = fileList;
+        }
+
         // GET: Lectures/Details/5
         public IActionResult Details(Guid? id)
         {
@@ -36,12 +57,27 @@ namespace Presentation.Controllers
             {
                 return NotFound();
             }
-
+            
             var lecture = _repository.GetLectureById(id.Value);
             if (lecture == null)
             {
                 return NotFound();
             }
+
+            List<string> fileList = new List<string>();
+            string path = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            
+            foreach(var files in Directory.GetFiles(path))
+            {
+                fileList.Add(Path.GetFileName(files));
+            }
+
+            ViewData["Files"] = fileList;
 
             return View(lecture);
         }
@@ -70,23 +106,23 @@ namespace Presentation.Controllers
                     lectureCreateModel.Description
                 )
             );
-
-            var file = lectureCreateModel.File;
-
-            if (file.Length > 0)
+            foreach(var file in lectureCreateModel.File)
             {
-                string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureCreateModel.Title);
-
-                if (!Directory.Exists(path))
+                if (file.Length > 0)
                 {
-                    Directory.CreateDirectory(path);
-                }
+                    string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureCreateModel.Title);
 
-                string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
 
-                using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
+                    // string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                    using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
                 }
             }
 
@@ -134,6 +170,8 @@ namespace Presentation.Controllers
                 return View(lectureModel);
             }
 
+            var oldTitle = lectureEdited.Title;
+
             lectureEdited.Title = lectureModel.Title;
             lectureEdited.Description = lectureModel.Description;
 
@@ -141,22 +179,26 @@ namespace Presentation.Controllers
             {
                 _repository.EditLecture(lectureEdited);
 
-                var file = lectureModel.File;
+                string searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + oldTitle;
+                Directory.Delete(searchedPath, true);
 
-                if (file.Length > 0)
+                foreach (var file in lectureModel.File)
                 {
-                    string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureModel.Title);
-
-                    if (!Directory.Exists(path))
+                    if (file.Length > 0)
                     {
-                        Directory.CreateDirectory(path);
-                    }
+                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureModel.Title);
 
-                    string extension = lectureModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
 
-                    using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
+                        // string extension = lectureModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
                     }
                 }
             }
@@ -182,10 +224,26 @@ namespace Presentation.Controllers
             }
 
             var lecture = _repository.GetLectureById(id.Value);
+            
             if (lecture == null)
             {
                 return NotFound();
             }
+
+            List<string> fileList = new List<string>();
+            string path = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            foreach (var files in Directory.GetFiles(path))
+            {
+                fileList.Add(Path.GetFileName(files));
+            }
+
+            ViewData["Files"] = fileList;
 
             return View(lecture);
         }
@@ -196,6 +254,9 @@ namespace Presentation.Controllers
         public IActionResult DeleteConfirmed(Guid id)
         {
             var lecture = _repository.GetLectureById(id);
+
+            string searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + lecture.Title;
+            Directory.Delete(searchedPath, true);
 
             _repository.DeleteLecture(lecture);
 

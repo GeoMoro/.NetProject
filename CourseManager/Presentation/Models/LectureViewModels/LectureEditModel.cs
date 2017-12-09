@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models
@@ -18,7 +19,7 @@ namespace Presentation.Models
         public string Description { get; set; }
         
         [Required]
-        public IFormFile File { get; set; }
+        public IEnumerable<IFormFile> File { get; set; }
 
         public LectureEditModel(string title, string description)
         {

@@ -28,6 +28,16 @@
                 <p>
                     <b>@Html.DisplayFor(modelItem => item.Title)</b>
                     <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
+                    @*@using (Html.BeginForm("GetFiles", "Lectures", new { id = item.Id }, FormMethod.Post, null, new { }))
+                    {
+                       
+                        <input type="submit" value="Download" />
+                    }
+                    @foreach (var file in ViewData["Files"] as List<string>)
+                    {
+                        @file
+                        <br />
+                    }*@
                 </p>
 </td>
             <td>
