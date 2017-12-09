@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models
 {
@@ -37,5 +38,11 @@ namespace Presentation.Models
         [MaxLength(200, ErrorMessage = "E-mail adress must not exceed 200 charaters.")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+
+        public IFormFile File { get; set; }
+        public long Size { get; set; }
+        public string Source { get; set; }
+        public string Extension { get; set; }
+        public string Type { get; set; }
     }
 }

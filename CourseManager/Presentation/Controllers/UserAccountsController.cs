@@ -8,6 +8,10 @@ using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Presentation.Models;
+using System.Collections;
+using System.Net.Http.Headers;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace Presentation.Controllers
 {
@@ -56,7 +60,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateStudent([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email")] UserAccountStudentCreateModel userAccountStudentCreateModel)
+        public async Task<IActionResult> CreateStudent([Bind("FirstName,LastName,RegistrationNumber,Group,Password,ConfirmPassword,Email,File")] UserAccountStudentCreateModel userAccountStudentCreateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -73,6 +77,25 @@ namespace Presentation.Controllers
                     userAccountStudentCreateModel.Email
                 )
             );
+
+            var file = userAccountStudentCreateModel.File;
+
+            if (file.Length > 0)
+            {
+                string path = Path.Combine(_env.WebRootPath, "Files/" + userAccountStudentCreateModel.Email);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string extension = userAccountStudentCreateModel.Email + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -299,15 +322,40 @@ namespace Presentation.Controllers
                  {
                      StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
                  }*/
+        [HttpPost("UploadFiles")]
+        public async void Post(List<IFormFile> files)
+        {
+            long size = files.Sum(f => f.Length);
+
+            // full path to file in temp location
+            var filePath = Path.GetTempFileName();
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+                }
+            }
+
+            // process uploaded files
+            // Don't rely on or trust the FileName property without validation.
+            
+        }
+
 
         [HttpPost]
-        public async Task<IActionResult> Upload(FileViewModel model)
+        public async void Upload(FileViewModel model)
         {
  
             var file = model.File;
             if (file.Length > 0)
             {
                 string path = Path.Combine(_env.WebRootPath, "Files");
+
                 using (var fs = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
                 {
                     await file.CopyToAsync(fs);
@@ -315,19 +363,57 @@ namespace Presentation.Controllers
                 model.Source = $"/Files{file.FileName}";
                 model.Extension = Path.GetExtension(file.FileName).Substring(1);
             }
-            return BadRequest();
         }
 
         [HttpPost]
-        public FileResult Download()
+        public void UploadFilesAjax()
         {
-            string file = "~/Files/bau.txt";
-            
-            string content_type = "application/msword";
-            
-
-            return File(file, content_type, Path.GetFileName(file));
+            long size = 0;
+            var files = Request.Form.Files;
+            foreach (var file in files)
+            {
+                var filename = ContentDispositionHeaderValue
+                                .Parse(file.ContentDisposition)
+                                .FileName
+                                .Trim('"');
+                filename = _env.WebRootPath + $@"\{filename}";
+                size += file.Length;
+                using (FileStream fs = System.IO.File.Create(filename))
+                {
+                    file.CopyTo(fs);
+                    fs.Flush();
+                }
+            }
         }
+
+        [HttpPost]
+        public IActionResult Download(Guid? id)
+        {
+            var userAccount = _repository.GetUserById(id.Value);
+           
+            string searchedPath= Directory.GetFiles(Directory.GetCurrentDirectory() + "\\wwwroot\\Files\\" + userAccount.Email)[0];
+            Stream file = new FileStream(searchedPath, FileMode.Open);
+            string content_type = "application/octet-stream";
+
+            return File(file, content_type, Path.GetFileName(searchedPath));
+        }
+
+        [HttpPost]
+        public void Uploading(ICollection<IFormFile> files)
+        {
+            var uploads = Path.Combine(_env.WebRootPath, "uploads");
+            foreach (var file in files)
+            {
+                if (file.Length > 0)
+                {
+                    using (var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create))
+                    {
+                         file.CopyToAsync(fileStream);
+                    }
+                }
+            }
+        }
+        
 
     }
         }

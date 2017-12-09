@@ -5,14 +5,13 @@
 }
 
 <h2>Index</h2>
-
 <p>
-    <a asp-action="CreateStudent">Create New Student</a>
-    <a asp-action="CreateAssistant">Create New Assistant</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
+        <a asp-action="CreateStudent">Create New Student</a>
+        <a asp-action="CreateAssistant">Create New Assistant</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.FirstName)
                 </th>
@@ -37,52 +36,59 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Validated)
                 </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegistrationNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Group)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rank)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Validated)
-            </td>
-            <td>
-                @{
-                    if (item.Rank == 2)
-                    {
-                        <a asp-action="EditStudent" asp-route-id="@item.Id">Edit</a>
-                    }
-                    else
-                    {
-                        <a asp-action="EditAdmin" asp-route-id="@item.Id">Edit</a>
-                    }
-                }
-                
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RegistrationNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Group)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Password)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Rank)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Validated)
+                    </td>
+                    <td>
+                        @{
+                            if (item.Rank == 2)
+                            {
+                                <a asp-action="EditStudent" asp-route-id="@item.Id">Edit</a>
+                            }
+                            else
+                            {
+                                <a asp-action="EditAdmin" asp-route-id="@item.Id">Edit</a>
+                            }
+                        }
+
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                        
+                        @using (Html.BeginForm("Download", "UserAccounts", new { id = item.Id }, FormMethod.Post,null, new { }))
+                        {
+                            <input type="submit" value="Add" />
+                        }
+                        
+                    </td>
+                </tr>
+                            }
+        </tbody>
+    </table>

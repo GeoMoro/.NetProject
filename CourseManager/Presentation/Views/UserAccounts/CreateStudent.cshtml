@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateStudent">
+        <form method="post" runat="server" enctype="multipart/form-data" asp-action="CreateStudent">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
@@ -47,8 +47,9 @@
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <a asp-area="" asp-controller="UserAccounts" asp-action="Upload">Uploads</a>
+            <div id="file-list" class="form-group">
+                <label asp-for="File" class="control-label"></label>
+                <input asp-for="File" class="form-control" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
@@ -63,4 +64,36 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    /*
+    $(document).ready(function () {
+        $("#submit").click(function (evt) {
+
+            var data = new FormData();
+            i = 0;
+
+            $(".file-select").each(function () { data.append($(this).val(), $(this).get(0).files[0]); i++; })
+
+            var postData = $('#fields :input');
+            $.each(postData, function (key, input) {
+                data.append(input.name, input.value);
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAccountsController/CreateStudent",     // <--- Double check this url.
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (message) {
+                    alert(message);
+                },
+                error: function () {
+                    alert("There was error uploading files!");
+                }
+            });
+        });
+    });*/
+</script>  
 }
