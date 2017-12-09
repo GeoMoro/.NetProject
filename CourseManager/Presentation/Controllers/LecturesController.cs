@@ -5,15 +5,21 @@ using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Presentation.Models;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Presentation.Controllers
 {
     public class LecturesController : Controller
     {
-        private readonly ILectureRepository _repository;
 
-        public LecturesController(ILectureRepository repository)
+        private readonly IHostingEnvironment _env;
+        private readonly ILectureRepository _repository;
+        
+        public LecturesController(ILectureRepository repository, IHostingEnvironment env)
         {
+            _env = env;
             _repository = repository;
         }
 
@@ -51,7 +57,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Title,Description")] LectureCreateModel lectureCreateModel)
+        public async Task<IActionResult> Create([Bind("Title,Description,File")] LectureCreateModel lectureCreateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -64,6 +70,25 @@ namespace Presentation.Controllers
                     lectureCreateModel.Description
                 )
             );
+
+            var file = lectureCreateModel.File;
+
+            if (file.Length > 0)
+            {
+                string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureCreateModel.Title);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -95,7 +120,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, [Bind("Title,Description")] LectureEditModel lectureModel)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Title,Description,File")] LectureEditModel lectureModel)
         {
             var lectureEdited = _repository.GetLectureById(id);
 
@@ -115,6 +140,25 @@ namespace Presentation.Controllers
             try
             {
                 _repository.EditLecture(lectureEdited);
+
+                var file = lectureModel.File;
+
+                if (file.Length > 0)
+                {
+                    string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureModel.Title);
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    string extension = lectureModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                    using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -161,6 +205,18 @@ namespace Presentation.Controllers
         private bool LectureExists(Guid id)
         {
             return _repository.GetAllLectures().Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        public IActionResult Download(Guid? id)
+        {
+            var lecture = _repository.GetLectureById(id.Value);
+
+            string searchedPath = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + lecture.Title)[0];
+            Stream file = new FileStream(searchedPath, FileMode.Open);
+            string content_type = "application/octet-stream";
+
+            return File(file, content_type, Path.GetFileName(searchedPath));
         }
     }
 }

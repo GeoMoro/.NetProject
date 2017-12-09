@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models
 {
@@ -10,5 +11,8 @@ namespace Presentation.Models
         [Required(ErrorMessage = "A description is required.")]
         [StringLength(2000, ErrorMessage = "Maximum number of characters is 2000!")]
         public string Description { get; set; }
+        
+        [Required]
+        public IFormFile File { get; set; }
     }
 }
