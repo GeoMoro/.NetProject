@@ -11,23 +11,25 @@ using Business;
 using Data.Domain.Interfaces;
 using Data.Persistance;
 
-namespace Presentation
-{
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
+namespace Presentation {
+    public class Startup {
+        public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
+        public void ConfigureServices(IServiceCollection services) {
             services.AddMvc();
             services.AddDistributedMemoryCache();
             services.AddSession();
+
+            services.AddDbContext<DatabaseContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("BusinessConnection")));
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<IDatabaseContext, DatabaseContext>();
             services.AddTransient<IUserAccountRepository, UserAccountRepository>();
@@ -36,13 +38,6 @@ namespace Presentation
             services.AddTransient<ILectureRepository, LectureRepository>();
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
-
-            const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
-
-            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
-
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -54,16 +49,12 @@ namespace Presentation
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+            if(env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
                 app.UseDatabaseErrorPage();
-            }
-            else
-            {
+            } else {
                 app.UseExceptionHandler("/Home/Error");
             }
 
@@ -71,8 +62,7 @@ namespace Presentation
 
             app.UseAuthentication();
 
-            app.UseMvc(routes =>
-            {
+            app.UseMvc(routes => {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
