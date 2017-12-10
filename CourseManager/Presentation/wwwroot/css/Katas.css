@@ -7,3 +7,7 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+.delete:hover {
+    color: #ff0000;
+}

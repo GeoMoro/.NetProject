@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Presentation.Controllers
 {
@@ -209,7 +210,7 @@ namespace Presentation.Controllers
         public IActionResult DeleteConfirmed(Guid id)
         {
             var lecture = _repository.GetLectureById(id);
-
+            
             string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
             Directory.Delete(searchedPath, true);
 
@@ -221,6 +222,20 @@ namespace Presentation.Controllers
         private bool LectureExists(Guid id)
         {
             return _repository.GetAllLectures().Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteFile(string title, string fileName, Guid? givenId)
+        {
+            {
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + title + "/" + fileName);
+                if ((System.IO.File.Exists(searchedPath)))
+                {
+                    System.IO.File.Delete(searchedPath);
+                }
+            }
+            
+            return RedirectToAction("Delete", "Lectures", new { id = givenId });
         }
 
         [HttpPost]

@@ -219,6 +219,20 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
+        public IActionResult DeleteFile(string title, string fileName, Guid? givenId)
+        {
+            {
+                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + title + "/" + fileName);
+                if ((System.IO.File.Exists(searchedPath)))
+                {
+                    System.IO.File.Delete(searchedPath);
+                }
+            }
+
+            return RedirectToAction("Delete", "Katas", new { id = givenId });
+        }
+
+        [HttpPost]
         public IActionResult Download(string title, string fileName)
         {
             {

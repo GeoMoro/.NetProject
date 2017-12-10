@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Presentation.Models;
+using System.Collections.Generic;
 
 namespace Presentation.Controllers
 {
@@ -49,7 +50,7 @@ namespace Presentation.Controllers
         public IActionResult AnswerList(Guid? id)
         {
             ViewData["QuestionId"] = id.Value; //id.Value;
-            return RedirectToAction("AnswerList", "Answers", new{ QuestionId=id});
+            return RedirectToAction("Index", "Answers", new{ QuestionId=id});
         }
 
         // GET: Questions/Create
@@ -74,7 +75,8 @@ namespace Presentation.Controllers
                 Question.CreateQuestion(
                     questionCreateModel.UserId,
                     questionCreateModel.Topic,
-                    questionCreateModel.Text
+                    questionCreateModel.Text//,
+                   // new List<string> { "FE", "BU" }
                 )
             );
 

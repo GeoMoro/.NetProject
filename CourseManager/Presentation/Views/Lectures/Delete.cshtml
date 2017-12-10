@@ -4,6 +4,10 @@
     ViewData["Title"] = "Delete";
 }
 
+<environment include="Development">
+    <link href="~/css/Lectures.css" rel="stylesheet" />
+</environment>
+
 <h2>Delete</h2>
 
 <h3>Are you sure you want to delete this?</h3>
@@ -29,8 +33,10 @@
         <dd style="font-size: 16px;">
             @foreach (var file in Model.GetFiles())
             {
-                @file
-                <br />
+                @using (Html.BeginForm("DeleteFile", "Lectures", new { title = Model.Title, fileName = @file, givenId = Model.Id}, FormMethod.Post, null, new { }))
+                {
+                    <button class="delete">@file</button>
+                }
             }
         </dd>
     </dl>
