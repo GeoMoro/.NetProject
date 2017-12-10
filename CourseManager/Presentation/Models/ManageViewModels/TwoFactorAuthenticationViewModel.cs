@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Presentation.Models.ManageViewModels
+﻿namespace Presentation.Models.ManageViewModels
 {
     public class TwoFactorAuthenticationViewModel
     {
@@ -12,6 +6,7 @@ namespace Presentation.Models.ManageViewModels
 
         public int RecoveryCodesLeft { get; set; }
 
+        // ReSharper disable once InconsistentNaming
         public bool Is2faEnabled { get; set; }
     }
 }
