@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Data.Domain.Entities.Kata>
+
+@{
+    ViewData["Title"] = "Katas";
+}
+
+<environment include="Development">
+    <link href="~/css/Lectures.css" rel="stylesheet" />
+</environment>
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Add a new kata</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th style="font-size: 22px;">
+                <p align="left"><b>Contents</b></p>
+            </th>
+            <th style="font-size: 22px;">
+                <p align="left"><b>Actions</b></p>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="font-size: 16px;">
+                    <p>
+                        <b>@Html.DisplayFor(modelItem => item.Title)</b>
+                        <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
+                        @foreach (var file in item.GetFiles())
+                        {
+                            @using (Html.BeginForm("Download", "Katas", new { title = item.Title, fileName = @file }, FormMethod.Post, null, new { }))
+                            {
+                                <button>@file</button>
+                            }
+                        }
+                    </p>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Modify</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

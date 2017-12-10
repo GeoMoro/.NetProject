@@ -34,6 +34,7 @@ namespace Presentation
             services.AddTransient<ILectureRepository, LectureRepository>();
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
+            services.AddTransient<IKataRepository, KataRepository>();
 
             const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 
