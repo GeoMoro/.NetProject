@@ -315,3 +315,5 @@ OpenCover/
 ASALocalRun/
 CourseManager/.vscode/launch.json
 CourseManager/.vscode/tasks.json
+
+CourseManager/Presentation/appsettings\.json
