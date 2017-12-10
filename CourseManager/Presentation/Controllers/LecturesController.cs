@@ -29,27 +29,7 @@ namespace Presentation.Controllers
         {
             return View(_repository.GetAllLectures());
         }
-
-        public void GetFiles(Guid? id)
-        {
-            //ViewData.Clear();
-            var lecture = _repository.GetLectureById(id.Value);
-            List<string> fileList = new List<string>();
-            string path = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
-
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            foreach (var files in Directory.GetFiles(path))
-            {
-                fileList.Add(Path.GetFileName(files));
-            }
-
-            ViewData["Files"] = fileList;
-        }
-
+        
         // GET: Lectures/Details/5
         public IActionResult Details(Guid? id)
         {
@@ -63,21 +43,7 @@ namespace Presentation.Controllers
             {
                 return NotFound();
             }
-
-            List<string> fileList = new List<string>();
-            string path = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
-
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
             
-            foreach(var files in Directory.GetFiles(path))
-            {
-                fileList.Add(Path.GetFileName(files));
-            }
-
-            ViewData["Files"] = fileList;
 
             return View(lecture);
         }
@@ -174,14 +140,18 @@ namespace Presentation.Controllers
 
             lectureEdited.Title = lectureModel.Title;
             lectureEdited.Description = lectureModel.Description;
-
+            
             try
             {
                 _repository.EditLecture(lectureEdited);
 
-                string searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + oldTitle;
-                Directory.Delete(searchedPath, true);
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + oldTitle);
 
+                if (Directory.Exists(searchedPath))
+                {
+                    Directory.Delete(searchedPath, true);
+                }
+                
                 foreach (var file in lectureModel.File)
                 {
                     if (file.Length > 0)
@@ -229,22 +199,7 @@ namespace Presentation.Controllers
             {
                 return NotFound();
             }
-
-            List<string> fileList = new List<string>();
-            string path = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
-
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            foreach (var files in Directory.GetFiles(path))
-            {
-                fileList.Add(Path.GetFileName(files));
-            }
-
-            ViewData["Files"] = fileList;
-
+            
             return View(lecture);
         }
 
@@ -255,7 +210,7 @@ namespace Presentation.Controllers
         {
             var lecture = _repository.GetLectureById(id);
 
-            string searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + lecture.Title;
+            string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
             Directory.Delete(searchedPath, true);
 
             _repository.DeleteLecture(lecture);
@@ -269,15 +224,15 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Download(Guid? id)
+        public IActionResult Download(string title, string fileName)
         {
-            var lecture = _repository.GetLectureById(id.Value);
+            {
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + title + "/" + fileName);
+                Stream file = new FileStream(searchedPath, FileMode.Open);
+                string content_type = "application/octet-stream";
 
-            string searchedPath = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + lecture.Title)[0];
-            Stream file = new FileStream(searchedPath, FileMode.Open);
-            string content_type = "application/octet-stream";
-
-            return File(file, content_type, Path.GetFileName(searchedPath));
+                return File(file, content_type, fileName);
+            }
         }
     }
 }

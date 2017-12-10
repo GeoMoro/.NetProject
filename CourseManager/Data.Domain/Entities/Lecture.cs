@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 namespace Data.Domain.Entities
 {
@@ -28,6 +30,24 @@ namespace Data.Domain.Entities
         {
             Title = title;
             Description = description;
+        }
+
+        public List<string> GetFiles()
+        {
+            List<string> fileList = new List<string>();
+            string path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + Title;
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            foreach (var files in Directory.GetFiles(path))
+            {
+                fileList.Add(Path.GetFileName(files));
+            }
+
+            return fileList;
         }
     }
 }

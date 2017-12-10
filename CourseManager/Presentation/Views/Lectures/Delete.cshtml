@@ -27,7 +27,7 @@
             Uploaded Files
         </dt>
         <dd style="font-size: 16px;">
-            @foreach (var file in ViewData["Files"] as List<string>)
+            @foreach (var file in Model.GetFiles())
             {
                 @file
                 <br />
