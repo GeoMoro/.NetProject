@@ -260,7 +260,7 @@ namespace Presentation.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var info = await _signInManager.GetExternalLoginInfoAsync(user.Id.ToString());
+            var info = await _signInManager.GetExternalLoginInfoAsync(user.Id);
             if (info == null)
             {
                 throw new ApplicationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");

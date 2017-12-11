@@ -212,13 +212,60 @@ namespace Presentation.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
+                //var username = model.FirstName.Split("-")[0].ToLower() + "." + model.LastName.Split("-")[0].ToLower();
+
                 var user = new ApplicationUser
                 {
-                    UserName = model.FirstName + " " + model.LastName,
+                    UserName = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     RegistrationNumber = model.RegistrationNumber,
                     Group = model.Group,
+                    Email = model.Email
+                };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User created a new account with password.");
+
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    _logger.LogInformation("User created a new account with password.");
+                    return RedirectToLocal(returnUrl);
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult RegisterAssistant(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterAssistant(RegisterAssistantViewModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                //var username = model.FirstName.Split("-")[0].ToLower() + "." + model.LastName.Split("-")[0].ToLower();
+
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
                     Email = model.Email
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);

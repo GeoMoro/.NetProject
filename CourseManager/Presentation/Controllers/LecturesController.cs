@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Presentation.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
 {
@@ -18,6 +19,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Lectures
+        [Authorize]
         public IActionResult Index()
         {
             return View(_repository.GetAllLectures());
@@ -41,6 +43,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Lectures/Create
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Create()
         {
             return View();
@@ -55,7 +58,7 @@ namespace Presentation.Controllers
         {
             if (!ModelState.IsValid)
             {
-               return View(lectureCreateModel);
+                return View(lectureCreateModel);
             }
 
             _repository.CreateLecture(
