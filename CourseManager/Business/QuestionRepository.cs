@@ -16,6 +16,11 @@ namespace Business
             _databaseService = databaseService;
         }
 
+        public IList<Answer> GetAllAnswersForQuestion(Guid id)
+        {
+            return _databaseService.Answers.Where(answer => answer.QuestionId == id).ToList();
+        }
+
         public IReadOnlyList<Question> GetAllQuestions()
         {
             return _databaseService.Questions.ToList();

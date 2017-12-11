@@ -24,12 +24,15 @@ namespace Data.Domain.Entities
         [MinLength(1, ErrorMessage = "Answer must have at least 1 character.")]
         [MaxLength(2000, ErrorMessage = "Answer cannot exceed 2000 characters.")]
         public string Text { get; set; }
-        
+
+        public IList<Answer> Answers { get; set; }
+
         public static Question CreateQuestion(Guid userId, string topic, string text)//, List<string> answers)
         {
             var instance = new Question
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                Answers = new List<Answer>()
             };
 
             instance.UpdateQuestion(userId, topic, text);//, answers);

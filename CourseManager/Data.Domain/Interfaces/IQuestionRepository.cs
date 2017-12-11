@@ -7,6 +7,7 @@ namespace Data.Domain.Interfaces
     public interface IQuestionRepository
     {
         IReadOnlyList<Question> GetAllQuestions();
+        IList<Answer> GetAllAnswersForQuestion(Guid id);
         Question GetQuestionById(Guid id);
         void CreateQuestion(Question question);
         void EditQuestion(Question question);

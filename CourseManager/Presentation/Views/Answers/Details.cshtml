@@ -10,18 +10,6 @@
     <h4>Answer</h4>
     <hr />
     <dl class="dl-horizontal">
-       <!-- <dt>
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.QuestionId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.QuestionId)
-        </dd>-->
         <dt>
             @Html.DisplayNameFor(model => model.AnswerDate)
         </dt>
@@ -37,6 +25,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        @using (Html.BeginForm("Index", "Answers", new { questionId = Model.QuestionId }, FormMethod.Post, null, new { }))
+        {
+            <button>Back to list</button>
+        }
 </div>

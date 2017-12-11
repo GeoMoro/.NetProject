@@ -26,9 +26,14 @@ namespace Presentation.Controllers
         // GET: Questions
         public IActionResult Index()
         {
+            foreach(var item in _repository.GetAllQuestions())
+            {
+               item.Answers = _repository.GetAllAnswersForQuestion(item.Id);
+            }
+
             return View(_repository.GetAllQuestions());
         }
-        
+
         // GET: Questions/Details/5
         public IActionResult Details(Guid? id)
         {
@@ -47,10 +52,9 @@ namespace Presentation.Controllers
         }
 
         // GET: Questions/AnswerList/5
-        public IActionResult AnswerList(Guid? id)
+        public IActionResult Answers(Guid? id)
         {
-            ViewData["QuestionId"] = id.Value; //id.Value;
-            return RedirectToAction("Index", "Answers", new{ QuestionId=id});
+            return RedirectToAction("Index", "Answers", new { questionId = id });
         }
 
         // GET: Questions/Create
