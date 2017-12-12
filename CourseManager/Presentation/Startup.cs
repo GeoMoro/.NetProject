@@ -77,29 +77,7 @@ namespace Presentation
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            //new UserRoleSeed(app.ApplicationServices.GetService<RoleManager<IdentityRole>>()).Seed();
-
-            IServiceScopeFactory scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-
-            using (IServiceScope scope = scopeFactory.CreateScope())
-            {
-                RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-                if ((roleManager.FindByNameAsync("Owner")) == null)
-                {
-                    roleManager.CreateAsync(new IdentityRole { Name = "Owner" });
-                }
-
-                if ((roleManager.FindByNameAsync("Assitant")) == null)
-                {
-                    roleManager.CreateAsync(new IdentityRole { Name = "Assitant" });
-                }
-
-                if ((roleManager.FindByNameAsync("Student")) == null)
-                {
-                    roleManager.CreateAsync(new IdentityRole { Name = "Student" });
-                }
-            }
+            new UserRoleSeed(app.ApplicationServices.GetService<RoleManager<IdentityRole>>()).Seed();
         }
     }
 }
