@@ -65,7 +65,7 @@ namespace Presentation
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            
             app.UseStaticFiles();
 
             app.UseAuthentication();
@@ -77,7 +77,9 @@ namespace Presentation
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            new UserRoleSeed(app.ApplicationServices.GetService<RoleManager<IdentityRole>>()).Seed();
+            //new UserRoleSeed(app.ApplicationServices.GetService<RoleManager<IdentityRole>>()).Seed();
+
+            Seed.Initialize(app.ApplicationServices);
         }
     }
 }
