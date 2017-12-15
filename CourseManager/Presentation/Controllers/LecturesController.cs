@@ -1,24 +1,23 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Presentation.Models;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Presentation.Models.LectureViewModels;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class LecturesController : Controller
     {
-
         private readonly IHostingEnvironment _env;
         private readonly ILectureRepository _repository;
-        
+
         public LecturesController(ILectureRepository repository, IHostingEnvironment env)
         {
             _env = env;
@@ -26,12 +25,11 @@ namespace Presentation.Controllers
         }
 
         // GET: Lectures
-        [Authorize]
         public IActionResult Index()
         {
             return View(_repository.GetAllLectures());
         }
-        
+
         // GET: Lectures/Details/5
         public IActionResult Details(Guid? id)
         {
@@ -39,13 +37,13 @@ namespace Presentation.Controllers
             {
                 return NotFound();
             }
-            
+
             var lecture = _repository.GetLectureById(id.Value);
             if (lecture == null)
             {
                 return NotFound();
             }
-            
+
 
             return View(lecture);
         }
@@ -62,6 +60,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public async Task<IActionResult> Create([Bind("Title,Description,File")] LectureCreateModel lectureCreateModel)
         {
             if (!ModelState.IsValid)
@@ -75,7 +74,8 @@ namespace Presentation.Controllers
                     lectureCreateModel.Description
                 )
             );
-            foreach(var file in lectureCreateModel.File)
+
+            foreach (var file in lectureCreateModel.File)
             {
                 if (file.Length > 0)
                 {
@@ -99,6 +99,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Lectures/Edit/5
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -125,6 +126,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Title,Description,File")] LectureEditModel lectureModel)
         {
             var lectureEdited = _repository.GetLectureById(id);
@@ -143,7 +145,7 @@ namespace Presentation.Controllers
 
             lectureEdited.Title = lectureModel.Title;
             lectureEdited.Description = lectureModel.Description;
-            
+
             try
             {
                 _repository.EditLecture(lectureEdited);
@@ -154,7 +156,7 @@ namespace Presentation.Controllers
                 {
                     Directory.Delete(searchedPath, true);
                 }
-                
+
                 foreach (var file in lectureModel.File)
                 {
                     if (file.Length > 0)
@@ -189,6 +191,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Lectures/Delete/5
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -197,22 +200,23 @@ namespace Presentation.Controllers
             }
 
             var lecture = _repository.GetLectureById(id.Value);
-            
+
             if (lecture == null)
             {
                 return NotFound();
             }
-            
+
             return View(lecture);
         }
 
         // POST: Lectures/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteConfirmed(Guid id)
         {
             var lecture = _repository.GetLectureById(id);
-            
+
             string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
             Directory.Delete(searchedPath, true);
 
@@ -227,6 +231,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteFile(string title, string fileName, Guid? givenId)
         {
             {
@@ -236,7 +241,7 @@ namespace Presentation.Controllers
                     System.IO.File.Delete(searchedPath);
                 }
             }
-            
+
             return RedirectToAction("Delete", "Lectures", new { id = givenId });
         }
 
