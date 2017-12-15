@@ -22,8 +22,6 @@ namespace Presentation {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddMvc();
-            services.AddDistributedMemoryCache();
-            services.AddSession();
 
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("BusinessConnection")));
@@ -38,7 +36,16 @@ namespace Presentation {
             services.AddTransient<ILectureRepository, LectureRepository>();
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
+            services.AddTransient<IKataRepository, KataRepository>();
 
+/*
+            const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
+
+            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
+
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
+
+*/
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

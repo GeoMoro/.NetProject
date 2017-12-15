@@ -7,11 +7,6 @@ namespace Data.Domain.Entities
 {
     public class Faction
     {
-        public Faction()
-        {
-            //EF
-        }
-
         [Key]
         public Guid Id { get; set; }
 

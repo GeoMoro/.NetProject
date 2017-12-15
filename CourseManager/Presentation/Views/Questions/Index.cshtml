@@ -15,15 +15,18 @@
                 <!--<th>
                     @Html.DisplayNameFor(model => model.UserId)
                 </th> -->
-                <th>
+                @*<th>
                     @Html.DisplayNameFor(model => model.CreatedDate)
-                </th>
+                </th>*@
                 <th>
                     @Html.DisplayNameFor(model => model.Topic)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Text)
                 </th>
+            <th>
+                Answers
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -33,9 +36,9 @@
             <!--<td>
                 @Html.DisplayFor(modelItem => item.UserId)
             </td>-->
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.Topic)
             </td>
@@ -43,10 +46,18 @@
                 @Html.DisplayFor(modelItem => item.Text)
             </td>
             <td>
+                @foreach (var answer in item.Answers)
+                {
+                    @answer.Text
+                    <br />
+                }
+            </td>
+
+            <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                <a asp-action="AnswerList" asp-route-id="@item.Id">AnswerList</a>
+                <a asp-action="Answers" asp-route-id="@item.Id">Answers</a>
             </td>
         </tr>
 }

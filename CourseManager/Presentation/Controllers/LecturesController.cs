@@ -5,15 +5,23 @@ using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Presentation.Models;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Presentation.Controllers
 {
     public class LecturesController : Controller
     {
-        private readonly ILectureRepository _repository;
 
-        public LecturesController(ILectureRepository repository)
+        private readonly IHostingEnvironment _env;
+        private readonly ILectureRepository _repository;
+        
+        public LecturesController(ILectureRepository repository, IHostingEnvironment env)
         {
+            _env = env;
             _repository = repository;
         }
 
@@ -22,7 +30,7 @@ namespace Presentation.Controllers
         {
             return View(_repository.GetAllLectures());
         }
-
+        
         // GET: Lectures/Details/5
         public IActionResult Details(Guid? id)
         {
@@ -30,12 +38,13 @@ namespace Presentation.Controllers
             {
                 return NotFound();
             }
-
+            
             var lecture = _repository.GetLectureById(id.Value);
             if (lecture == null)
             {
                 return NotFound();
             }
+            
 
             return View(lecture);
         }
@@ -51,7 +60,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Title,Description")] LectureCreateModel lectureCreateModel)
+        public async Task<IActionResult> Create([Bind("Title,Description,File")] LectureCreateModel lectureCreateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -64,6 +73,25 @@ namespace Presentation.Controllers
                     lectureCreateModel.Description
                 )
             );
+            foreach(var file in lectureCreateModel.File)
+            {
+                if (file.Length > 0)
+                {
+                    string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureCreateModel.Title);
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    // string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                    using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                }
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -95,7 +123,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, [Bind("Title,Description")] LectureEditModel lectureModel)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Title,Description,File")] LectureEditModel lectureModel)
         {
             var lectureEdited = _repository.GetLectureById(id);
 
@@ -109,12 +137,41 @@ namespace Presentation.Controllers
                 return View(lectureModel);
             }
 
+            var oldTitle = lectureEdited.Title;
+
             lectureEdited.Title = lectureModel.Title;
             lectureEdited.Description = lectureModel.Description;
-
+            
             try
             {
                 _repository.EditLecture(lectureEdited);
+
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + oldTitle);
+
+                if (Directory.Exists(searchedPath))
+                {
+                    Directory.Delete(searchedPath, true);
+                }
+                
+                foreach (var file in lectureModel.File)
+                {
+                    if (file.Length > 0)
+                    {
+                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureModel.Title);
+
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        // string extension = lectureModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+                    }
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -138,11 +195,12 @@ namespace Presentation.Controllers
             }
 
             var lecture = _repository.GetLectureById(id.Value);
+            
             if (lecture == null)
             {
                 return NotFound();
             }
-
+            
             return View(lecture);
         }
 
@@ -152,6 +210,9 @@ namespace Presentation.Controllers
         public IActionResult DeleteConfirmed(Guid id)
         {
             var lecture = _repository.GetLectureById(id);
+            
+            string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
+            Directory.Delete(searchedPath, true);
 
             _repository.DeleteLecture(lecture);
 
@@ -161,6 +222,32 @@ namespace Presentation.Controllers
         private bool LectureExists(Guid id)
         {
             return _repository.GetAllLectures().Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteFile(string title, string fileName, Guid? givenId)
+        {
+            {
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + title + "/" + fileName);
+                if ((System.IO.File.Exists(searchedPath)))
+                {
+                    System.IO.File.Delete(searchedPath);
+                }
+            }
+            
+            return RedirectToAction("Delete", "Lectures", new { id = givenId });
+        }
+
+        [HttpPost]
+        public IActionResult Download(string title, string fileName)
+        {
+            {
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + title + "/" + fileName);
+                Stream file = new FileStream(searchedPath, FileMode.Open);
+                string content_type = "application/octet-stream";
+
+                return File(file, content_type, fileName);
+            }
         }
     }
 }

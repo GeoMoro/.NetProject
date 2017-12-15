@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Presentation.Models;
+using System.Collections.Generic;
 
 namespace Presentation.Controllers
 {
@@ -25,9 +26,14 @@ namespace Presentation.Controllers
         // GET: Questions
         public IActionResult Index()
         {
+            foreach(var item in _repository.GetAllQuestions())
+            {
+               item.Answers = _repository.GetAllAnswersForQuestion(item.Id);
+            }
+
             return View(_repository.GetAllQuestions());
         }
-        
+
         // GET: Questions/Details/5
         public IActionResult Details(Guid? id)
         {
@@ -46,10 +52,9 @@ namespace Presentation.Controllers
         }
 
         // GET: Questions/AnswerList/5
-        public IActionResult AnswerList(Guid? id)
+        public IActionResult Answers(Guid? id)
         {
-            ViewData["QuestionId"] = id.Value; //id.Value;
-            return RedirectToAction("AnswerList", "Answers", new{ QuestionId=id});
+            return RedirectToAction("Index", "Answers", new { questionId = id });
         }
 
         // GET: Questions/Create
@@ -74,7 +79,8 @@ namespace Presentation.Controllers
                 Question.CreateQuestion(
                     questionCreateModel.UserId,
                     questionCreateModel.Topic,
-                    questionCreateModel.Text
+                    questionCreateModel.Text//,
+                   // new List<string> { "FE", "BU" }
                 )
             );
 

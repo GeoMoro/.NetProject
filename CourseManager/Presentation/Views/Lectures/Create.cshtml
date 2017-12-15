@@ -3,9 +3,10 @@
 @{
     ViewData["Title"] = "Create";
 }
-<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/ckeditor/ckeditor.js"></script>
+
+<environment include="Development">
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+</environment>
 
 <h2>Create</h2>
 
@@ -13,7 +14,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form multiple="multiple" runat="server" enctype="multipart/form-data" asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
@@ -24,6 +25,10 @@
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="ckeditor"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="File" class="control-label"></label>
+                <input type="file" multiple="multiple" asp-for="File" class="form-control" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
@@ -38,4 +43,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/ckeditor/ckeditor.js"></script>
 }

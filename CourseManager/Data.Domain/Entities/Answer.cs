@@ -5,12 +5,6 @@ namespace Data.Domain.Entities
 {
     public class Answer
     {
-        // ReSharper disable once EmptyConstructor
-        public Answer()
-        {
-            // EF
-        }
-
         [Key]
         public Guid Id { get; set; }
 
@@ -28,21 +22,21 @@ namespace Data.Domain.Entities
         [MaxLength(2000, ErrorMessage = "Answer cannot exceed 2000 characters.")]
         public string Text{ get; set; }
 
-        public static Answer CreateAnswer(Guid answerId, Guid questionId, string text)
+        public static Answer CreateAnswer(Guid userId, Guid questionId, string text)
         {
             var instance = new Answer
             {
                 Id = Guid.NewGuid()
             };
 
-            instance.UpdateAnswer(answerId, questionId, text);
+            instance.UpdateAnswer(userId, questionId, text);
 
             return instance;
         }
 
-        private void UpdateAnswer(Guid answerId, Guid questionId, string text)
+        private void UpdateAnswer(Guid userId, Guid questionId, string text)
         {
-            UserId = answerId;
+            UserId = userId;
             QuestionId = questionId;
             AnswerDate = DateTime.Now;
             Text = text;

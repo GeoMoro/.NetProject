@@ -4,6 +4,10 @@
     ViewData["Title"] = "Lectures";
 }
 
+<environment include="Development">
+    <link href="~/css/Lectures.css" rel="stylesheet" />
+</environment>
+
 <h2>Lectures</h2>
 
 <p>
@@ -22,12 +26,20 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{
         <tr>
             <td style="font-size: 16px;">
                 <p>
                     <b>@Html.DisplayFor(modelItem => item.Title)</b>
                     <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
+                    @foreach (var file in item.GetFiles())
+                    {
+                        @using (Html.BeginForm("Download", "Lectures", new { title = item.Title, fileName = @file }, FormMethod.Post, null, new { }))
+                        {
+                            <button>@file</button>
+                        }
+                    }
                 </p>
 </td>
             <td>

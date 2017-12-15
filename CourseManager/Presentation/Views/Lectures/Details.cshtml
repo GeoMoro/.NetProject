@@ -22,6 +22,16 @@
         <dd style="font-size: 16px;">
             @Html.DisplayFor(model => model.Description)
         </dd>
+        <dt style="font-size: 18px;">
+            UploadedFiles
+        </dt>
+        <dd style="font-size: 16px;">
+            @foreach (var file in Model.GetFiles())
+            {
+                @file
+                <br />
+            }
+        </dd>
     </dl>
 </div>
 <div>

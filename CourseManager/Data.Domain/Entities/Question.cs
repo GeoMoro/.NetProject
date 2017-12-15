@@ -1,16 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Data.Domain.Entities
 {
     public class Question
     {
-        // ReSharper disable once EmptyConstructor
-        public Question()
-        {
-            // EF
-        }
-
         [Key]
         public Guid Id { get; set; }
 
@@ -30,24 +25,28 @@ namespace Data.Domain.Entities
         [MaxLength(2000, ErrorMessage = "Answer cannot exceed 2000 characters.")]
         public string Text { get; set; }
 
-        public static Question CreateQuestion(Guid userId, string topic, string text)
+        public IList<Answer> Answers { get; set; }
+
+        public static Question CreateQuestion(Guid userId, string topic, string text)//, List<string> answers)
         {
             var instance = new Question
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                Answers = new List<Answer>()
             };
 
-            instance.UpdateQuestion(userId, topic, text);
+            instance.UpdateQuestion(userId, topic, text);//, answers);
 
             return instance;
         }
 
-        private void UpdateQuestion(Guid userId, string topic, string text)
+        private void UpdateQuestion(Guid userId, string topic, string text)//, List<string> answers)
         {
             UserId = userId;
             CreatedDate = DateTime.Now;
             Topic = topic;
             Text = text;
+           // Answers = answers;
         }
     }
 }
