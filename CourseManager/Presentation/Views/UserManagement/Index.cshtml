@@ -7,11 +7,10 @@
 
 <h2>User Management</h2>
 
-<table>
+<table cellspacing=2>
     <thead>
         <tr>
-            <th>Email</th>
-            <th>Roles</th>
+            <th>Fullname</th>
             <th>Options</th>
         </tr>
     </thead>
@@ -19,8 +18,7 @@
         @foreach (var user in Model.Users)
         {
             <tr>
-                <td>@user.Email</td>
-                <td>@user.Role</td>
+                <td>@user.FirstName @user.LastName</td>
                 <td><a asp-controller="UserManagement" asp-action="AddRole" asp-route-id="@user.Id">Add Role</a></td>
             </tr>
         }

@@ -10,6 +10,6 @@ namespace Presentation.Models.UserManagementViewModels
 
         public SelectList Roles { get; set; }
 
-        public string Email { get; set; }
+        public string Fullname { get; set; }
     }
 }

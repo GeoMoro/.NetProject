@@ -27,8 +27,6 @@ namespace Presentation
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddDistributedMemoryCache();
-            services.AddSession();
 
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("BusinessConnection")));
@@ -36,6 +34,10 @@ namespace Presentation
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+           
             services.AddTransient<IDatabaseContext, DatabaseContext>();
             services.AddTransient<IUserAccountRepository, UserAccountRepository>();
             services.AddTransient<IPresenceRepository, PresenceRepository>();
@@ -43,17 +45,15 @@ namespace Presentation
             services.AddTransient<ILectureRepository, LectureRepository>();
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
-
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            
+            // ATTENTION services.AddSingleton<UserManager<ApplicationUser>>(); 
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -65,10 +65,12 @@ namespace Presentation
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            
-            app.UseStaticFiles();
 
+            app.UseStaticFiles();
+            
             app.UseAuthentication();
+
+            MyIdentityDataInitializer.SeedData(roleManager);
 
             app.UseMvc(routes =>
             {
@@ -77,9 +79,19 @@ namespace Presentation
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            //new UserRoleSeed(app.ApplicationServices.GetService<RoleManager<IdentityRole>>()).Seed();
+            // DON'T REMOVE THIS WITHOUT RADU'S PERMISSION v
 
-            Seed.Initialize(app.ApplicationServices);
+            //IServiceScopeFactory scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+
+            //using (IServiceScope scope = scopeFactory.CreateScope())
+            //{
+            //    using (var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
+            //    {
+            //        // seed database code goes here
+
+            //        context.Seed(roleManager);
+            //    }
+            //}
         }
     }
 }

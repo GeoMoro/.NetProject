@@ -42,7 +42,7 @@ namespace Presentation.Controllers
             {
                 Roles = GetAllRoles(),
                 UserId = id,
-                Email = user.Email
+                Fullname = user.FirstName + " " + user.LastName
             };
 
             return View(vm);
@@ -68,7 +68,7 @@ namespace Presentation.Controllers
                 }
             }
 
-            rvm.Email = user.Email;
+            rvm.Fullname = user.FirstName + " " + user.LastName;
             rvm.Roles = GetAllRoles();
 
             return View(rvm);
