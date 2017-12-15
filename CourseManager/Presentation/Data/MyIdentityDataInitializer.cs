@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 
-namespace Presentation.Configuration
+namespace Presentation.Data
 {
     public static class MyIdentityDataInitializer
     {
@@ -29,6 +30,11 @@ namespace Presentation.Configuration
             };
 
             var roleResult = roleManager.CreateAsync(role).Result;
+
+            if (!roleResult.Succeeded)
+            {
+                throw new Exception("Error creating role");
+            }
         }
     }
 }
