@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Presentation.Models;
 using Presentation.Models.ManageViewModels;
 using Presentation.Services;
@@ -18,6 +17,7 @@ namespace Presentation.Controllers
 {
     [Authorize]
     [Route("[controller]/[action]")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class ManageController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -57,8 +57,12 @@ namespace Presentation.Controllers
             var model = new IndexViewModel
             {
                 Username = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                RegistrationNumber = user.RegistrationNumber,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
+                Group = user.Group,
                 IsEmailConfirmed = user.EmailConfirmed,
                 StatusMessage = StatusMessage
             };
@@ -88,16 +92,6 @@ namespace Presentation.Controllers
                 if (!setEmailResult.Succeeded)
                 {
                     throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
-                }
-            }
-
-            var phoneNumber = user.PhoneNumber;
-            if (model.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
                 }
             }
 

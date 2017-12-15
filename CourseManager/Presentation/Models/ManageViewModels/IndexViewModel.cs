@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Models.ManageViewModels
 {
@@ -12,7 +8,17 @@ namespace Presentation.Models.ManageViewModels
 
         public bool IsEmailConfirmed { get; set; }
 
-        [Required]
+        [Display(Name = "First name")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Last name")]
+        public string LastName { get; set; }
+
+        public string Group { get; set; }
+
+        [Display(Name = "Registration number")]
+        public string RegistrationNumber { get; set; }
+
         [EmailAddress]
         public string Email { get; set; }
 

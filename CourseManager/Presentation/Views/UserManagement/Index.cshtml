@@ -1,0 +1,26 @@
+﻿@model Presentation.Models.UserManagementViewModels.UserManagementIndexViewModel
+
+@{
+    ViewBag.Title = "User Management";
+    Layout = "_Layout";
+}
+
+<h2>User Management</h2>
+
+<table cellspacing=2>
+    <thead>
+        <tr>
+            <th>Fullname</th>
+            <th>Options</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.FirstName @user.LastName</td>
+                <td><a asp-controller="UserManagement" asp-action="AddRole" asp-route-id="@user.Id">Add Role</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
