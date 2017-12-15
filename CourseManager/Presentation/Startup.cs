@@ -56,10 +56,6 @@ namespace Presentation
 
 */
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-				
             // ATTENTION services.AddSingleton<UserManager<ApplicationUser>>(); 
 
             // Add application services.
