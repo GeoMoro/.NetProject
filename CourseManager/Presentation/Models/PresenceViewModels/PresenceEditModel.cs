@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Presentation.Models
+﻿namespace Presentation.Models.PresenceViewModels
 {
     public class PresenceEditModel
     {

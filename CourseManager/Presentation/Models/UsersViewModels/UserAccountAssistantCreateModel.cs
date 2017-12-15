@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Presentation.Models
+namespace Presentation.Models.UsersViewModels
 {
     public class UserAccountAssistantCreateModel
     {

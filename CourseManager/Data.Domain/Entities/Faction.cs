@@ -1,7 +1,5 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
-using Data.Domain.Interfaces;
 
 namespace Data.Domain.Entities
 {
@@ -13,7 +11,6 @@ namespace Data.Domain.Entities
         public DateTime Date { get; set; }
         
         public string Week { get; set; }
-
 
         public static Faction CreateFaction(DateTime date, string week)
         {

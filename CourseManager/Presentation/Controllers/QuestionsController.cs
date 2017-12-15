@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Presentation.Models;
-using System.Collections.Generic;
+using Presentation.Models.QuestionViewModels;
 
 namespace Presentation.Controllers
 {
@@ -13,7 +13,7 @@ namespace Presentation.Controllers
     {
         private readonly IQuestionRepository _repository;
 
-        public readonly IAnswerRepository _answerRepository;
+        private readonly IAnswerRepository _answerRepository;
 
         public QuestionsController(IQuestionRepository repository, IAnswerRepository answerRepository)
         {

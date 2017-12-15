@@ -11,6 +11,7 @@ using Presentation.Models;
 using Presentation.Models.AccountViewModels;
 using Presentation.Services;
 using Presentation.Enums;
+using Presentation.Extensions;
 
 namespace Presentation.Controllers
 {
@@ -93,7 +94,7 @@ namespace Presentation.Controllers
 
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load two-factor authentication user.");
+                throw new ApplicationException("Unable to load two-factor authentication user.");
             }
 
             var model = new LoginWith2faViewModel { RememberMe = rememberMe };
@@ -146,7 +147,7 @@ namespace Presentation.Controllers
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load two-factor authentication user.");
+                throw new ApplicationException("Unable to load two-factor authentication user.");
             }
 
             ViewData["ReturnUrl"] = returnUrl;
@@ -167,7 +168,7 @@ namespace Presentation.Controllers
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load two-factor authentication user.");
+                throw new ApplicationException("Unable to load two-factor authentication user.");
             }
 
             var recoveryCode = model.RecoveryCode.Replace(" ", string.Empty);

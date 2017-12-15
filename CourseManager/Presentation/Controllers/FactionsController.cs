@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Presentation.Models;
+using Presentation.Models.FactionViewModels;
 
 
 namespace Presentation.Controllers

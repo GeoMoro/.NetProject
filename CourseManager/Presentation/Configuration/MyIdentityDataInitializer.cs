@@ -18,15 +18,17 @@ namespace Presentation.Configuration
 
         public static void CreateRole(this RoleManager<IdentityRole> roleManager, string roleName)
         {
-            if (!roleManager.RoleExistsAsync(roleName).Result)
+            if (roleManager.RoleExistsAsync(roleName).Result)
             {
-                IdentityRole role = new IdentityRole
-                {
-                    Name = roleName
-                };
-
-                IdentityResult roleResult = roleManager.CreateAsync(role).Result;
+                return;
             }
+
+            var role = new IdentityRole
+            {
+                Name = roleName
+            };
+
+            var roleResult = roleManager.CreateAsync(role).Result;
         }
     }
 }

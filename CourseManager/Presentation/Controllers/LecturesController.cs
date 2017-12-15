@@ -8,9 +8,8 @@ using Presentation.Models;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Presentation.Models.LectureViewModels;
 
 namespace Presentation.Controllers
 {

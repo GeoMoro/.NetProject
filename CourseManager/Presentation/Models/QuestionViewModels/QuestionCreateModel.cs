@@ -1,9 +1,7 @@
-﻿using Data.Domain.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Presentation.Models
+namespace Presentation.Models.QuestionViewModels
 {
     public class QuestionCreateModel
     {

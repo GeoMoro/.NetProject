@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Presentation.Models
+namespace Presentation.Models.QuestionViewModels
 {
     public class QuestionEditModel
     {

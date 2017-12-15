@@ -8,7 +8,7 @@ using Presentation.Models;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using System.Collections.Generic;
+using Presentation.Models.KataViewModels;
 
 namespace Presentation.Controllers
 {
