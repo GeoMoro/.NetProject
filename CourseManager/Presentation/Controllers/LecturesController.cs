@@ -74,23 +74,25 @@ namespace Presentation.Controllers
                     lectureCreateModel.Description
                 )
             );
-
-            foreach (var file in lectureCreateModel.File)
+            if (lectureCreateModel.File != null)
             {
-                if (file.Length > 0)
+                foreach (var file in lectureCreateModel.File)
                 {
-                    string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureCreateModel.Title);
-
-                    if (!Directory.Exists(path))
+                    if (file.Length > 0)
                     {
-                        Directory.CreateDirectory(path);
-                    }
+                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureCreateModel.Title);
 
-                    // string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
 
-                    using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
+                        // string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
                     }
                 }
             }
@@ -157,22 +159,25 @@ namespace Presentation.Controllers
                     Directory.Delete(searchedPath, true);
                 }
 
-                foreach (var file in lectureModel.File)
+                if (lectureModel.File != null)
                 {
-                    if (file.Length > 0)
+                    foreach (var file in lectureModel.File)
                     {
-                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureModel.Title);
-
-                        if (!Directory.Exists(path))
+                        if (file.Length > 0)
                         {
-                            Directory.CreateDirectory(path);
-                        }
+                            string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureModel.Title);
 
-                        // string extension = lectureModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+                            if (!Directory.Exists(path))
+                            {
+                                Directory.CreateDirectory(path);
+                            }
 
-                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
+                            // string extension = lectureModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                            using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                            {
+                                await file.CopyToAsync(fileStream);
+                            }
                         }
                     }
                 }

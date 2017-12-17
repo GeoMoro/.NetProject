@@ -1,5 +1,6 @@
 ﻿@model Data.Domain.Entities.Lecture
-
+@using Data.Domain.Interfaces
+@inject ILectureService services
 @{
     ViewData["Title"] = "Delete";
 }
@@ -31,7 +32,7 @@
             Uploaded Files
         </dt>
         <dd style="font-size: 16px;">
-            @foreach (var file in Model.GetFiles())
+            @foreach (var file in services.GetFiles(Model.Id))
             {
                 @using (Html.BeginForm("DeleteFile", "Lectures", new { title = Model.Title, fileName = @file, givenId = Model.Id}, FormMethod.Post, null, new { }))
                 {

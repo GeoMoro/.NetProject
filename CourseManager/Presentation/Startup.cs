@@ -1,5 +1,6 @@
 ﻿using Business;
 using Data.Domain.Interfaces;
+using Data.Domain.Interfaces.ServicesInterfaces;
 using Data.Persistance;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Presentation.Data;
 using Presentation.Models;
 using Presentation.Services;
+using ServicesProvider;
 
 namespace Presentation
 {
@@ -45,15 +47,18 @@ namespace Presentation
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<IKataRepository, KataRepository>();
+            services.AddTransient<ILectureService, LectureService>();
+            services.AddTransient<IKataService, KataService>();
 
-/*
-            const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 
-            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
+        /*
+                    const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
+                    services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
 
-*/
+                    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
+
+        */
 
             // ATTENTION services.AddSingleton<UserManager<ApplicationUser>>(); 
 
