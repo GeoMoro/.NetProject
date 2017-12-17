@@ -74,13 +74,16 @@ namespace Presentation.Controllers
                     lectureCreateModel.Description
                 )
             );
+
+            var currentLecture = _repository.GetLectureInfoByDetails(lectureCreateModel.Title, lectureCreateModel.Description);
+
             if (lectureCreateModel.File != null)
             {
                 foreach (var file in lectureCreateModel.File)
                 {
                     if (file.Length > 0)
                     {
-                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureCreateModel.Title);
+                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + currentLecture.Id);
 
                         if (!Directory.Exists(path))
                         {
@@ -152,12 +155,12 @@ namespace Presentation.Controllers
             {
                 _repository.EditLecture(lectureEdited);
 
-                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + oldTitle);
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
 
-                if (Directory.Exists(searchedPath))
-                {
-                    Directory.Delete(searchedPath, true);
-                }
+                //if (Directory.Exists(searchedPath) && oldTitle.Equals(lectureModel.Title) == false)
+                //{
+                //    Directory.Delete(searchedPath, true);
+                //}
 
                 if (lectureModel.File != null)
                 {
@@ -165,7 +168,7 @@ namespace Presentation.Controllers
                     {
                         if (file.Length > 0)
                         {
-                            string path = Path.Combine(_env.WebRootPath, "Lectures/" + lectureModel.Title);
+                            string path = Path.Combine(_env.WebRootPath, "Lectures/" + id);
 
                             if (!Directory.Exists(path))
                             {
@@ -222,9 +225,11 @@ namespace Presentation.Controllers
         {
             var lecture = _repository.GetLectureById(id);
 
-            string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lecture.Title);
-            Directory.Delete(searchedPath, true);
-
+            string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
+            if (Directory.Exists(searchedPath))
+            {
+                Directory.Delete(searchedPath, true);
+            }
             _repository.DeleteLecture(lecture);
 
             return RedirectToAction(nameof(Index));
@@ -237,10 +242,10 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Owner, Assistant")]
-        public IActionResult DeleteFile(string title, string fileName, Guid? givenId)
+        public IActionResult DeleteFile(string fileName, Guid? givenId)
         {
             {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + title + "/" + fileName);
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
                 if ((System.IO.File.Exists(searchedPath)))
                 {
                     System.IO.File.Delete(searchedPath);
@@ -251,10 +256,10 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Download(string title, string fileName)
+        public IActionResult Download(Guid lectureId, string fileName)
         {
             {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + title + "/" + fileName);
+                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lectureId + "/" + fileName);
                 Stream file = new FileStream(searchedPath, FileMode.Open);
                 string content_type = "application/octet-stream";
 

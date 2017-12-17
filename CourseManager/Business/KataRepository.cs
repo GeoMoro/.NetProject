@@ -16,6 +16,11 @@ namespace Business
             _databaseService = databaseService;
         }
 
+        public Kata GetKataInfoByDetails(string title, string description)
+        {
+            return _databaseService.Katas.SingleOrDefault(kata => kata.Title == title && kata.Description == description);
+        }
+
         public IReadOnlyList<Kata> GetAllKatas()
         {
             return _databaseService.Katas.ToList();

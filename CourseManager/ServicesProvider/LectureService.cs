@@ -19,7 +19,7 @@ namespace ServicesProvider
         {
             var currentLecture = _repository.GetLectureById(id);
             var fileList = new List<string>();
-            string path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + currentLecture.Title;
+            string path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + id;
 
             if (!Directory.Exists(path))
             {
@@ -33,5 +33,25 @@ namespace ServicesProvider
 
             return fileList;
         }
+
+        public List<string> GetFilesBasedOnDetails(string title, string description)
+        {
+            var currentLecture = _repository.GetLectureInfoByDetails(title, description);
+            var fileList = new List<string>();
+            string path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + currentLecture.Id;
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            foreach (var files in Directory.GetFiles(path))
+            {
+                fileList.Add(Path.GetFileName(files));
+            }
+
+            return fileList;
+        }
+
     }
 }

@@ -1,5 +1,5 @@
 ﻿@model Data.Domain.Entities.Lecture
-@using Data.Domain.Interfaces
+@using Data.Domain.Interfaces.ServicesInterfaces
 @inject ILectureService services
 @{
     ViewData["Title"] = "Delete";
@@ -34,7 +34,7 @@
         <dd style="font-size: 16px;">
             @foreach (var file in services.GetFiles(Model.Id))
             {
-                @using (Html.BeginForm("DeleteFile", "Lectures", new { title = Model.Title, fileName = @file, givenId = Model.Id}, FormMethod.Post, null, new { }))
+                @using (Html.BeginForm("DeleteFile", "Lectures", new { fileName = @file, givenId = Model.Id}, FormMethod.Post, null, new { }))
                 {
                     <button class="delete">@file</button>
                 }

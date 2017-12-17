@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<Data.Domain.Entities.Lecture>
-@using Data.Domain.Interfaces
+@using Data.Domain.Interfaces.ServicesInterfaces
 @inject ILectureService services
 @{
     ViewData["Title"] = "Lectures";
@@ -47,7 +47,7 @@
                 
                         @foreach (var file in services.GetFiles(item.Id))
                         {
-                            using (Html.BeginForm("Download", "Lectures", new { title = item.Title, fileName = @file }, FormMethod.Post, null, new { }))
+                            using (Html.BeginForm("Download", "Lectures", new { lectureId = item.Id, fileName = @file }, FormMethod.Post, null, new { }))
                             {
                                 <button>@file</button>
                             }

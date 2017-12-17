@@ -75,13 +75,15 @@ namespace Presentation.Controllers
                 )
             );
 
-            if(kataCreateModel.File != null)
+            var currentKata = _repository.GetKataInfoByDetails(kataCreateModel.Title, kataCreateModel.Description);
+
+            if (kataCreateModel.File != null)
             {
                 foreach (var file in kataCreateModel.File)
                 {
                     if (file.Length > 0)
                     {
-                        string path = Path.Combine(_env.WebRootPath, "Katas/" + kataCreateModel.Title);
+                        string path = Path.Combine(_env.WebRootPath, "Katas/" + currentKata.Id);
 
                         if (!Directory.Exists(path))
                         {
@@ -151,12 +153,12 @@ namespace Presentation.Controllers
             {
                 _repository.EditKata(kataEdited);
 
-                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + oldTitle);
+                //string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + oldTitle);
 
-                if (Directory.Exists(searchedPath))
-                {
-                    Directory.Delete(searchedPath, true);
-                }
+                //if (Directory.Exists(searchedPath))
+                //{
+                //    Directory.Delete(searchedPath, true);
+                //}
 
                 if (kataModel.File != null)
                 {
@@ -165,7 +167,7 @@ namespace Presentation.Controllers
                     {
                         if (file.Length > 0)
                         {
-                            string path = Path.Combine(_env.WebRootPath, "Lectures/" + kataModel.Title);
+                            string path = Path.Combine(_env.WebRootPath, "Katas/" + kataEdited.Id);
 
                             if (!Directory.Exists(path))
                             {
@@ -220,8 +222,11 @@ namespace Presentation.Controllers
         {
             var kata = _repository.GetKataById(id);
 
-            string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kata.Title);
-            Directory.Delete(searchedPath, true);
+            string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kata.Id);
+            if (Directory.Exists(searchedPath))
+            {
+                Directory.Delete(searchedPath, true);
+            }
 
             _repository.DeleteKata(kata);
 
@@ -235,10 +240,10 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Owner, Assistant")]
-        public IActionResult DeleteFile(string title, string fileName, Guid? givenId)
+        public IActionResult DeleteFile(string fileName, Guid? givenId)
         {
             {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + title + "/" + fileName);
+                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + givenId.Value + "/" + fileName);
                 if ((System.IO.File.Exists(searchedPath)))
                 {
                     System.IO.File.Delete(searchedPath);
@@ -249,10 +254,10 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Download(string title, string fileName)
+        public IActionResult Download(Guid kataId, string fileName)
         {
             {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + title + "/" + fileName);
+                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kataId + "/" + fileName);
                 Stream file = new FileStream(searchedPath, FileMode.Open);
                 string content_type = "application/octet-stream";
 

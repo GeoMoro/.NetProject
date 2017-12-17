@@ -20,24 +20,6 @@ namespace Presentation.Models.KataViewModels
 
         public IEnumerable<IFormFile> File { get; set; }
 
-        public List<string> GetFiles()
-        {
-            List<string> fileList = new List<string>();
-            string path = Directory.GetCurrentDirectory() + "\\wwwroot\\Katas\\" + Title;
-
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            foreach (var files in Directory.GetFiles(path))
-            {
-                fileList.Add(Path.GetFileName(files));
-            }
-
-            return fileList;
-        }
-
         public KataEditModel(string title, string description)
         {
             Title = title;

@@ -20,24 +20,6 @@ namespace Presentation.Models.LectureViewModels
         
         public IEnumerable<IFormFile> File { get; set; }
 
-        public List<string> GetFiles()
-        {
-            List<string> fileList = new List<string>();
-            string path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + Title;
-
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            foreach (var files in Directory.GetFiles(path))
-            {
-                fileList.Add(Path.GetFileName(files));
-            }
-
-            return fileList;
-        }
-
         public LectureEditModel(string title, string description)
         {
             Title = title;
