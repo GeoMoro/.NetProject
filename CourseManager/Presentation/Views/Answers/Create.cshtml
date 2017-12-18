@@ -7,6 +7,7 @@
 
 @{
     var save = TempData["Id"];
+    var userxd = TempData["myVar"];
 }
 
 <h2>Create</h2>
@@ -21,13 +22,13 @@
             <!-- O sa se ia automat in viitor -->
             <div class="form-group">
                 <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
+                <input asp-for="UserId" class="form-control" value="@save" />
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Text" class="control-label"></label>
-                <input asp-for="Text" class="form-control" />
+                <input asp-for="Text" class="form-control" value="@userxd"/>
                 <span asp-validation-for="Text" class="text-danger"></span>
             </div>
 
@@ -37,10 +38,10 @@
         </form>
     </div>
 </div>
-
+<!--
 <div>
     <a asp-action="Index" asp-route-id="@save">Back to List</a>
-</div>
+</div>-->
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

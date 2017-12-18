@@ -1,33 +1,35 @@
-﻿@using Presentation.Models.AnswerViewModels
-@model Presentation.Models.AnswerViewModels.AnswerCreateModel
+﻿@model Presentation.Models.AnswerViewModels.AnswerCreateModel;
 
 @{
-    ViewData["Title"] = "CreateNewAnswerForGivenQuestion";
+    ViewData["Title"] = "CreateNew";
+}
+@{
+    var qid = TempData["QId"];
+    var uid = TempData["UId"];
+    var qtxt = TempData["QText"];
 }
 
-<h2>CreateNewAnswerForGivenQuestion</h2>
+<h2>CreateNew</h2>
 
 <h4>Answer</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateNewAnswerForGivenQuestion">
+        <form asp-action="CreateNew">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
+                <input asp-for="UserId" class="form-control"  value="@uid"/>
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
-            <!--
-            <div class="form-group"><!--visibility="hidden">--
+            <div class="form-group">
                 <label asp-for="QuestionId" class="control-label"></label>
-                <input asp-for="QuestionId" class="form-control"  value="@ViewData["QID"]"/>
+                <input asp-for="QuestionId" class="form-control"  value="@qid"/>
                 <span asp-validation-for="QuestionId" class="text-danger"></span>
-            </div> -->
-            
+            </div>
             <div class="form-group">
                 <label asp-for="Text" class="control-label"></label>
-                <input asp-for="Text" class="form-control" />
+                <input asp-for="Text" class="form-control" value="@qtxt" />
                 <span asp-validation-for="Text" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -38,7 +40,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+   <!--<a asp-action="Index">Back to List</a>--> 
 </div>
 
 @section Scripts {
