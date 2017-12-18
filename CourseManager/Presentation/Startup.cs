@@ -33,12 +33,14 @@ namespace Presentation
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+                {
+                    config.SignIn.RequireConfirmedEmail = true;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-           
+
             services.AddTransient<IDatabaseContext, DatabaseContext>();
-            services.AddTransient<IUserAccountRepository, UserAccountRepository>();
             services.AddTransient<IPresenceRepository, PresenceRepository>();
             services.AddTransient<IFactionRepository, FactionRepository>();
             services.AddTransient<ILectureRepository, LectureRepository>();
@@ -46,14 +48,13 @@ namespace Presentation
             services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<IKataRepository, KataRepository>();
 
-/*
+            /*
             const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
-
-*/
+            */
 
             // ATTENTION services.AddSingleton<UserManager<ApplicationUser>>(); 
 
@@ -76,7 +77,7 @@ namespace Presentation
             }
 
             app.UseStaticFiles();
-            
+
             app.UseAuthentication();
 
             MyIdentityDataInitializer.SeedData(roleManager);
