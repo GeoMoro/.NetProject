@@ -66,6 +66,8 @@ namespace Presentation.Controllers
                         ModelState.AddModelError(string.Empty, "You must have a confirmed email to log in.");
                         return View(model);
                     }
+
+                    await _userManager.AddClaimAsync(user, new Claim("FullName", user.FirstName + " " + user.LastName));
                 }
 
                 // This doesn't count login failures towards account lockout
@@ -235,8 +237,6 @@ namespace Presentation.Controllers
 
             if (ModelState.IsValid)
             {
-                //var username = model.FirstName.Split("-")[0].ToLower() + "." + model.LastName.Split("-")[0].ToLower();
-
                 var user = new ApplicationUser
                 {
                     UserName = model.Email,
@@ -293,8 +293,6 @@ namespace Presentation.Controllers
 
             if (ModelState.IsValid)
             {
-                //var username = model.FirstName.Split("-")[0].ToLower() + "." + model.LastName.Split("-")[0].ToLower();
-
                 var user = new ApplicationUser
                 {
                     UserName = model.Email,
@@ -314,7 +312,7 @@ namespace Presentation.Controllers
 
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-                        await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                        await _emailSender.SendAssistantEmailConfirmationAsync(model, callbackUrl);
 
                         //await _signInManager.SignInAsync(user, isPersistent: false);
 
@@ -466,12 +464,10 @@ namespace Presentation.Controllers
                     return RedirectToAction(nameof(ForgotPasswordConfirmation));
                 }
 
-                // For more information on how to enable account confirmation and password reset please
-                // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.ResetPasswordCallbackLink(user.Id, code, Request.Scheme);
                 await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+                   $"Please reset your password by clicking here: {callbackUrl}");
 
                 return RedirectToAction(nameof(ForgotPasswordConfirmation));
             }
