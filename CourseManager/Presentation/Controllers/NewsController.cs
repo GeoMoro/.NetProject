@@ -25,14 +25,14 @@ namespace Presentation.Controllers
             return View(_repository.GetAllNews());
         }
 
-        public IActionResult CreateNews()
+        public IActionResult CreateNews(string createdBy)
         {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateNews([Bind("Title, Description, CreatedBy")] NewsCreateModel newsCreateModel)
+        public IActionResult CreateNews(string createdBy,[Bind("Title, Description")] NewsCreateModel newsCreateModel)
         {
             if (!ModelState.IsValid)
             {
@@ -43,7 +43,7 @@ namespace Presentation.Controllers
                 News.CreateNews(
                     newsCreateModel.Title,
                     newsCreateModel.Description,
-                    newsCreateModel.CreatedBy
+                    createdBy
                 )
             );
 
@@ -65,8 +65,7 @@ namespace Presentation.Controllers
 
             var newsEditModel = new NewsEditModel(
                 news.Title,
-                news.Description,
-                news.CreatedBy
+                news.Description
             );
 
             return View(newsEditModel);
@@ -90,7 +89,6 @@ namespace Presentation.Controllers
 
             newsEdited.Title = newsEditModel.Title;
             newsEdited.Description = newsEditModel.Description;
-            newsEdited.CreatedBy = newsEditModel.CreatedBy;
 
             try
             {

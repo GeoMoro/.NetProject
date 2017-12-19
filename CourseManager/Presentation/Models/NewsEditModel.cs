@@ -18,11 +18,10 @@ namespace Presentation.Models
 
         public string CreatedBy { get; set; }
 
-        public NewsEditModel(string title, string description, string createdBy)
+        public NewsEditModel(string title, string description)
         {
             Title = title;
             Description = description;
-            CreatedBy = createdBy;
         }
     }
 }
