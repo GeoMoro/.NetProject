@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Presentation.Models;
 using Presentation.Models.AnswerViewModels;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class AnswersController : Controller
     {
         private readonly IAnswerRepository _repository;
