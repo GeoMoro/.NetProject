@@ -5,7 +5,6 @@ namespace Data.Domain.Interfaces.ServicesNews
 {
     public interface IRecordService
     {
-        IReadOnlyList<News> GetFirstFive();
         IReadOnlyList<News> GetNextFiveOrTheRest(int Count);
         int GetNumberOfElements();
     }

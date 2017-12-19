@@ -20,12 +20,6 @@ namespace RecordServiceProvider
             _repository = repository;
         }
         
-        public IReadOnlyList<News> GetFirstFive()
-        {
-            Count = 5;
-            return _databaseContext.News.OrderByDescending(d => d.CreatedAtDate).Take(5).ToList();
-        }
-
         public IReadOnlyList<News> GetNextFiveOrTheRest(int Count)
         {
             return _databaseContext.News.OrderByDescending(d => d.CreatedAtDate).Skip(Count).Take(5).ToList();
