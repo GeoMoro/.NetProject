@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
+using Data.Domain.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
-using Presentation.Models;
 using Presentation.Models.QuestionViewModels;
 
 namespace Presentation.Controllers
@@ -15,14 +15,13 @@ namespace Presentation.Controllers
     {
         private readonly IQuestionRepository _repository;
 
-        private readonly IAnswerRepository _answerRepository;
-
-        public QuestionsController(IQuestionRepository repository, IAnswerRepository answerRepository)
+        private readonly IQuestionService _service;
+        
+        public QuestionsController(IQuestionRepository repository, IQuestionService service)
         {
             _repository = repository;
 
-            _answerRepository = answerRepository;
-
+            _service = service;
         }
         
         // GET: Questions
@@ -180,8 +179,8 @@ namespace Presentation.Controllers
         {
             var question = _repository.GetQuestionById(id);
 
-            _repository.DeleteQuestion(question);
-
+            _service.DeleteQuestion(question);
+            
             return RedirectToAction(nameof(Index));
         }
 

@@ -11,8 +11,6 @@ namespace Data.Domain.Interfaces
         Question GetQuestionById(Guid id);
         void CreateQuestion(Question question);
         void EditQuestion(Question question);
-        void DeleteQuestion(Question question);
-        /* plus those operations for answers related to an question
-         */
+        void Delete(Question question);
     }
 }

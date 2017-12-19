@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Presentation.Models;
 using Presentation.Models.FactionViewModels;
 
 

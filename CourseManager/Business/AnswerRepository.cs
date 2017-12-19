@@ -26,6 +26,11 @@ namespace Business
             return _databaseService.Answers.Where(answer => answer.QuestionId == qid).ToList();
         }
 
+        public List<Answer> GetAllAnswersForGivenUserId(Guid uid)
+        {
+            return _databaseService.Answers.Where(answer => answer.QuestionId == uid).ToList();
+        }
+
         public Answer GetAnswerById(Guid id)
         {
             return _databaseService.Answers.SingleOrDefault(answer => answer.Id == id);

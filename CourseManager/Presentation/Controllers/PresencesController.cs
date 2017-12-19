@@ -4,7 +4,6 @@ using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Models;
 using Presentation.Models.PresenceViewModels;
 
 namespace Presentation.Controllers

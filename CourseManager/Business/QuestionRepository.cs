@@ -45,11 +45,12 @@ namespace Business
             _databaseService.SaveChanges();
         }
 
-        public void DeleteQuestion(Question question)
+        public void Delete(Question question)
         {
             _databaseService.Questions.Remove(question);
-
+            
             _databaseService.SaveChanges();
+
         }
     }
 }
