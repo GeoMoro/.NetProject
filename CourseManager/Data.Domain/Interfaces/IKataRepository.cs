@@ -8,6 +8,7 @@ namespace Data.Domain.Interfaces
     {
         IReadOnlyList<Kata> GetAllKatas();
         Kata GetKataById(Guid id);
+        Kata GetKataInfoByDetails(string title, string description);
         void CreateKata(Kata kata);
         void EditKata(Kata kata);
         void DeleteKata(Kata kata);

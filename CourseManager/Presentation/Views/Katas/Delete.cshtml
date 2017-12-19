@@ -1,5 +1,6 @@
 ﻿@model Data.Domain.Entities.Kata
-
+@using Data.Domain.Interfaces.ServicesInterfaces
+@inject IKataService services
 @{
     ViewData["Title"] = "Delete";
 }
@@ -32,9 +33,9 @@
             Uploaded Files
         </dt>
         <dd style="font-size: 16px;">
-            @foreach (var file in Model.GetFiles())
+            @foreach (var file in services.GetFiles(Model.Id))
             {
-                @using (Html.BeginForm("DeleteFile", "Katas", new { title = Model.Title, fileName = @file, givenId = Model.Id }, FormMethod.Post, null, new { }))
+                @using (Html.BeginForm("DeleteFile", "Katas", new { fileName = @file, givenId = Model.Id }, FormMethod.Post, null, new { }))
                 {
                     <button class="delete">@file</button>
                 }

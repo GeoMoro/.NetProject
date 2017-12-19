@@ -1,6 +1,7 @@
 ﻿@using Presentation.Models.LectureViewModels
 @model Presentation.Models.LectureViewModels.LectureEditModel
-
+@using Data.Domain.Interfaces.ServicesInterfaces
+@inject ILectureService services
 @{
     ViewData["Title"] = "Edit";
 }
@@ -25,7 +26,7 @@
             <div class="form-group">
                 <span><b>Current Files:</b></span>
                 <br />
-                @foreach (var file in Model.GetFiles())
+                @foreach (var file in services.GetFilesBasedOnDetails(Model.Title, Model.Description))
                 {
                     @file
                     <br />

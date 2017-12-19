@@ -31,23 +31,5 @@ namespace Data.Domain.Entities
             Title = title;
             Description = description;
         }
-
-        public List<string> GetFiles()
-        {
-            List<string> fileList = new List<string>();
-            string path = Directory.GetCurrentDirectory() + "\\wwwroot\\Katas\\" + Title;
-
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            foreach (var files in Directory.GetFiles(path))
-            {
-                fileList.Add(Path.GetFileName(files));
-            }
-
-            return fileList;
-        }
     }
 }

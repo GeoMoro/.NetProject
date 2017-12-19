@@ -1,17 +1,18 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Presentation.Models;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Presentation.Models.KataViewModels;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class KatasController : Controller
     {
         private readonly IHostingEnvironment _env;
@@ -48,6 +49,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Katas/Create
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Create()
         {
             return View();
@@ -58,6 +60,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public async Task<IActionResult> Create([Bind("Title,Description,File")] KataCreateModel kataCreateModel)
         {
             if (!ModelState.IsValid)
@@ -71,28 +74,35 @@ namespace Presentation.Controllers
                     kataCreateModel.Description
                 )
             );
-            foreach (var file in kataCreateModel.File)
-            {
-                if (file.Length > 0)
-                {
-                    string path = Path.Combine(_env.WebRootPath, "Katas/" + kataCreateModel.Title);
 
-                    if (!Directory.Exists(path))
+            var currentKata = _repository.GetKataInfoByDetails(kataCreateModel.Title, kataCreateModel.Description);
+
+            if (kataCreateModel.File != null)
+            {
+                foreach (var file in kataCreateModel.File)
+                {
+                    if (file.Length > 0)
                     {
-                        Directory.CreateDirectory(path);
-                    }
-                    
-                    using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
+                        string path = Path.Combine(_env.WebRootPath, "Katas/" + currentKata.Id);
+
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
                     }
                 }
             }
-
+            
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Katas/Edit/5
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -119,6 +129,7 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Title,Description,File")] KataEditModel kataModel)
         {
             var kataEdited = _repository.GetKataById(id);
@@ -142,27 +153,31 @@ namespace Presentation.Controllers
             {
                 _repository.EditKata(kataEdited);
 
-                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + oldTitle);
+                //string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + oldTitle);
 
-                if (Directory.Exists(searchedPath))
-                {
-                    Directory.Delete(searchedPath, true);
-                }
+                //if (Directory.Exists(searchedPath))
+                //{
+                //    Directory.Delete(searchedPath, true);
+                //}
 
-                foreach (var file in kataModel.File)
+                if (kataModel.File != null)
                 {
-                    if (file.Length > 0)
+
+                    foreach (var file in kataModel.File)
                     {
-                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + kataModel.Title);
+                        if (file.Length > 0)
+                        {
+                            string path = Path.Combine(_env.WebRootPath, "Katas/" + kataEdited.Id);
 
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-                        
-                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
+                            if (!Directory.Exists(path))
+                            {
+                                Directory.CreateDirectory(path);
+                            }
+
+                            using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                            {
+                                await file.CopyToAsync(fileStream);
+                            }
                         }
                     }
                 }
@@ -181,6 +196,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Katas/Delete/5
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -201,12 +217,16 @@ namespace Presentation.Controllers
         // POST: Katas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteConfirmed(Guid id)
         {
             var kata = _repository.GetKataById(id);
 
-            string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kata.Title);
-            Directory.Delete(searchedPath, true);
+            string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kata.Id);
+            if (Directory.Exists(searchedPath))
+            {
+                Directory.Delete(searchedPath, true);
+            }
 
             _repository.DeleteKata(kata);
 
@@ -219,10 +239,11 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteFile(string title, string fileName, Guid? givenId)
+        [Authorize(Roles = "Owner, Assistant")]
+        public IActionResult DeleteFile(string fileName, Guid? givenId)
         {
             {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + title + "/" + fileName);
+                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + givenId.Value + "/" + fileName);
                 if ((System.IO.File.Exists(searchedPath)))
                 {
                     System.IO.File.Delete(searchedPath);
@@ -233,10 +254,10 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Download(string title, string fileName)
+        public IActionResult Download(Guid kataId, string fileName)
         {
             {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + title + "/" + fileName);
+                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kataId + "/" + fileName);
                 Stream file = new FileStream(searchedPath, FileMode.Open);
                 string content_type = "application/octet-stream";
 

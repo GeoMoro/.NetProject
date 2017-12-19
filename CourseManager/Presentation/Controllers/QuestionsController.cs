@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Presentation.Models;
 using Presentation.Models.QuestionViewModels;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class QuestionsController : Controller
     {
         private readonly IQuestionRepository _repository;
@@ -58,8 +60,9 @@ namespace Presentation.Controllers
         }
 
         // GET: Questions/Create
-        public IActionResult Create()
+        public IActionResult Create(Guid? uid)
         {
+            TempData["UId"] = uid;
             return View();
         }
 
@@ -68,8 +71,9 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("UserId,CreatedDate,Topic,Text")] QuestionCreateModel questionCreateModel)
+        public IActionResult Create(Guid? uid, [Bind("UserId,CreatedDate,Topic,Text")] QuestionCreateModel questionCreateModel)
         {
+            TempData["UId"] = uid;
             if (!ModelState.IsValid)
             {
                 return View(questionCreateModel);

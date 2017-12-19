@@ -16,6 +16,11 @@ namespace Business
             _databaseService = databaseService;
         }
 
+        public Lecture GetLectureInfoByDetails(string title, string description)
+        {
+            return _databaseService.Lectures.SingleOrDefault(lecture => lecture.Title == title && lecture.Description == description);
+        }
+
         public IReadOnlyList<Lecture> GetAllLectures()
         {
             return _databaseService.Lectures.ToList();
