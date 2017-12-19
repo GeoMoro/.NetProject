@@ -38,6 +38,7 @@ namespace Presentation {
             services.AddTransient<ILectureRepository, LectureRepository>();
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
+            services.AddTransient<INewsRepository,  NewsRepository>();
 
 
             services.AddIdentity<ApplicationUser, IdentityRole>()

@@ -17,6 +17,7 @@ namespace Data.Persistance
         public DbSet<Data.Domain.Entities.Lecture> Lectures { get; set; }
         public DbSet<Data.Domain.Entities.Answer> Answers { get; set; }
         public DbSet<Data.Domain.Entities.Question> Questions { get; set; }
+        public DbSet<Data.Domain.Entities.News> News { get; set; }
 
     }
 }
