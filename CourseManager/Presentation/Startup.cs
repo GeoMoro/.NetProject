@@ -9,7 +9,9 @@ using Presentation.Models;
 using Presentation.Services;
 using Business;
 using Data.Domain.Interfaces;
+using Data.Domain.Interfaces.ServicesNews;
 using Data.Persistance;
+using RecordServiceProvider;
 
 namespace Presentation {
     public class Startup {
@@ -39,7 +41,7 @@ namespace Presentation {
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<INewsRepository,  NewsRepository>();
-
+            services.AddTransient<IRecordService, RecordService>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

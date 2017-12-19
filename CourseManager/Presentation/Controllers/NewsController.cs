@@ -1,29 +1,43 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
+using Data.Domain.Interfaces.ServicesNews;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Models;
+using RecordServiceProvider;
 
 namespace Presentation.Controllers
 {
-    [Authorize]
     public class NewsController : Controller
     {
         private readonly INewsRepository _repository;
+        private readonly IRecordService _service;
 
-        public NewsController(INewsRepository repository)
+        public NewsController(INewsRepository repository, IRecordService service)
         {
             _repository = repository;
+            _service = service;
         }
 
         // GET
-        public IActionResult Index()
+        public IActionResult Index(string loadButton)
         {
-            return View(_repository.GetAllNews());
+            if (loadButton != null)
+            {
+                var value = Int32.Parse(loadButton);
+                return View(_service.GetNextFiveOrTheRest(value));
+            }
+
+
+            return View(_service.GetNextFiveOrTheRest(0));
         }
+
+
 
         public IActionResult CreateNews(string createdBy)
         {

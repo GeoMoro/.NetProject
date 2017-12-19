@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<Data.Domain.Entities.News>
+@using Data.Domain.Interfaces.ServicesNews
+@inject IRecordService Service;
 
 @{
     ViewData["Title"] = "Index";
@@ -45,4 +47,13 @@
          }
     </tbody>
 </table>
-
+@using (Html.BeginForm("Index", "News", null, FormMethod.Post, null, new { })) 
+{
+    for (var index = 0; index <  Service.GetNumberOfElements(); ++index) {
+        if (index % 5 == 0)
+        {
+            int value = @index / 5 + 1;
+            <button type="submit" name="loadButton" value="@index">@value</button>
+        }
+    }
+}
