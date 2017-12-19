@@ -1,16 +1,18 @@
-﻿namespace Presentation.Models.PresenceViewModels
+﻿using Data.Domain.Entities;
+using System.Collections.Generic;
+
+namespace Presentation.Models.PresenceViewModels
 {
     public class PresenceEditModel
     {
-        public PresenceEditModel() {
-            // EF
-        }
+        public string Name { get; set; }
 
-        public PresenceEditModel(bool present)
+      //  public List<UserStatus> Students { get; set; }
+
+        public PresenceEditModel(string name)//, List<UserStatus> students)
         {
-            Present = present;
+            Name = name;
+           // Students = students;
         }
-
-        public bool Present { get; set; }
     }
 }

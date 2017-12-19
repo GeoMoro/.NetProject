@@ -40,7 +40,7 @@ namespace Presentation
                 .AddDefaultTokenProviders();
            
             services.AddTransient<IDatabaseContext, DatabaseContext>();
-            services.AddTransient<IUserAccountRepository, UserAccountRepository>();
+            services.AddTransient<IUserStatusRepository, UserStatusRepository>();
             services.AddTransient<IPresenceRepository, PresenceRepository>();
             services.AddTransient<IFactionRepository, FactionRepository>();
             services.AddTransient<ILectureRepository, LectureRepository>();

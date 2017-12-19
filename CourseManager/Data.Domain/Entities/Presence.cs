@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Data.Domain.Entities
@@ -8,25 +9,28 @@ namespace Data.Domain.Entities
         [Key]
         public Guid Id { get; set; }
 
-        public string Laboratory { get; set; }
+        public string Name { get; set; }
 
-        public bool Present { get; set; }
+        public DateTime StartDate { get; set; }
 
-        public static Presence CreatePresence(string laboratory, bool present)
+        public List<UserStatus> Students { get; set; }
+
+        public static Presence CreatePresence(string name)//, List<UserStatus> students)
         {
             var instance = new Presence
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                StartDate = DateTime.Now
             };
-            instance.UpdatePresence(laboratory, present);
+            instance.UpdatePresence(name);//, students);
 
             return instance;
         }
 
-        private void UpdatePresence(string laboratory, bool present)
+        private void UpdatePresence(string name)//, List<UserStatus> students)
         {
-            Laboratory = laboratory;
-            Present = present;
+            Name = name;
+            //Students = students;
         }
     }
 }
