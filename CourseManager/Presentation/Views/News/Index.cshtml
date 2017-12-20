@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Data.Domain.Entities.News>
+@using Data.Domain.Interfaces.ServicesNews
+@inject IRecordService Service;
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="CreateNews">Create new News</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy)
+                </td>
+                <td>
+                    <a asp-action="UpdateNews" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="DeleteNews" asp-route-id="@item.Id">Delete</a>
+                </td>
+                
+            </tr>
+         }
+    </tbody>
+</table>
+@using (Html.BeginForm("Index", "News", null, FormMethod.Post, null, new { })) 
+{
+    for (var index = 0; index <  Service.GetNumberOfElements(); ++index) {
+        if (index % 5 == 0)
+        {
+            int value = @index / 5 + 1;
+            <button type="submit" name="loadButton" value="@index">@value</button>
+        }
+    }
+}

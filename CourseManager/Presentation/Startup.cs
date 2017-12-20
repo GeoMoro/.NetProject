@@ -12,7 +12,11 @@ using Presentation.Data;
 using Presentation.Models;
 using Presentation.Services;
 using ServicesProvider;
-
+using Business;
+using Data.Domain.Interfaces;
+using Data.Domain.Interfaces.ServicesNews;
+using Data.Persistance;
+using RecordServiceProvider;
 namespace Presentation
 {
     public class Startup
@@ -54,6 +58,8 @@ namespace Presentation
 
         /*
                     const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
+            services.AddTransient<INewsRepository,  NewsRepository>();
+            services.AddTransient<IRecordService, RecordService>();
 
                     services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
 
