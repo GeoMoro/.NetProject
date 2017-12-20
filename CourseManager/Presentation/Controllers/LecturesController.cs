@@ -44,7 +44,6 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-
             return View(lecture);
         }
 
@@ -235,18 +234,13 @@ namespace Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LectureExists(Guid id)
-        {
-            return _repository.GetAllLectures().Any(e => e.Id == id);
-        }
-
         [HttpPost]
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteFile(string fileName, Guid? givenId)
         {
             {
                 string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
-                if ((System.IO.File.Exists(searchedPath)))
+                if (System.IO.File.Exists(searchedPath))
                 {
                     System.IO.File.Delete(searchedPath);
                 }
@@ -265,6 +259,11 @@ namespace Presentation.Controllers
 
                 return File(file, content_type, fileName);
             }
+        }
+
+        private bool LectureExists(Guid id)
+        {
+            return _repository.GetAllLectures().Any(e => e.Id == id);
         }
     }
 }
