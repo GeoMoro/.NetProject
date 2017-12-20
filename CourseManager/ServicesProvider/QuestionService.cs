@@ -1,4 +1,5 @@
-﻿using Data.Domain.Entities;
+﻿using System;
+using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Data.Domain.Interfaces.ServicesInterfaces;
 
@@ -30,5 +31,6 @@ namespace ServicesProvider
             _questionsRepository.Delete(question);
             
         }
+        
     }
 }

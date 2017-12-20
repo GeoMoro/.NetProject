@@ -220,5 +220,78 @@ namespace Presentation.Controllers
 
             return RedirectToAction("Index", "Questions");
         }
+
+        // GET: Answers/Edit/5&4&True
+        //[ActionName("EditAnswer")]
+        public IActionResult EditAnswer(Guid? aid, Guid? uid, bool role)
+        {
+
+            if (aid == null)
+            {
+                return NotFound();
+            }
+
+            var answer = _repository.GetAnswerById(aid.Value);
+            if (answer == null)
+            {
+                return NotFound();
+            }
+
+            var answerEditFinalModel = new AnswerEditFinalModel(
+                answer.Text
+            );
+            if (uid == answer.UserId || role == true)
+            {
+                return View(answerEditFinalModel);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Questions");
+            }
+
+        }
+
+        // POST: Answers/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditAnswer(Guid? aid, Guid? uid, bool role, [Bind("AnswerDate,Text")] AnswerEditFinalModel answerEditFinalModel)
+        {
+            var answerToBeEdited = _repository.GetAnswerById(aid.Value);
+
+            if (answerToBeEdited == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(answerEditFinalModel);
+            }
+            
+            answerToBeEdited.AnswerDate = answerEditFinalModel.AnswerDate;
+            answerToBeEdited.Text = answerEditFinalModel.Text;
+
+            try
+            {
+                if (uid == answerToBeEdited.UserId || role == true)
+                {
+                    _repository.EditAnswer(answerToBeEdited);
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AnswerExists(_repository.GetAnswerById(aid.Value).Id))
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+
+            return RedirectToAction("Index", "Questions");
+
+        }
     }
 }

@@ -1,19 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Presentation.Models.AnswerViewModels
 {
-    public class AnswerEditModel
+    public class AnswerEditFinalModel
     {
-        public AnswerEditModel()
+        public AnswerEditFinalModel()
         {
         }
-
-        [Required(ErrorMessage = "User Id is required.")]
-        public Guid UserId { get; set; }
-
-        [Required(ErrorMessage = "Question Id is required.")]
-        public Guid QuestionId { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime AnswerDate = DateTime.Now;
@@ -23,10 +20,8 @@ namespace Presentation.Models.AnswerViewModels
         [MaxLength(2000, ErrorMessage = "Answer cannot exceed 2000 characters.")]
         public string Text { get; set; }
 
-        public AnswerEditModel(Guid userId, Guid questionId, string text)
+        public AnswerEditFinalModel(string text)
         {
-            UserId = userId;
-            QuestionId = questionId;
             Text = text;
         }
     }
