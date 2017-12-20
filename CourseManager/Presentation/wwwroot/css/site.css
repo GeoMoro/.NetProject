@@ -3,8 +3,48 @@
     color: #222;
     font-weight: 300;
     font-size: 15px;
+
+}
+.carousel-inner {
+    border-radius: 2%;
+}
+blockquote {
+    font-size: 1.4em;
+    width: 60%;
+    margin: 50px auto;
+    font-family: Open Sans;
+    font-style: italic;
+    color: #555555;
+    padding: 1.2em 30px 1.2em 75px;
+    border-left: 8px solid #337AB7;
+    line-height: 1.3;
+    position: relative;
+    background: #f9f9f9;
+    border-radius: 5%;
 }
 
+    blockquote::before {
+        font-family: Arial;
+        content: open-quote;
+        color: #3371b1;
+        font-size: 3em;
+        position: absolute;
+        left: 10px;
+        top: -10px;
+    }
+
+    blockquote::after {
+        content: close-quote;
+        font-family: Arial;
+        color: #337AB7;
+        font-size: 3em;
+    }
+.big {
+    width: 90%;
+    margin: 0 auto;
+    background: #eff7fb;
+    border-radius: 2%;
+}
 nav {
     background-color: #337AB7;
     border: 1px solid #dedede;
@@ -12,9 +52,9 @@ nav {
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.055);
     color: #888;
     display: inline-block;
-    margin: 0 22px 8px 80px;
+    margin: 0 auto;
     overflow: hidden;
-    width: 90%;
+    width: 100%;
 }
 
 nav div ul {
@@ -41,8 +81,25 @@ nav > div > ul > li > a {
     line-height: 56px;
     padding: 0 30px;
     text-decoration: none;
+    position:relative;
+    transition: all 0.3s ease-in-out 0;
 }
-
+    nav > div > ul > li>a::before {
+        content:"";
+        background:black;
+        border-radius: 15%;
+        width:80%;
+        height: 3px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transition: all 0.3s ease-in-out 0s;
+        transform: scaleX(0);
+        left: 10%;
+    }
+    nav > div > ul > li>a:hover::before {
+        transform: scaleX(1);
+    }
 nav > div> ul > li:hover {
     background-color: whitesmoke;
 }
