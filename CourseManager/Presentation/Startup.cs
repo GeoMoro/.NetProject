@@ -1,4 +1,5 @@
 ﻿using Business;
+using Data.Domain.Entities.Services;
 using Data.Domain.Interfaces;
 using Data.Persistance;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Presentation.Data;
 using Presentation.Models;
 using Presentation.Services;
+using ServiceProvider;
 
 namespace Presentation
 {
@@ -47,6 +49,7 @@ namespace Presentation
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<IKataRepository, KataRepository>();
+            services.AddTransient<IUploadService, UploadService>();
 
             /*
             const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";

@@ -1,0 +1,72 @@
+﻿@using Data.Domain.Entities.Services
+@model Presentation.Models.UploadsViewModels.UploadsEditModel
+@inject IUploadService Service
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Uploads";
+}
+
+<environment include="Development">
+    <link href="~/css/Katas.css" rel="stylesheet" />
+</environment>
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create" asp-route-id="@UserManager.GetUserId(User)">Upload a Homework or Kata file</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th style="font-size: 22px;">
+                <p align="left"><b>Contents</b></p>
+            </th>
+            @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+            {
+                <th style="font-size: 22px;">
+                    <p align="left">
+                        <b>Actions</b>
+                    </p>
+                </th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td style="font-size: 16px;">
+                <p>
+                    @{
+                        var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == UserManager.GetUserId(User));
+                        foreach (var file in Service.GetFiles("Laboratory", "1", currentUser.FirstName + "" + currentUser.LastName + "" + currentUser.Group))
+                        {
+                            @file
+                            <br />
+                        }
+                    }
+
+                </p>
+            </td>
+            <td>
+                @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                {
+                    var value = 0;
+                    for (var index = 1; index <= 7; ++index)
+                    {
+                        <button value="@index">Laborator @index</button>
+                    }
+
+                    foreach (var file in Service.GetAllFiles("Laboratory", "1"))
+                    {
+                        using (Html.BeginForm("Download", "Uploads", new { seminarName = "Seminar", seminarNumber = "1", fileName = @file }, FormMethod.Post, null, new { }))
+                        {
+                            <button>@file</button>
+                        }
+                    }
+                 }
+            </td>
+        </tr>
+    </tbody>
+</table>
