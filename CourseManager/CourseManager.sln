@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27130.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01.Data", "01.Data", "{0B579975-1FD5-46E5-A79B-E830C0FC42A3}"
 EndProject
@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Domain", "Data.Domain\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{B07BF111-50AB-414F-886D-3D0EABE21F21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesProvider", "ServicesProvider\ServicesProvider.csproj", "{5CB135EE-B8DF-46B0-B81C-16841AD21309}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesProvider", "ServicesProvider\ServicesProvider.csproj", "{5CB135EE-B8DF-46B0-B81C-16841AD21309}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceProviderTests", "ServiceProviderTests\ServiceProviderTests.csproj", "{BC103CA8-F84E-470C-86D0-5E4375C41859}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{5CB135EE-B8DF-46B0-B81C-16841AD21309}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CB135EE-B8DF-46B0-B81C-16841AD21309}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CB135EE-B8DF-46B0-B81C-16841AD21309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC103CA8-F84E-470C-86D0-5E4375C41859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC103CA8-F84E-470C-86D0-5E4375C41859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC103CA8-F84E-470C-86D0-5E4375C41859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC103CA8-F84E-470C-86D0-5E4375C41859}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +73,7 @@ Global
 		{74C313FD-881B-4A12-98C4-AC4CDF439705} = {0B579975-1FD5-46E5-A79B-E830C0FC42A3}
 		{B07BF111-50AB-414F-886D-3D0EABE21F21} = {20EB2644-F16E-4EF8-B5AB-213B675839A0}
 		{5CB135EE-B8DF-46B0-B81C-16841AD21309} = {B07BF111-50AB-414F-886D-3D0EABE21F21}
+		{BC103CA8-F84E-470C-86D0-5E4375C41859} = {82190E46-9CBC-42D7-B187-4D765CA1C336}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3B62F0A-1694-4221-8BAF-79FC59DFEE17}

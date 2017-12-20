@@ -25,7 +25,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Lectures
-        public IActionResult Index()
+        public ViewResult Index()
         {
             return View(_repository.GetAllLectures());
         }
@@ -146,7 +146,7 @@ namespace Presentation.Controllers
                 return View(lectureModel);
             }
 
-            var oldTitle = lectureEdited.Title;
+            //var oldTitle = lectureEdited.Title;
 
             lectureEdited.Title = lectureModel.Title;
             lectureEdited.Description = lectureModel.Description;
@@ -155,7 +155,7 @@ namespace Presentation.Controllers
             {
                 _repository.EditLecture(lectureEdited);
 
-                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
+               // string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
 
                 //if (Directory.Exists(searchedPath) && oldTitle.Equals(lectureModel.Title) == false)
                 //{
