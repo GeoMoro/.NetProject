@@ -2,6 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01.Data", "01.Data", "{0B579975-1FD5-46E5-A79B-E830C0FC42A3}"
 EndProject
@@ -25,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{B0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesProvider", "ServicesProvider\ServicesProvider.csproj", "{5CB135EE-B8DF-46B0-B81C-16841AD21309}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordServiceProvider", "RecordServiceProvider\RecordServiceProvider.csproj", "{867CEFC9-CA76-4563-99F9-3C02F6F11126}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceProvider", "ServiceProvider\ServiceProvider.csproj", "{CBBEE622-2097-47BB-84D3-19505AD5795F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +62,12 @@ Global
 		{867CEFC9-CA76-4563-99F9-3C02F6F11126}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{867CEFC9-CA76-4563-99F9-3C02F6F11126}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{867CEFC9-CA76-4563-99F9-3C02F6F11126}.Release|Any CPU.Build.0 = Release|Any CPU
+
+		{CBBEE622-2097-47BB-84D3-19505AD5795F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBBEE622-2097-47BB-84D3-19505AD5795F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBBEE622-2097-47BB-84D3-19505AD5795F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBBEE622-2097-47BB-84D3-19505AD5795F}.Release|Any CPU.Build.0 = Release|Any CPU
+
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,9 +78,12 @@ Global
 		{57D591F6-3D2A-4223-AD83-1CA526767CDF} = {20EB2644-F16E-4EF8-B5AB-213B675839A0}
 		{EABED72A-E32C-49CF-A1C9-F4E0C44DA364} = {82190E46-9CBC-42D7-B187-4D765CA1C336}
 		{74C313FD-881B-4A12-98C4-AC4CDF439705} = {0B579975-1FD5-46E5-A79B-E830C0FC42A3}
+
 		{B07BF111-50AB-414F-886D-3D0EABE21F21} = {20EB2644-F16E-4EF8-B5AB-213B675839A0}
 		{5CB135EE-B8DF-46B0-B81C-16841AD21309} = {B07BF111-50AB-414F-886D-3D0EABE21F21}
 		{867CEFC9-CA76-4563-99F9-3C02F6F11126} = {20EB2644-F16E-4EF8-B5AB-213B675839A0}
+
+		{CBBEE622-2097-47BB-84D3-19505AD5795F} = {20EB2644-F16E-4EF8-B5AB-213B675839A0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3B62F0A-1694-4221-8BAF-79FC59DFEE17}

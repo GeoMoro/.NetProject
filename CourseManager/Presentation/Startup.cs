@@ -1,4 +1,5 @@
 ﻿using Business;
+using Data.Domain.Entities.Services;
 using Data.Domain.Interfaces;
 using Data.Domain.Interfaces.ServicesInterfaces;
 using Data.Persistance;
@@ -55,6 +56,8 @@ namespace Presentation
             services.AddTransient<IKataService, KataService>();
             services.AddTransient<INewsRepository, NewsRepository>();
             services.AddTransient<IRecordService, RecordService>();
+
+            services.AddTransient<IUploadService, UploadService>();
 
         /*
                     const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
