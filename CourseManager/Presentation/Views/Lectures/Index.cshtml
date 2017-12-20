@@ -14,7 +14,7 @@
 @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
 {
     <p>
-        <a asp-action="Create">Add a new lecture</a>
+        <a class="btn btn-default"  asp-action="Create">Add a new lecture</a>
     </p>
 }
 <table class="table">
@@ -57,9 +57,9 @@
                 @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                 {
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Modify</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a  class="btn btn-default"  asp-action="Edit" asp-route-id="@item.Id">Modify</a> 
+                        <a  class="btn btn-default" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                        <a  class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                     </td>
                 }
             </tr>
