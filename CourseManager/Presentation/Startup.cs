@@ -14,6 +14,7 @@ using Presentation.Services;
 using ServicesProvider;
 using Data.Domain.Interfaces.ServicesNews;
 using RecordServiceProvider;
+
 namespace Presentation
 {
     public class Startup

@@ -1,7 +1,77 @@
 ﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+    background-color: #FFFCF7;
+    color: #222;
+    font-weight: 300;
+    font-size: 15px;
 }
+
+nav {
+    background-color: #337AB7;
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.055);
+    color: #888;
+    display: inline-block;
+    margin: 0 22px 8px 80px;
+    overflow: hidden;
+    width: 90%;
+}
+
+nav div ul {
+    margin: 0;
+    padding: 0;
+
+}
+
+nav div ul li {
+    display: inline-block;
+    list-style-type: none;
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+    font-family: "Courier New";
+    font-size: 23px;
+}
+     
+nav > div > ul > li > a {
+    color: white;
+    display: block;
+    line-height: 56px;
+    padding: 0 30px;
+    text-decoration: none;
+}
+
+nav > div> ul > li:hover {
+    background-color: whitesmoke;
+}
+ 
+nav > div > ul > li:hover > a {
+    color: black;
+    text-decoration: none;
+}
+ 
+nav > div > ul > li:hover > a > .caret {
+    border-top-color: rgb( 255, 255, 255 );
+}
+
+form > ul > li > a {
+    color: white;
+}
+
+form > ul > li:hover > a {
+    color: black;
+}
+
+.button {
+    color: white;
+    background-color: #337AB7;
+    border: none;
+    margin-right: 20px;
+    margin-top: 8px;
+}
+
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
