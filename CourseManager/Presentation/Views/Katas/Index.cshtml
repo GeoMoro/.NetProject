@@ -44,7 +44,7 @@
                         {
                             @using (Html.BeginForm("Download", "Katas", new { kataId = item.Id, fileName = @file }, FormMethod.Post, null, new { }))
                             {
-                                <button>@file</button>
+                                <button class="buttonFile">@file</button>
                             }
                         }
                     </p>

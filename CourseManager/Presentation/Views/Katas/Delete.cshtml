@@ -37,7 +37,7 @@
             {
                 @using (Html.BeginForm("DeleteFile", "Katas", new { fileName = @file, givenId = Model.Id }, FormMethod.Post, null, new { }))
                 {
-                    <button class="delete">@file</button>
+                    <button class="buttonFile">@file</button>
                 }
             }
         </dd>

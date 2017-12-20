@@ -49,7 +49,7 @@
                         {
                             using (Html.BeginForm("Download", "Lectures", new { lectureId = item.Id, fileName = @file }, FormMethod.Post, null, new { }))
                             {
-                                <button>@file</button>
+                                <button class="buttonLectures">@file</button>
                             }
                         }
                     </p>
