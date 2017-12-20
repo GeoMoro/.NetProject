@@ -12,10 +12,7 @@ using Presentation.Data;
 using Presentation.Models;
 using Presentation.Services;
 using ServicesProvider;
-using Business;
-using Data.Domain.Interfaces;
 using Data.Domain.Interfaces.ServicesNews;
-using Data.Persistance;
 using RecordServiceProvider;
 namespace Presentation
 {
@@ -55,6 +52,8 @@ namespace Presentation
             services.AddTransient<IKataRepository, KataRepository>();
             services.AddTransient<ILectureService, LectureService>();
             services.AddTransient<IKataService, KataService>();
+            services.AddTransient<INewsRepository, NewsRepository>();
+            services.AddTransient<IRecordService, RecordService>();
 
         /*
                     const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
