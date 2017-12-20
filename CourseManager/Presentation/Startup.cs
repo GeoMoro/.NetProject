@@ -15,6 +15,7 @@ using Presentation.Services;
 using ServicesProvider;
 using Data.Domain.Interfaces.ServicesNews;
 using RecordServiceProvider;
+using ServiceProvider;
 
 namespace Presentation
 {
@@ -56,7 +57,6 @@ namespace Presentation
             services.AddTransient<IKataService, KataService>();
             services.AddTransient<INewsRepository, NewsRepository>();
             services.AddTransient<IRecordService, RecordService>();
-
             services.AddTransient<IUploadService, UploadService>();
 
         /*
