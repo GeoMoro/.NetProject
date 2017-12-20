@@ -16,7 +16,7 @@ namespace Data.Domain.Entities
 
         public bool Presence { get; set; }
 
-        public static UserStatus CreatePresence(string id, Guid laboratoryId, double laboratoryMark, double kataMark, bool presence)
+        public static UserStatus CreateUsersStatus(string id, Guid laboratoryId, double laboratoryMark, double kataMark, bool presence)
         {
             var instance = new UserStatus
             {

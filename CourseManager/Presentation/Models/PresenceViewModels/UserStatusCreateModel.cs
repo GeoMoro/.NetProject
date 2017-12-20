@@ -7,7 +7,6 @@ namespace Presentation.Models.PresenceViewModels
 {
     public class UserStatusCreateModel
     {
-        public Guid LaboratoryId { get; set; }
         public bool Presence { get; set; }
     }
 }

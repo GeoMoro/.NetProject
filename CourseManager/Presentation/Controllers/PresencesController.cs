@@ -58,28 +58,31 @@ namespace Presentation.Controllers
                     presenceCreateModel.Name
                 )
             );
-           
+            
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Attendance(string userId, [Bind("LaboratoryId, Presence")] UserStatusCreateModel userCreateModel)
+        public IActionResult Attendance(string userId, [Bind("Presence")] UserStatusCreateModel userCreateModel)
         {
             if (!ModelState.IsValid)
             {
                 return View(userCreateModel);
             }
 
-            _userRepo.CreateUser(
-                UserStatus.CreatePresence(
-                    userId,
-                    userCreateModel.LaboratoryId,
-                    0,
-                    0,
-                    userCreateModel.Presence
-                )
-            );
+            var laboratory = _repository.GetAllPresences().LastOrDefault();
+
+            if (laboratory != null)
+                _userRepo.CreateUser(
+                    UserStatus.CreateUsersStatus(
+                        userId,
+                        laboratory.Id,
+                        0,
+                        0,
+                        userCreateModel.Presence
+                    )
+                );
 
             return RedirectToAction(nameof(Index));
         }
@@ -96,13 +99,14 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var presenceEditModel = new PresenceEditModel(
-                presence.Name
-            );
+            //var presenceEditModel = new PresenceEditModel(
+            //    presence.Name,
+            //    presence.Week
+            //);
 
-            return View(presenceEditModel);
+            return View("Index");
         }
-
+        
         public IActionResult UpdateAttendance(string id)
         {
             if (id == null)

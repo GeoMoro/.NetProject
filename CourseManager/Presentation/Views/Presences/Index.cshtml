@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Data.Domain.Entities.Presence>
-
+@using Data.Domain.Interfaces.ServicesInterfaces
+@inject IUserStatusService service
 @{
     ViewData["Title"] = "Index";
 }
@@ -26,30 +27,106 @@ else
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Students)
+                Informations
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <b>@Html.DisplayFor(modelItem => item.Name)</b>
                 </td>
+
                 <td>
-                    @foreach (var student in item.Students)
-                    {
-                       @student.Id
-                       <br />
-                    }
+                    <table class="table">
+                        <tr>
+                            @{
+                                var space = "---------";
+                                <th>
+                                    @Html.DisplayFor(modelItem => space)
+                                </th>
+
+                                for (var index = 1; index <= 7; ++index)
+                                {
+                                    <th>
+                                        Week @Html.DisplayFor(modelItem => index)
+                                    </th>
+                                }
+                             }
+                        </tr>
+                        <tr>
+                            @{
+                                var presence = "P |";
+                                var lab = "L |";
+                                var kata = "K";
+                                var stud = "Student";
+                                <th>
+                                    @Html.DisplayFor(modelItem => stud)
+                                </th>
+
+                                for (var index = 1; index <= 7; ++index)
+                                {
+                                    <th>
+                                        @Html.DisplayFor(modelItem => presence)
+                                        @Html.DisplayFor(modelItem => lab)
+                                        @Html.DisplayFor(modelItem => kata)
+                                    </th>
+                                }
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var student in item.Students)
+                            {
+                                <tr>
+                                    @{
+                                        <th>
+                                            @Html.DisplayFor(modelItem => student.Id)
+                                        </th>
+
+                                        var presVal = false;
+                                        var labVal = "";
+                                        var kataVal = "";
+                                        var currentUser = service.GetUsersByLaboratory(student.LaboratoryId);
+                                        
+                                        if (currentUser[0].LaboratoryMark.Equals(0))
+                                        {
+                                            labVal = "| --";
+                                        }
+                                        else
+                                        {
+                                            labVal = currentUser[0].LaboratoryMark.ToString();
+                                        }
+                                        if (currentUser[0].KataMark.Equals(0))
+                                        {
+                                            kataVal = "| --";
+                                        }
+                                        else
+                                        {
+                                            labVal = currentUser[0].KataMark.ToString();
+                                        }
+
+                                        presVal = currentUser[0].Presence;
+                                        <td>
+                                            @Html.DisplayFor(modelItem => presVal)
+                                            @Html.DisplayFor(modelItem => labVal)
+                                            @Html.DisplayFor(modelItem => kataVal)
+                                        </td>   
+                                    }
+                                </tr>
+                            }
+                        </tr>
+                    </table>
                 </td>
                 <td>
                     <a asp-action="UpdatePresence" asp-route-id="@item.Id">Edit</a>
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
-                
-            </tr>
-         }
+
+                </tr>
+        }
     </tbody>
+
 </table>
 

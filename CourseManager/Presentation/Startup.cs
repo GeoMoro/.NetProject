@@ -49,16 +49,16 @@ namespace Presentation
             services.AddTransient<IKataRepository, KataRepository>();
             services.AddTransient<ILectureService, LectureService>();
             services.AddTransient<IKataService, KataService>();
+            services.AddTransient<IUserStatusService, UserStatusService>();
 
+            /*
+                        const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 
-        /*
-                    const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
+                        services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
 
-                    services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
+                        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
 
-                    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
-
-        */
+            */
 
             // ATTENTION services.AddSingleton<UserManager<ApplicationUser>>(); 
 

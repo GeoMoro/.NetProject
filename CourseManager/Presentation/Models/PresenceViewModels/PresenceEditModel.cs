@@ -7,12 +7,10 @@ namespace Presentation.Models.PresenceViewModels
     {
         public string Name { get; set; }
 
-      //  public List<UserStatus> Students { get; set; }
-
-        public PresenceEditModel(string name)//, List<UserStatus> students)
+        public PresenceEditModel(string name)
         {
             Name = name;
-           // Students = students;
+            //Week = week;
         }
     }
 }
