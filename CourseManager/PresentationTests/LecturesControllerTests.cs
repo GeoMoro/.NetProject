@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
@@ -98,6 +99,22 @@ namespace PresentationTests
 
             // Act
             var result = sut.Edit(null);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        }
+
+        [TestMethod]
+        public void Edit_GivenInexistentLectureId_ShouldReturnNotFound()
+        {
+            // Arrange
+            _mock.Setup(lectRep => lectRep.GetLectureById(new Guid()))
+                .Returns(() => null);
+
+            var sut = new LecturesController(_mock.Object, _nenv);
+
+            // Act
+            var result = sut.Edit(new Guid());
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
