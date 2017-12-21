@@ -1,6 +1,7 @@
 ﻿@using Presentation.Models.PresenceViewModels
 @model Presentation.Models.PresenceViewModels.PresenceCreateModel
-
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Create Laboratory";
 }
@@ -11,8 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateLaboratory">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form multiple="multiple" runat="server" asp-action="CreateLaboratory">
             <div class="form-group">
                 <label asp-for="Name" class="control-label">Groups</label>
                 <input asp-for="Name" class="form-control" />
@@ -22,7 +22,7 @@
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
         </form>
-    </div>
+</div>
 </div>
 
 <div>

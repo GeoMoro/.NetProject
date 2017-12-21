@@ -5,9 +5,8 @@ namespace Data.Domain.Entities
 {
     public class UserStatus
     {
-        [Key]
         public string Id { get; set; }
-
+        
         public Guid LaboratoryId { get; set; }
 
         public double LaboratoryMark { get; set; }

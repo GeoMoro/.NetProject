@@ -12,11 +12,8 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        @*@{using (Html.BeginForm("Download", "Lectures", new { lectureId = item.Id, fileName = @file }, FormMethod.Post, null, new { }))
+        @using (Html.BeginForm("Attendance", "Presences", new { userId = UserManager.GetUserId(User)}, FormMethod.Post, null, new { }))
         {
-        <button>@file</button>
-        }*@
-        <form asp-action="Attendance" asp-route-id="@UserManager.GetUserId(User)">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Presence" class="control-label"></label>
@@ -26,7 +23,7 @@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default"/>
             </div>
-        </form>
+        }
     </div>
 </div>
 

@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<Data.Domain.Entities.Presence>
 @using Data.Domain.Interfaces.ServicesInterfaces
 @inject IUserStatusService service
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Index";
 }
@@ -41,92 +43,68 @@ else
 
                 <td>
                     <table class="table">
-                        <tr>
-                            @{
-                                var space = "---------";
-                                <th>
-                                    @Html.DisplayFor(modelItem => space)
-                                </th>
-
-                                for (var index = 1; index <= 7; ++index)
-                                {
+                            <tr>
+                                @{
+                                    var space = "---------";
                                     <th>
-                                        Week @Html.DisplayFor(modelItem => index)
+                                        @Html.DisplayFor(modelItem => space)
                                     </th>
-                                }
-                             }
-                        </tr>
-                        <tr>
-                            @{
-                                var presence = "P |";
-                                var lab = "L |";
-                                var kata = "K";
-                                var stud = "Student";
-                                <th>
-                                    @Html.DisplayFor(modelItem => stud)
-                                </th>
 
-                                for (var index = 1; index <= 7; ++index)
-                                {
-                                    <th>
-                                        @Html.DisplayFor(modelItem => presence)
-                                        @Html.DisplayFor(modelItem => lab)
-                                        @Html.DisplayFor(modelItem => kata)
-                                    </th>
-                                }
-                            }
-                        </tr>
-                        <tr>
-                            @foreach (var student in item.Students)
-                            {
-                                <tr>
-                                    @{
+                                    for (var index = 1; index <= 7; ++index)
+                                    {
                                         <th>
-                                            @Html.DisplayFor(modelItem => student.Id)
+                                            Week @Html.DisplayFor(modelItem => index)
                                         </th>
-
-                                        var presVal = false;
-                                        var labVal = "";
-                                        var kataVal = "";
-                                        var currentUser = service.GetUsersByLaboratory(student.LaboratoryId);
-                                        
-                                        if (currentUser[0].LaboratoryMark.Equals(0))
-                                        {
-                                            labVal = "| --";
-                                        }
-                                        else
-                                        {
-                                            labVal = currentUser[0].LaboratoryMark.ToString();
-                                        }
-                                        if (currentUser[0].KataMark.Equals(0))
-                                        {
-                                            kataVal = "| --";
-                                        }
-                                        else
-                                        {
-                                            labVal = currentUser[0].KataMark.ToString();
-                                        }
-
-                                        presVal = currentUser[0].Presence;
-                                        <td>
-                                            @Html.DisplayFor(modelItem => presVal)
-                                            @Html.DisplayFor(modelItem => labVal)
-                                            @Html.DisplayFor(modelItem => kataVal)
-                                        </td>   
                                     }
-                                </tr>
-                            }
-                        </tr>
+                                 }
+                            </tr>
+                            <tr>
+                                @{
+                                    var presence = "P |";
+                                    var lab = "L |";
+                                    var kata = "K";
+                                    var stud = "Student";
+                                    <th>
+                                        @Html.DisplayFor(modelItem => stud)
+                                    </th>
+
+                                    for (var index = 1; index <= 7; ++index)
+                                    {
+                                        <th>
+                                            @Html.DisplayFor(modelItem => presence)
+                                            @Html.DisplayFor(modelItem => lab)
+                                            @Html.DisplayFor(modelItem => kata)
+                                        </th>
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                @{
+                                    foreach (var student in item.Students)
+                                    {
+                                        <tr>
+                                            @{
+                                                var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
+                                                var displayName = currentUser.FirstName + currentUser.LastName;
+                                                <th>
+                                                    @Html.DisplayFor(modelItem => displayName)
+                                                </th>
+                                        
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => student.Presence)
+                                                    @Html.DisplayFor(modelItem => student.LaboratoryMark)
+                                                    @Html.DisplayFor(modelItem => student.KataMark)
+                                                </td>
+                                                <a asp-action="UpdatePresence" asp-route-id="@student.Id">Edit</a>
+                                            }
+                                        </tr>
+                                    }
+                                  }
+                            </tr>
                     </table>
                 </td>
-                <td>
-                    <a asp-action="UpdatePresence" asp-route-id="@item.Id">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-
-                </tr>
-        }
-    </tbody>
-
+             </tr>
+         }
+   </tbody>
 </table>
 

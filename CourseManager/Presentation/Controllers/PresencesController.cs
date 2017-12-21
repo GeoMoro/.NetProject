@@ -8,6 +8,8 @@ using Presentation.Models;
 using Presentation.Models.PresenceViewModels;
 using Presentation.Data;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Data.Domain.Interfaces.ServicesInterfaces;
 
 namespace Presentation.Controllers
 {
@@ -16,12 +18,14 @@ namespace Presentation.Controllers
         private readonly IPresenceRepository _repository;
         private readonly ApplicationDbContext _application;
         private readonly IUserStatusRepository _userRepo;
+        private readonly IUserStatusService _service;
 
-        public PresencesController(IPresenceRepository repository, ApplicationDbContext application, IUserStatusRepository userRepo)
+        public PresencesController(IPresenceRepository repository, ApplicationDbContext application, IUserStatusRepository userRepo, IUserStatusService service)
         {
             _repository = repository;
             _application = application;
             _userRepo = userRepo;
+            _service = service;
         }
 
         //GET: Presences
@@ -39,12 +43,7 @@ namespace Presentation.Controllers
         {
             return View();
         }
-
-        public IActionResult Attendance()
-        {
-            return View();
-        }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateLaboratory([Bind("Name")] PresenceCreateModel presenceCreateModel)
@@ -53,13 +52,56 @@ namespace Presentation.Controllers
                 return View(presenceCreateModel);
             }
             
+            var selectedStudents = new List<UserStatus>();
+            Guid randomLab = new Guid();
+            
+            foreach (var student in _application.Users.ToList())
+            {
+                if (presenceCreateModel.Name.Equals(student.Group))
+                {
+                    selectedStudents.Add(
+                            _service.CreateAndReturnLatestUser(student.Id, randomLab, 0, 0, false)
+                    );
+                }
+            }
+            
             _repository.CreatePresence(
                 Presence.CreatePresence(
-                    presenceCreateModel.Name
+                    presenceCreateModel.Name,
+                    selectedStudents
                 )
             );
-            
+
+            var modify = _repository.GetAllPresences().OrderBy(user => user.StartDate).LastOrDefault()?.Id;
+            var searchedUser = new UserStatus();
+            foreach (var student in selectedStudents)
+            {
+                if (modify != null)
+                {
+                    try
+                    {
+                        searchedUser = _userRepo.GetUserById(student.Id);
+                        searchedUser.LaboratoryId = modify.Value;
+                        _userRepo.EditUser(searchedUser);
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!UserStatusExists(_userRepo.GetUserById(student.Id).Id))
+                        {
+                            return NotFound();
+                        }
+
+                        throw;
+                    }
+                }
+            }
+
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Attendance()
+        {
+            return View();
         }
 
         [HttpPost]
@@ -71,23 +113,32 @@ namespace Presentation.Controllers
                 return View(userCreateModel);
             }
 
-            var laboratory = _repository.GetAllPresences().LastOrDefault();
+            foreach (var student in _application.Users.ToList())
+            {
+                if (student.Id == userId)
+                {
+                    try
+                    {
+                        var searchedUser = _userRepo.GetUserById(student.Id);
+                        searchedUser.Presence = userCreateModel.Presence;
+                        _userRepo.EditUser(searchedUser);
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!UserStatusExists(_userRepo.GetUserById(student.Id).Id))
+                        {
+                            return NotFound();
+                        }
 
-            if (laboratory != null)
-                _userRepo.CreateUser(
-                    UserStatus.CreateUsersStatus(
-                        userId,
-                        laboratory.Id,
-                        0,
-                        0,
-                        userCreateModel.Presence
-                    )
-                );
+                        throw;
+                    }
+                }
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
-
+        /*
         // GET: UserAccounts/EditStudent/5
         public IActionResult UpdatePresence(Guid? id) {
             if (id == null) {
@@ -99,16 +150,51 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            //var presenceEditModel = new PresenceEditModel(
-            //    presence.Name,
-            //    presence.Week
-            //);
+            var presenceEditModel = new PresenceEditModel(
+                presence.Name
+            );
 
             return View("Index");
         }
-        
-        public IActionResult UpdateAttendance(string id)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdatePresence(Guid id, [Bind("Name")] PresenceEditModel presenceEditModel)
         {
+            var presenceToBeEdited = _repository.GetPresenceById(id);
+
+            if (presenceToBeEdited == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(presenceEditModel);
+            }
+
+            presenceToBeEdited.Name = presenceEditModel.Name;
+
+            try
+            {
+                _repository.UpdatePresence(presenceToBeEdited);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PresenceExists(_repository.GetPresenceById(id).Id))
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }*/
+
+        public IActionResult UpdatePresence(string id)
+        {
+            TempData["value"] = id;
             if (id == null)
             {
                 return NotFound();
@@ -131,69 +217,43 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateAttendance(string id, [Bind("LaboratoryMark, KataMark, Presence")] UserStatusEditModel userStatusEditModel)
+        public IActionResult UpdatePresence(string id, [Bind("LaboratoryMark, KataMark, Presence")] UserStatusEditModel userStatusEditModel)
         {
-            var userStatusToBeEdited = _userRepo.GetUserById(id);
-
-            if (userStatusToBeEdited == null)
-            {
-                return NotFound();
-            }
-
             if (!ModelState.IsValid)
             {
                 return View(userStatusEditModel);
             }
 
-            userStatusToBeEdited.Presence = userStatusEditModel.Presence;
-            userStatusToBeEdited.LaboratoryMark = userStatusEditModel.LaboratoryMark;
-            userStatusToBeEdited.KataMark = userStatusEditModel.KataMark;
-
-            try
+            foreach (var student in _application.Users.ToList())
             {
-                _userRepo.EditUser(userStatusToBeEdited);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserStatusExists(_userRepo.GetUserById(id).Id))
+                if (student.Id == id)
                 {
-                    return NotFound();
-                }
+                    try
+                    {
+                        var searchedUser = _userRepo.GetUserById(student.Id);
+                        searchedUser.Presence = userStatusEditModel.Presence;
+                        searchedUser.KataMark = userStatusEditModel.KataMark;
+                        searchedUser.LaboratoryMark = userStatusEditModel.LaboratoryMark;
 
-                throw;
+                        _userRepo.EditUser(searchedUser);
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!UserStatusExists(_userRepo.GetUserById(student.Id).Id))
+                        {
+                            return NotFound();
+                        }
+
+                        throw;
+                    }
+                }
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult UpdatePresence(Guid id, [Bind("Laboratory, Present")] PresenceEditModel presenceEditModel) {
-            var presenceToBeEdited = _repository.GetPresenceById(id);
-
-            if (presenceToBeEdited == null) {
-                return NotFound();
-            }
-
-            if (!ModelState.IsValid) {
-                return View(presenceEditModel);
-            }
-
-            presenceToBeEdited.Name = presenceEditModel.Name;
-
-            try {
-                _repository.UpdatePresence(presenceToBeEdited);
-            } catch (DbUpdateConcurrencyException) {
-                if (!PresenceExists(_repository.GetPresenceById(id).Id)) {
-                    return NotFound();
-                }
-
-                throw;
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
+        
+        /*
         // GET: UserAccounts/Delete/5
         public IActionResult Delete(Guid? id) {
             if (id == null) {
@@ -218,7 +278,7 @@ namespace Presentation.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
+        */
         private bool PresenceExists(Guid id) {
             return _repository.GetAllPresences().Any(e => e.Id == id);
         }
