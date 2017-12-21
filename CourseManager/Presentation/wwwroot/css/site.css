@@ -160,3 +160,6 @@ form > ul > li:hover > a {
         display: none;
     }
 }
+.row {
+    transform: translateX(12%)
+}

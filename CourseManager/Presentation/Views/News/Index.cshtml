@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<Data.Domain.Entities.News>
 @using Data.Domain.Interfaces.ServicesNews
-@inject IRecordService Service;
+@inject IRecordService Service
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
@@ -9,40 +11,44 @@
 <h2>Index</h2>
 
 <p>
-    <a asp-action="CreateNews">Create new News</a>
+    <a class="btn btn-default" asp-action="CreateNews">Create new News</a>
 </p>
 
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-        </tr>
+    <tr>
+        <th style="font-size: 22px;">
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th style="font-size: 22px;">
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </th>
+        <th style="font-size: 22px;">
+            Actions
+        </th>
+    </tr>
     </thead>
     <tbody>
         @foreach (var item in Model) {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
+                <td style="font-size: 16px;">
+                    <p>
+                        <b>@Html.DisplayFor(modelItem => item.Title)</b>
+                        <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
+                    </p>
+                </td>
+                <td style="font-size: 16px;">
+                    @{
+                        var creator = UserManager.Users.SingleOrDefault(user => user.Email == item.CreatedBy);
+                        var author = creator.FirstName + " " + creator.LastName;
+                    }
+                    @Html.DisplayFor(modelItem => author)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    <a class="btn btn-default" asp-action="UpdateNews" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-default" asp-action="DeleteNews" asp-route-id="@item.Id">Delete</a>
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedBy)
-                </td>
-                <td>
-                    <a asp-action="UpdateNews" asp-route-id="@item.Id">Edit</a>
-                    <a asp-action="DeleteNews" asp-route-id="@item.Id">Delete</a>
-                </td>
-                
+
             </tr>
          }
     </tbody>
@@ -53,7 +59,7 @@
         if (index % 5 == 0)
         {
             int value = @index / 5 + 1;
-            <button type="submit" name="loadButton" value="@index">@value</button>
+            <button class="btn btn-default" type="submit" name="loadButton" value="@index">@value</button>
         }
     }
 }

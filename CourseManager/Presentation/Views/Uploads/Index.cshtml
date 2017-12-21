@@ -55,14 +55,14 @@
                     var value = 0;
                     for (var index = 1; index <= 7; ++index)
                     {
-                        <button value="@index">Laborator @index</button>
+                        <button class="btn btn-default" value="@index">Laborator @index</button>
                     }
 
                     foreach (var file in Service.GetAllFiles("Laboratory", "1"))
                     {
                         using (Html.BeginForm("Download", "Uploads", new { seminarName = "Seminar", seminarNumber = "1", fileName = @file }, FormMethod.Post, null, new { }))
                         {
-                            <button>@file</button>
+                            <button class="btn btn-default">@file</button>
                         }
                     }
                  }
