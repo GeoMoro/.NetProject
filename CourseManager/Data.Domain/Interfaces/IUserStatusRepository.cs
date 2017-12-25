@@ -6,7 +6,6 @@ namespace Data.Domain.Interfaces
 {
     public interface IUserStatusRepository
     {
-        IReadOnlyList<UserStatus> GetUsersByLaboratory(Guid id);
         IReadOnlyList<UserStatus> GetAllUsers();
         UserStatus GetUserById(string id);
         void CreateUser(UserStatus user);

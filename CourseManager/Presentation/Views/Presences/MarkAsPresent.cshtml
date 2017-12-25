@@ -3,7 +3,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @{
-    ViewData["Title"] = "Attendance";
+    ViewData["Title"] = "MarkAsPresent";
 }
 
 <h2>Create</h2>
@@ -12,7 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        @using (Html.BeginForm("Attendance", "Presences", new { userId = UserManager.GetUserId(User)}, FormMethod.Post, null, new { }))
+        @using (Html.BeginForm("MarkAsPresent", "Presences", new { userId = UserManager.GetUserId(User)}, FormMethod.Post, null, new { }))
         {
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">

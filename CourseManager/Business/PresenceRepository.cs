@@ -20,7 +20,7 @@ namespace Business
         {
             return _databaseContext.Presences.SingleOrDefault(presence => presence.Name == name);
         }
-
+        
         public IReadOnlyList<Presence> GetAllPresences()
         {
             return _databaseContext.Presences.ToList();

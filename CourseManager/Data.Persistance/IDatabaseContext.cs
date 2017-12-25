@@ -12,6 +12,7 @@ namespace Data.Persistance
         DbSet<Answer> Answers { get; set; }
         DbSet<Question> Questions { get; set; }
         DbSet<Kata> Katas { get; set; }
+        DbSet<Attendance> Attendances { get; set; }
 
         int SaveChanges();
     }

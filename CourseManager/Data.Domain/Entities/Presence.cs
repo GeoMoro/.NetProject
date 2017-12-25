@@ -10,8 +10,6 @@ namespace Data.Domain.Entities
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-        
-        public DateTime StartDate { get; set; }
 
         public List<UserStatus> Students { get; set; }
 
@@ -19,8 +17,7 @@ namespace Data.Domain.Entities
         {
             var instance = new Presence
             {
-                Id = Guid.NewGuid(),
-                StartDate = DateTime.Now
+                Id = Guid.NewGuid()
             };
             instance.UpdatePresence(name, students);
 

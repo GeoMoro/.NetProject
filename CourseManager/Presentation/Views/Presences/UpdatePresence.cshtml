@@ -12,7 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        @using (Html.BeginForm("UpdatePresence", "Presences", new { id = @TempData["value"] }, FormMethod.Post, null, new { }))
+        @using (Html.BeginForm("UpdatePresence", "Presences", new { attendanceId = @TempData["value"] }, FormMethod.Post, null, new { }))
         {
             <div class="form-group">
                 <label asp-for="Presence" class="control-label"></label>
@@ -33,11 +33,6 @@
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         }
-        @*<form asp-action="UpdatePresence" asp-route-id="@TempData["value"]">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            
-        </form>*@
     </div>
 </div>
 

@@ -3,7 +3,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @{
-    ViewData["Title"] = "Create Laboratory";
+    ViewData["Title"] = "Create Faction";
 }
 
 <h2>Create Presence</h2>
@@ -12,7 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form multiple="multiple" runat="server" asp-action="CreateLaboratory">
+        <form multiple="multiple" runat="server" asp-action="CreateFaction">
             <div class="form-group">
                 <label asp-for="Name" class="control-label">Groups</label>
                 <input asp-for="Name" class="form-control" />

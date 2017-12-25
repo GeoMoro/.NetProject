@@ -16,30 +16,31 @@ namespace ServicesProvider
             _repository = repository;
         }
 
-        public IReadOnlyList<UserStatus> GetUsersByLaboratory(Guid id)
+        public IReadOnlyList<UserStatus> GetUsersByFactionId(Guid id)
         {
-            return _repository.GetUsersByLaboratory(id);
+            return _repository.GetAllUsers().Where(user => user.FactionId == id).ToList();
         }
 
-        public UserStatus CreateAndReturnLatestUser(string id, Guid labId, double labMark, double kataMark, bool presence)
+        //public IReadOnlyList<UserStatus> GetUsersByPresence(Guid id)
+        //{
+        //    return _repository.GetAllUsers().Where(user => user. == id).ToList();
+        //}
+
+        public UserStatus CreateAndReturnLatestUser(string id)//, double labMark, double kataMark, bool presence)
         {
             _repository.CreateUser(
                     UserStatus.CreateUsersStatus(
-                        id,
-                        labId,
-                        labMark,
-                        kataMark,
-                        presence
+                        id
                     )
                 );
 
             return _repository.GetAllUsers().LastOrDefault();
         }
 
-        public void EditLaboratory(string id, Guid newLabortory)
+        public void EditFaction(string id, Guid newFaction)
         {
             var searchedUser = _repository.GetUserById(id);
-            searchedUser.LaboratoryId = newLabortory;
+            searchedUser.FactionId = newFaction;
             _repository.EditUser(searchedUser);
         }
 

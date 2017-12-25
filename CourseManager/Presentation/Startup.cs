@@ -50,6 +50,7 @@ namespace Presentation
             services.AddTransient<ILectureService, LectureService>();
             services.AddTransient<IKataService, KataService>();
             services.AddTransient<IUserStatusService, UserStatusService>();
+            services.AddTransient<IAttendanceRepository, AttendanceRepository>();
 
             /*
                         const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";

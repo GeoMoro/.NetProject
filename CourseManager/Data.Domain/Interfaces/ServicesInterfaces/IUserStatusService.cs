@@ -7,8 +7,9 @@ namespace Data.Domain.Interfaces.ServicesInterfaces
 {
     public interface IUserStatusService
     {
-        IReadOnlyList<UserStatus> GetUsersByLaboratory(Guid id);
-        UserStatus CreateAndReturnLatestUser(string id, Guid labId, double labMark, double kataMark, bool presence);
-        void EditLaboratory(string id, Guid newLabortory);
+        IReadOnlyList<UserStatus> GetUsersByFactionId(Guid id);
+        //IReadOnlyList<UserStatus> GetUsersByPresence(Guid id);
+        UserStatus CreateAndReturnLatestUser(string id);//, double labMark, double kataMark, bool presence);
+        void EditFaction(string id, Guid newFaction);
     }
 }

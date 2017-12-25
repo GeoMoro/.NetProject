@@ -16,9 +16,9 @@ namespace Business
             _databaseService = databaseService;
         }
 
-        public IReadOnlyList<UserStatus> GetUsersByLaboratory(Guid id)
+        public IReadOnlyList<UserStatus> GetUsersByFactionId(Guid id)
         {
-            return _databaseService.UserStatus.Where(user => user.LaboratoryId == id).ToList();
+            return _databaseService.UserStatus.Where(user => user.FactionId == id).ToList();
         }
 
         public IReadOnlyList<UserStatus> GetAllUsers()

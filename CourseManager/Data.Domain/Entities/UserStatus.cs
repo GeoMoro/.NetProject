@@ -1,37 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Data.Domain.Entities
 {
     public class UserStatus
     {
+        [Key]
         public string Id { get; set; }
+
+        public Guid FactionId { get; set; }
         
-        public Guid LaboratoryId { get; set; }
+        public List<Attendance> Attendance { get; set; }
 
-        public double LaboratoryMark { get; set; }
-
-        public double KataMark { get; set; }
-
-        public bool Presence { get; set; }
-
-        public static UserStatus CreateUsersStatus(string id, Guid laboratoryId, double laboratoryMark, double kataMark, bool presence)
+        public static UserStatus CreateUsersStatus(string id)//, double laboratoryMark, double kataMark, bool presence)
         {
             var instance = new UserStatus
             {
                 Id = id,
-                LaboratoryId = laboratoryId
+                Attendance = new List<Attendance>()
             };
-            instance.UpdateUserStatus(laboratoryMark, kataMark, presence);
+            //instance.UpdateUserStatus(laboratoryMark, kataMark, presence);
 
             return instance;
         }
 
-        private void UpdateUserStatus(double laboratoryMark, double kataMark, bool presence)
-        {
-            LaboratoryMark = laboratoryMark;
-            KataMark = kataMark;
-            Presence = presence;
-        }
+        //private void UpdateUserStatus(double laboratoryMark, double kataMark, bool presence)
+        //{
+        //    LaboratoryMark = laboratoryMark;
+        //    KataMark = kataMark;
+        //    Presence = presence;
+        //}
     }
 }

@@ -12,13 +12,13 @@
 @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
 {
     <p>
-        <a asp-action="CreateLaboratory">Start Laboratory</a>
+        <a asp-action="CreateFaction">Create Faction</a>
     </p>
 }
 else
 {
     <p>
-        <a asp-action="Attendance">Attendance</a>
+        <a asp-action="MarkAsPresent">Mark as present</a>
     </p>
 }
 
@@ -53,16 +53,24 @@ else
                                     for (var index = 1; index <= 7; ++index)
                                     {
                                         <th>
+                                            @using (Html.BeginForm("StartLaboratory", "Presences", new { factionId = item.Id, labValue = index }, FormMethod.Post, null, new { }))
+                                            {
+                                                <button>StartLab</button>
+
+                                            }
+
+
                                             Week @Html.DisplayFor(modelItem => index)
                                         </th>
                                     }
-                                 }
+                                }
                             </tr>
                             <tr>
                                 @{
-                                    var presence = "P |";
-                                    var lab = "L |";
-                                    var kata = "K";
+                                    var presence = "P|";
+                                    var lab = "L|";
+                                    var kata = "K|";
+                                    var actions = "Actions";
                                     var stud = "Student";
                                     <th>
                                         @Html.DisplayFor(modelItem => stud)
@@ -74,6 +82,7 @@ else
                                             @Html.DisplayFor(modelItem => presence)
                                             @Html.DisplayFor(modelItem => lab)
                                             @Html.DisplayFor(modelItem => kata)
+                                            @Html.DisplayFor(modelItem => actions)
                                         </th>
                                     }
                                 }
@@ -86,22 +95,33 @@ else
                                             @{
                                                 var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
                                                 var displayName = currentUser.FirstName + currentUser.LastName;
+                                                var edit = "Edit";
                                                 <th>
                                                     @Html.DisplayFor(modelItem => displayName)
                                                 </th>
-                                        
-                                                <td>
-                                                    @Html.DisplayFor(modelItem => student.Presence)
-                                                    @Html.DisplayFor(modelItem => student.LaboratoryMark)
-                                                    @Html.DisplayFor(modelItem => student.KataMark)
-                                                </td>
-                                                <a asp-action="UpdatePresence" asp-route-id="@student.Id">Edit</a>
-                                            }
+
+                                                foreach (var activ in student.Attendance)
+                                                {
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => activ.Presence)
+                                                        @Html.DisplayFor(modelItem => activ.LaboratoryMark)
+                                                        @Html.DisplayFor(modelItem => activ.KataMark)
+                                                        
+                                                        @Html.ActionLink(edit, "UpdatePresence", "Presences", new { attendanceId = activ.Id } ,null)
+                                                   </td>
+
+                                                }
+                                              }
                                         </tr>
                                     }
                                   }
-                            </tr>
+                            
+                        </tr>
                     </table>
+                </td>
+                
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
              </tr>
          }
