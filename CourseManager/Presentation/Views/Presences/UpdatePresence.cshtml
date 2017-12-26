@@ -1,6 +1,7 @@
 ﻿@using Presentation.Models.PresenceViewModels
-@model Presentation.Models.PresenceViewModels.PresenceEditModel
-
+@model Presentation.Models.PresenceViewModels.UserStatusEditModel
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Edit Presence";
 }
@@ -11,18 +12,27 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="UpdatePresence">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+        @using (Html.BeginForm("UpdatePresence", "Presences", new { attendanceId = @TempData["value"] }, FormMethod.Post, null, new { }))
+        {
             <div class="form-group">
-                <label asp-for="Present" class="control-label"></label>
-                <input asp-for="Present" class="form-control" />
-                <span asp-validation-for="Present" class="text-danger"></span>
+                <label asp-for="Presence" class="control-label"></label>
+                <input asp-for="Presence" class="form-control" />
+                <span asp-validation-for="Presence" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KataMark" class="control-label"></label>
+                <input asp-for="KataMark" class="form-control" />
+                <span asp-validation-for="KataMark" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LaboratoryMark" class="control-label"></label>
+                <input asp-for="LaboratoryMark" class="form-control" />
+                <span asp-validation-for="LaboratoryMark" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
-        </form>
+        }
     </div>
 </div>
 

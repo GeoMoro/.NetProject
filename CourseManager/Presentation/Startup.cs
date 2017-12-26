@@ -47,6 +47,7 @@ namespace Presentation
                 .AddDefaultTokenProviders();
 
             services.AddTransient<IDatabaseContext, DatabaseContext>();
+            services.AddTransient<IUserStatusRepository, UserStatusRepository>();
             services.AddTransient<IPresenceRepository, PresenceRepository>();
             services.AddTransient<IFactionRepository, FactionRepository>();
             services.AddTransient<ILectureRepository, LectureRepository>();
@@ -58,17 +59,16 @@ namespace Presentation
             services.AddTransient<INewsRepository, NewsRepository>();
             services.AddTransient<IRecordService, RecordService>();
             services.AddTransient<IUploadService, UploadService>();
+	    services.AddTransient<IUserStatusService, UserStatusService>();
+            services.AddTransient<IAttendanceRepository, AttendanceRepository>();
 
-        /*
-                    const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
-            services.AddTransient<INewsRepository,  NewsRepository>();
-            services.AddTransient<IRecordService, RecordService>();
+            /*
+                        const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";
 
-                    services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
+                        services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
+                        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
 
-                    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
-
-        */
+            */
 
 
             // ATTENTION services.AddSingleton<UserManager<ApplicationUser>>(); 

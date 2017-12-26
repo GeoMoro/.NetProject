@@ -1,9 +1,10 @@
-﻿namespace Presentation.Models.PresenceViewModels
+﻿using Data.Domain.Entities;
+using System.Collections.Generic;
+
+namespace Presentation.Models.PresenceViewModels
 {
     public class PresenceCreateModel
     {
-        public string Laboratory { get; set; }
-
-        public bool Present { get; set; }
+        public string Name { get; set; }
     }
 }

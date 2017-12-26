@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<Data.Domain.Entities.Presence>
-
+@using Data.Domain.Interfaces.ServicesInterfaces
+@inject IUserStatusService service
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Index";
 }
@@ -10,33 +13,122 @@
     <a class="btn btn-default"  asp-action="CreatePresence">Create New Presence</a>
 </p>
 
+@if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+{
+    <p>
+        <a asp-action="CreateFaction">Create Faction</a>
+    </p>
+}
+else
+{
+    <p>
+        <a asp-action="MarkAsPresent">Mark as present</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Laboratory)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Present)
+                Informations
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Laboratory)
+                    <b>@Html.DisplayFor(modelItem => item.Name)</b>
                 </td>
+
                 <td>
-                    @Html.DisplayFor(modelItem => item.Present)
-                </td>
-                <td>
-                    <a  class="btn btn-default" asp-action="UpdatePresence" asp-route-id="@item.Id">Edit</a>
-                    <a  class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <table class="table">
+                            <tr>
+                                @{
+                                    var space = "---------";
+                                    <th>
+                                        @Html.DisplayFor(modelItem => space)
+                                    </th>
+
+                                    for (var index = 1; index <= 7; ++index)
+                                    {
+                                        <th>
+                                            @using (Html.BeginForm("StartLaboratory", "Presences", new { factionId = item.Id, labValue = index }, FormMethod.Post, null, new { }))
+                                            {
+                                                <button>StartLab</button>
+
+                                            }
+
+
+                                            Week @Html.DisplayFor(modelItem => index)
+                                        </th>
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                @{
+                                    var presence = "P|";
+                                    var lab = "L|";
+                                    var kata = "K|";
+                                    var actions = "Actions";
+                                    var stud = "Student";
+                                    <th>
+                                        @Html.DisplayFor(modelItem => stud)
+                                    </th>
+
+                                    for (var index = 1; index <= 7; ++index)
+                                    {
+                                        <th>
+                                            @Html.DisplayFor(modelItem => presence)
+                                            @Html.DisplayFor(modelItem => lab)
+                                            @Html.DisplayFor(modelItem => kata)
+                                            @Html.DisplayFor(modelItem => actions)
+                                        </th>
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                @{
+                                    foreach (var student in item.Students)
+                                    {
+                                        <tr>
+                                            @{
+                                                var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
+                                                var displayName = currentUser.FirstName + currentUser.LastName;
+                                                var edit = "Edit";
+                                                <th>
+                                                    @Html.DisplayFor(modelItem => displayName)
+                                                </th>
+
+                                                foreach (var activ in student.Attendance)
+                                                {
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => activ.Presence)
+                                                        @Html.DisplayFor(modelItem => activ.LaboratoryMark)
+                                                        @Html.DisplayFor(modelItem => activ.KataMark)
+                                                        
+                                                        @Html.ActionLink(edit, "UpdatePresence", "Presences", new { attendanceId = activ.Id } ,null)
+                                                   </td>
+
+                                                }
+                                              }
+                                        </tr>
+                                    }
+                                  }
+                            
+                        </tr>
+                    </table>
                 </td>
                 
-            </tr>
+                <td>
+          		<a  class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+             </tr>
          }
-    </tbody>
+   </tbody>
 </table>
 

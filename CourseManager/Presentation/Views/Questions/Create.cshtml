@@ -3,7 +3,6 @@
 
 @{
     ViewData["Title"] = "Create";
-    var uid = TempData["UId"];
 }
 
 <h2>Create</h2>
@@ -14,10 +13,10 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <div class="form-group" >
-                <input asp-for="UserId" class="form-control" value="@uid" type="hidden"/>
-                <span asp-validation-for="UserId" class="text-danger" type="hidden"></span>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             
             <div class="form-group">

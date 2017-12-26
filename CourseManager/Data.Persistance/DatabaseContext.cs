@@ -11,7 +11,7 @@ namespace Data.Persistance
 
         // Use entire link to entity for Scaffolding to work
 
-        // ReSharper disable RedundantNameQualifier
+        public DbSet<Data.Domain.Entities.UserStatus> UserStatus { get; set; }
         public DbSet<Data.Domain.Entities.Presence> Presences { get; set; }
         public DbSet<Data.Domain.Entities.Faction> Factions { get; set; }
         public DbSet<Data.Domain.Entities.Lecture> Lectures { get; set; }
@@ -19,5 +19,6 @@ namespace Data.Persistance
         public DbSet<Data.Domain.Entities.Question> Questions { get; set; }
         public DbSet<Data.Domain.Entities.Kata> Katas { get; set; }
         public DbSet<Data.Domain.Entities.News> News { get; set; }
+        public DbSet<Data.Domain.Entities.Attendance> Attendances { get; set; }
     }
 }

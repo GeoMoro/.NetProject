@@ -1,5 +1,6 @@
 ﻿@model Data.Domain.Entities.Presence
-
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Delete";
 }
@@ -12,17 +13,27 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Laboratory)
+            @Html.DisplayNameFor(model => model.Name)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Laboratory)
+            @Html.DisplayFor(model => model.Name)
         </dd>
         
         <dt>
-            @Html.DisplayNameFor(model => model.Present)
+            @Html.DisplayNameFor(model => model.Students)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Present)
+            @{
+                foreach (var student in Model.Students)
+                {
+                    var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
+                    var displayName = currentUser.FirstName + currentUser.LastName;
+                    
+                    @Html.DisplayFor(modelItem => displayName)
+                    
+                    <br />
+                }
+            }
         </dd>
     </dl>
 
