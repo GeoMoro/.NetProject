@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Data.Domain.Entities;
 
-namespace Data.Domain.Interfaces.ServicesNews
+namespace Data.Domain.Interfaces.ServicesInterfaces
 {
     public interface IRecordService
     {

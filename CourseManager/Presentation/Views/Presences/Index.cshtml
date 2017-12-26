@@ -7,22 +7,18 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
-
-<p>
-    <a class="btn btn-default"  asp-action="CreatePresence">Create New Presence</a>
-</p>
+<h2>Presences</h2>
 
 @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
 {
     <p>
-        <a asp-action="CreateFaction">Create Faction</a>
+        <a class="btn btn-default" asp-action="CreateFaction">Create Faction</a>
     </p>
 }
 else
 {
     <p>
-        <a asp-action="MarkAsPresent">Mark as present</a>
+        <a class="btn btn-default" asp-action="MarkAsPresent">Mark as present</a>
     </p>
 }
 
@@ -57,12 +53,10 @@ else
                                     for (var index = 1; index <= 7; ++index)
                                     {
                                         <th>
-                                            @using (Html.BeginForm("StartLaboratory", "Presences", new { factionId = item.Id, labValue = index }, FormMethod.Post, null, new { }))
+                                            @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                                             {
-                                                <button>StartLab</button>
-
+                                                @Html.ActionLink("Start the lab", "StartLaboratory", "Presences", new { factionId = item.Id, labValue = index }, null)
                                             }
-
 
                                             Week @Html.DisplayFor(modelItem => index)
                                         </th>
@@ -86,7 +80,11 @@ else
                                             @Html.DisplayFor(modelItem => presence)
                                             @Html.DisplayFor(modelItem => lab)
                                             @Html.DisplayFor(modelItem => kata)
-                                            @Html.DisplayFor(modelItem => actions)
+                                            
+                                            @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                                            {
+                                                @Html.DisplayFor(modelItem => actions)
+                                            }
                                         </th>
                                     }
                                 }
@@ -99,7 +97,6 @@ else
                                             @{
                                                 var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
                                                 var displayName = currentUser.FirstName + currentUser.LastName;
-                                                var edit = "Edit";
                                                 <th>
                                                     @Html.DisplayFor(modelItem => displayName)
                                                 </th>
@@ -111,8 +108,11 @@ else
                                                         @Html.DisplayFor(modelItem => activ.LaboratoryMark)
                                                         @Html.DisplayFor(modelItem => activ.KataMark)
                                                         
-                                                        @Html.ActionLink(edit, "UpdatePresence", "Presences", new { attendanceId = activ.Id } ,null)
-                                                   </td>
+                                                        @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                                                        {
+                                                             @Html.ActionLink("Edit", "UpdatePresence", "Presences", new { attendanceId = activ.Id }, null)
+                                                        }
+                                                    </td>
 
                                                 }
                                               }
@@ -125,7 +125,10 @@ else
                 </td>
                 
                 <td>
-          		<a  class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+          		@if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                 {
+                    <a class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                 }
                 </td>
              </tr>
          }

@@ -13,23 +13,15 @@ namespace Data.Domain.Entities
         
         public List<Attendance> Attendance { get; set; }
 
-        public static UserStatus CreateUsersStatus(string id)//, double laboratoryMark, double kataMark, bool presence)
+        public static UserStatus CreateUsersStatus(string id)
         {
             var instance = new UserStatus
             {
                 Id = id,
                 Attendance = new List<Attendance>()
             };
-            //instance.UpdateUserStatus(laboratoryMark, kataMark, presence);
 
             return instance;
         }
-
-        //private void UpdateUserStatus(double laboratoryMark, double kataMark, bool presence)
-        //{
-        //    LaboratoryMark = laboratoryMark;
-        //    KataMark = kataMark;
-        //    Presence = presence;
-        //}
     }
 }

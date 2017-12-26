@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Data.Domain.Entities.Services
+namespace Data.Domain.Interfaces.ServicesInterfaces
 {
     public interface IUploadService
     {

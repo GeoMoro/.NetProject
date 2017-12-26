@@ -21,14 +21,9 @@ namespace Business
             return _databaseService.Attendances.ToList();
         }
 
-        public List<Attendance> GetAttendanceById(string id)
+        public Attendance GetAttendanceById(Guid id)
         {
-            return _databaseService.Attendances.Where(attendance => attendance.UserId == id).ToList();
-        }
-
-        public bool GetCurrentLaboratoryForGivenFaction(string id, int name)
-        {
-            return _databaseService.Attendances.Where(attendance => attendance.UserId == id && attendance.LaboratoryNumber == name).ToList().Count == 0;
+            return _databaseService.Attendances.SingleOrDefault(attendance => attendance.Id == id);
         }
 
         public void CreateAttendance(Attendance attendance)

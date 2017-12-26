@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Presentation.Models;
 using Presentation.Models.QuestionViewModels;
 
 namespace Presentation.Controllers

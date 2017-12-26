@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Data.Domain.Interfaces.ServicesNews;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Models;
-using RecordServiceProvider;
+using Data.Domain.Interfaces.ServicesInterfaces;
 
 namespace Presentation.Controllers
 {

@@ -18,8 +18,6 @@
     <ProjectReference Include="..\Business\Business.csproj" />
     <ProjectReference Include="..\Data.Domain\Data.Domain.csproj" />
     <ProjectReference Include="..\Data.Persistance\Data.Persistance.csproj" />
-    <ProjectReference Include="..\ServicesProvider\ServicesProvider.csproj" />
-    <ProjectReference Include="..\RecordServiceProvider\RecordServiceProvider.csproj" />
-    <ProjectReference Include="..\ServiceProvider\ServiceProvider.csproj" />
+    <ProjectReference Include="..\ServiceProvider\ServicesProvider.csproj" />
   </ItemGroup>
 </Project>

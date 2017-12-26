@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Models.KataViewModels;
+using Data.Domain.Interfaces.ServicesInterfaces;
 
 namespace Presentation.Controllers
 {
@@ -17,11 +18,13 @@ namespace Presentation.Controllers
     {
         private readonly IHostingEnvironment _env;
         private readonly IKataRepository _repository;
+        private readonly IKataService _service;
 
-        public KatasController(IKataRepository repository, IHostingEnvironment env)
+        public KatasController(IKataRepository repository, IHostingEnvironment env, IKataService service)
         {
             _env = env;
             _repository = repository;
+            _service = service;
         }
 
         // GET: Katas
@@ -83,7 +86,7 @@ namespace Presentation.Controllers
                 {
                     if (file.Length > 0)
                     {
-                        string path = Path.Combine(_env.WebRootPath, "Katas/" + currentKata.Id);
+                        var path = Path.Combine(_env.WebRootPath, "Katas/" + currentKata.Id);
 
                         if (!Directory.Exists(path))
                         {
@@ -97,7 +100,7 @@ namespace Presentation.Controllers
                     }
                 }
             }
-            
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -143,22 +146,13 @@ namespace Presentation.Controllers
             {
                 return View(kataModel);
             }
-
-            var oldTitle = kataEdited.Title;
-
+            
             kataEdited.Title = kataModel.Title;
             kataEdited.Description = kataModel.Description;
 
             try
             {
                 _repository.EditKata(kataEdited);
-
-                //string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + oldTitle);
-
-                //if (Directory.Exists(searchedPath))
-                //{
-                //    Directory.Delete(searchedPath, true);
-                //}
 
                 if (kataModel.File != null)
                 {
@@ -167,7 +161,7 @@ namespace Presentation.Controllers
                     {
                         if (file.Length > 0)
                         {
-                            string path = Path.Combine(_env.WebRootPath, "Katas/" + kataEdited.Id);
+                            var path = Path.Combine(_env.WebRootPath, "Katas/" + id);
 
                             if (!Directory.Exists(path))
                             {
@@ -220,16 +214,7 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            var kata = _repository.GetKataById(id);
-
-            string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kata.Id);
-            if (Directory.Exists(searchedPath))
-            {
-                Directory.Delete(searchedPath, true);
-            }
-
-            _repository.DeleteKata(kata);
-
+            _service.DeleteFilesForGivenId(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -242,27 +227,18 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteFile(string fileName, Guid? givenId)
         {
-            {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + givenId.Value + "/" + fileName);
-                if ((System.IO.File.Exists(searchedPath)))
-                {
-                    System.IO.File.Delete(searchedPath);
-                }
-            }
-
+            _service.DeleteSpecificFiles(fileName, givenId);
             return RedirectToAction("Delete", "Katas", new { id = givenId });
         }
 
         [HttpPost]
         public IActionResult Download(Guid kataId, string fileName)
         {
-            {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kataId + "/" + fileName);
-                Stream file = new FileStream(searchedPath, FileMode.Open);
-                string content_type = "application/octet-stream";
+            var searchedPath = Path.Combine(_env.WebRootPath, "Katas/" + kataId + "/" + fileName);
+            var file = new FileStream(searchedPath, FileMode.Open);
+            var content_type = "application/octet-stream";
 
-                return File(file, content_type, fileName);
-            }
+            return File(file, content_type, fileName);
         }
     }
 }

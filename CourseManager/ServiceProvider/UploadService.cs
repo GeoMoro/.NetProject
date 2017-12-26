@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Data.Domain.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Hosting;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using Data.Domain.Entities.Services;
-using Microsoft.AspNetCore.Hosting;
 
-namespace ServiceProvider
+namespace ServicesProvider
 {
     public class UploadService : IUploadService
     {

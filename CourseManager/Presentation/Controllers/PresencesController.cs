@@ -8,9 +8,11 @@ using Presentation.Models.PresenceViewModels;
 using Presentation.Data;
 using System.Collections.Generic;
 using Data.Domain.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class PresencesController : Controller
     {
         private readonly IPresenceRepository _repository;
@@ -18,14 +20,18 @@ namespace Presentation.Controllers
         private readonly IUserStatusRepository _userRepo;
         private readonly IUserStatusService _service;
         private readonly IAttendanceRepository _attendance;
+        private readonly IPresenceService _presenceServ;
+        private readonly IUserAttendanceService _attServ;
 
-        public PresencesController(IPresenceRepository repository, ApplicationDbContext application, IUserStatusRepository userRepo, IUserStatusService service, IAttendanceRepository attendance)
+        public PresencesController(IPresenceRepository repository, ApplicationDbContext application, IUserStatusRepository userRepo, IUserStatusService service, IAttendanceRepository attendance, IPresenceService presenceServ, IUserAttendanceService attServ)
         {
             _repository = repository;
             _application = application;
             _userRepo = userRepo;
             _service = service;
             _attendance = attendance;
+            _presenceServ = presenceServ;
+            _attServ = attServ;
         }
 
         //GET: Presences
@@ -36,13 +42,14 @@ namespace Presentation.Controllers
                 item.Students = _service.GetUsersByFactionId(item.Id).ToList();
                 foreach(var student in item.Students)
                 {
-                    student.Attendance = _attendance.GetAttendanceById(student.Id);
+                    student.Attendance = _attServ.GetAttendanceByUserId(student.Id).OrderBy(att => att.StartDate).ToList();
                 }
             }
 
             return View(_repository.GetAllPresences());
         }
 
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult CreateFaction()
         {
             return View();
@@ -50,6 +57,7 @@ namespace Presentation.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult CreateFaction([Bind("Name")] PresenceCreateModel presenceCreateModel)
         {
             if (!ModelState.IsValid) {
@@ -79,53 +87,16 @@ namespace Presentation.Controllers
                     )
                 );
 
-                var modify = _repository.GetPresenceByName(presenceCreateModel.Name);
-                var searchedUser = new UserStatus();
-                foreach (var student in selectedStudents)
-                {
-                    try
-                    {
-                        searchedUser = _userRepo.GetUserById(student.Id);
-                        searchedUser.FactionId = modify.Id;
-                        _userRepo.EditUser(searchedUser);
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!UserStatusExists(_userRepo.GetUserById(student.Id).Id))
-                        {
-                            return NotFound();
-                        }
-
-                        throw;
-                    }
-                }
+                _presenceServ.ApplyModificationsOnUsers(presenceCreateModel.Name, selectedStudents);
             }
 
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult StartLaboratory(Guid factionId, int labValue)
         {
-            var laboratory = Guid.NewGuid();
-            var studentList = _service.GetUsersByFactionId(factionId);
-            var getUser = _userRepo.GetAllUsers().Where(user => user.FactionId == factionId).FirstOrDefault();
-            var check = _attendance.GetAllAttendances().Where(attend => attend.UserId == getUser.Id && attend.LaboratoryNumber == labValue).ToList().Count;
-
-            if (check == 0)
-            {
-                foreach (var students in studentList)
-                {
-                    _attendance.CreateAttendance(
-                        Attendance.CreateAttendance(
-                            labValue,
-                            laboratory,
-                            students.Id,
-                            0,
-                            0,
-                            false
-                        ));
-                }
-            }
+            _presenceServ.StartLaboratoryBasedOnValue(factionId, labValue);
             
             return RedirectToAction(nameof(Index));
         }
@@ -144,26 +115,32 @@ namespace Presentation.Controllers
                 return View(userCreateModel);
             }
 
-            try
-            {
-                var check = _attendance.GetAllAttendances().Where(attend => attend.UserId == userId).OrderByDescending(attend => attend.StartDate).FirstOrDefault();
-                check.Presence = userCreateModel.Presence;
+            var check = _attendance.GetAllAttendances().Where(att => att.UserId == userId).ToList().Count;
 
-                _attendance.EditAttendance(check);
-            }
-            catch (DbUpdateConcurrencyException)
+            if (check != 0)
             {
-                if (!UserStatusExists(_userRepo.GetUserById(userId).Id))
+                try
                 {
-                    return NotFound();
-                }
+                    var modifyPresence = _attendance.GetAllAttendances().Where(attend => attend.UserId == userId).OrderByDescending(attend => attend.StartDate).FirstOrDefault();
+                    modifyPresence.Presence = userCreateModel.Presence;
 
-                throw;
+                    _attendance.EditAttendance(modifyPresence);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserStatusExists(_userRepo.GetUserById(userId).Id))
+                    {
+                        return NotFound();
+                    }
+
+                    throw;
+                }
             }
 
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult UpdatePresence(Guid attendanceId)
         {
             TempData["value"] = attendanceId;
@@ -190,6 +167,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult UpdatePresence(Guid attendanceId, [Bind("LaboratoryMark, KataMark, Presence")] UserStatusEditModel userStatusEditModel)
         {
             var userToBeEdited = _attendance.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
@@ -224,8 +202,9 @@ namespace Presentation.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        
+
         // GET: UserAccounts/Delete/5
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Delete(Guid? id)
         {
             if (id == null) {
@@ -252,25 +231,10 @@ namespace Presentation.Controllers
         // POST: UserAccounts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            var presence = _repository.GetPresenceById(id);
-            var studentList = _userRepo.GetAllUsers().Where(user => user.FactionId == id);
-
-            foreach (var student in studentList)
-            {
-                var attendance = _attendance.GetAllAttendances().Where(attend => attend.UserId == student.Id).ToList();
-
-                foreach (var attend in attendance)
-                {
-                    _attendance.DeleteAttendance(attend);
-                }
-
-                _userRepo.DeleteUser(student);
-            }
-            
-            _repository.DeletePresence(presence);
-
+            _attServ.DeleteData(id);
             return RedirectToAction(nameof(Index));
         }
         

@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Principal;
 using System.Threading.Tasks;
-using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Data;
-using Presentation.Models;
 using Presentation.Models.UploadsViewModels;
 
 namespace Presentation.Controllers

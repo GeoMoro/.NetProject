@@ -1,5 +1,4 @@
 ﻿using Business;
-using Data.Domain.Entities.Services;
 using Data.Domain.Interfaces;
 using Data.Domain.Interfaces.ServicesInterfaces;
 using Data.Persistance;
@@ -13,9 +12,7 @@ using Presentation.Data;
 using Presentation.Models;
 using Presentation.Services;
 using ServicesProvider;
-using Data.Domain.Interfaces.ServicesNews;
 using RecordServiceProvider;
-using ServiceProvider;
 
 namespace Presentation
 {
@@ -49,7 +46,6 @@ namespace Presentation
             services.AddTransient<IDatabaseContext, DatabaseContext>();
             services.AddTransient<IUserStatusRepository, UserStatusRepository>();
             services.AddTransient<IPresenceRepository, PresenceRepository>();
-            services.AddTransient<IFactionRepository, FactionRepository>();
             services.AddTransient<ILectureRepository, LectureRepository>();
             services.AddTransient<IAnswerRepository, AnswerRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
@@ -59,8 +55,10 @@ namespace Presentation
             services.AddTransient<INewsRepository, NewsRepository>();
             services.AddTransient<IRecordService, RecordService>();
             services.AddTransient<IUploadService, UploadService>();
-	    services.AddTransient<IUserStatusService, UserStatusService>();
+	        services.AddTransient<IUserStatusService, UserStatusService>();
             services.AddTransient<IAttendanceRepository, AttendanceRepository>();
+            services.AddTransient<IUserAttendanceService, UserAttendanceService>();
+            services.AddTransient<IPresenceService, PresenceService>();
 
             /*
                         const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";

@@ -13,7 +13,6 @@ namespace Data.Persistance
 
         public DbSet<Data.Domain.Entities.UserStatus> UserStatus { get; set; }
         public DbSet<Data.Domain.Entities.Presence> Presences { get; set; }
-        public DbSet<Data.Domain.Entities.Faction> Factions { get; set; }
         public DbSet<Data.Domain.Entities.Lecture> Lectures { get; set; }
         public DbSet<Data.Domain.Entities.Answer> Answers { get; set; }
         public DbSet<Data.Domain.Entities.Question> Questions { get; set; }
