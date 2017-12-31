@@ -5,9 +5,9 @@ using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Models.PresenceViewModels;
-using Presentation.Data;
 using System.Collections.Generic;
 using Data.Domain.Interfaces.ServicesInterfaces;
+using Data.Persistance;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
@@ -64,32 +64,18 @@ namespace Presentation.Controllers
                 return View(presenceCreateModel);
             }
 
-            var check = _repository.GetAllPresences().Where(presences => presences.Name.Contains(presenceCreateModel.Name)).ToList();
+            var factionId = Guid.NewGuid();
 
-            if (check.Count == 0)
-            {
-                var selectedStudents = new List<UserStatus>();
-
-                foreach (var student in _application.Users.ToList())
-                {
-                    if (student.Group != null && presenceCreateModel.Name.Contains(student.Group))
-                    {
-                        selectedStudents.Add(
-                                _service.CreateAndReturnLatestUser(student.Id)
-                        );
-                    }
-                }
-
-                _repository.CreatePresence(
+            _repository.CreatePresence(
                     Presence.CreatePresence(
+                        factionId,
                         presenceCreateModel.Name,
-                        selectedStudents
+                        _presenceServ.GetUsersGivenGroup(presenceCreateModel.Name, factionId)
                     )
                 );
-
-                _presenceServ.ApplyModificationsOnUsers(presenceCreateModel.Name, selectedStudents);
-            }
-
+                
+               // _presenceServ.ApplyModificationsOnUsers(presenceCreateModel.Name, selectedStudents);
+            
             return RedirectToAction(nameof(Index));
         }
 
@@ -122,9 +108,12 @@ namespace Presentation.Controllers
                 try
                 {
                     var modifyPresence = _attendance.GetAllAttendances().Where(attend => attend.UserId == userId).OrderByDescending(attend => attend.StartDate).FirstOrDefault();
-                    modifyPresence.Presence = userCreateModel.Presence;
+                    if (modifyPresence != null)
+                    {
+                        modifyPresence.Presence = userCreateModel.Presence;
 
-                    _attendance.EditAttendance(modifyPresence);
+                        _attendance.EditAttendance(modifyPresence);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -145,7 +134,7 @@ namespace Presentation.Controllers
         {
             TempData["value"] = attendanceId;
 
-            if (attendanceId == null)
+            if (attendanceId.Equals(null))
             {
                 return NotFound();
             }
@@ -220,7 +209,7 @@ namespace Presentation.Controllers
 
             var userStatus = _userRepo.GetAllUsers().Where(user => user.FactionId == id.Value);
             
-            if(userStatus == null)
+            if(userStatus.Equals(null))
             {
                 return NotFound();
             }
@@ -238,10 +227,6 @@ namespace Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
         
-        private bool PresenceExists(Guid id) {
-            return _repository.GetAllPresences().Any(e => e.Id == id);
-        }
-
         private bool UserStatusExists(string id)
         {
             return _userRepo.GetAllUsers().Any(e => e.Id == id);

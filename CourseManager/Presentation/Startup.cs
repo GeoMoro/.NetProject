@@ -1,4 +1,5 @@
 ﻿using Business;
+using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Data.Domain.Interfaces.ServicesInterfaces;
 using Data.Persistance;
@@ -8,9 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Presentation.Data;
-using Presentation.Models;
-using Presentation.Services;
 using ServicesProvider;
 using RecordServiceProvider;
 

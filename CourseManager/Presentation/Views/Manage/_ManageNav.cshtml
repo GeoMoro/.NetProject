@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Presentation.Models
-@using Presentation.Views.Manage
+﻿@using Data.Domain.Entities
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();

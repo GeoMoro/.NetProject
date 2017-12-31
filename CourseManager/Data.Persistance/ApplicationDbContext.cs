@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Data.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Models;
 
-namespace Presentation.Data
+namespace Data.Persistance
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

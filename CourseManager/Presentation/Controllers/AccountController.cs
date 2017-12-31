@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Data.Domain.Entities;
+using Data.Domain.Interfaces.ServicesInterfaces;
+using Data.Persistance;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Presentation.Models;
 using Presentation.Models.AccountViewModels;
-using Presentation.Services;
-using Presentation.Enums;
 using Presentation.Extensions;
 
 namespace Presentation.Controllers

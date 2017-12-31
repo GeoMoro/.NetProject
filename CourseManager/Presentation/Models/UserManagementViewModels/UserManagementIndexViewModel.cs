@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Data.Domain.Entities;
 
 namespace Presentation.Models.UserManagementViewModels
 {

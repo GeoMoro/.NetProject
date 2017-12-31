@@ -1,8 +1,9 @@
 ﻿using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Data.Domain.Interfaces.ServicesInterfaces;
 
-namespace Presentation.Services
+namespace ServicesProvider
 {
     public class EmailSender : IEmailSender
     {

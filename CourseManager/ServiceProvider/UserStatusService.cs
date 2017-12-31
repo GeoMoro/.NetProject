@@ -26,11 +26,12 @@ namespace ServicesProvider
         //    return _repository.GetAllUsers().Where(user => user. == id).ToList();
         //}
 
-        public UserStatus CreateAndReturnLatestUser(string id)//, double labMark, double kataMark, bool presence)
+        public UserStatus CreateAndReturnLatestUser(string id, Guid factionId)//, double labMark, double kataMark, bool presence)
         {
             _repository.CreateUser(
                     UserStatus.CreateUsersStatus(
-                        id
+                        id,
+                        factionId
                     )
                 );
 

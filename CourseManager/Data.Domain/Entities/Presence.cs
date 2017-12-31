@@ -6,19 +6,19 @@ namespace Data.Domain.Entities
 {
     public class Presence
     {
-        [Key]
         public Guid Id { get; set; }
 
         public string Name { get; set; }
 
         public List<UserStatus> Students { get; set; }
 
-        public static Presence CreatePresence(string name, List<UserStatus> students)
+        public static Presence CreatePresence(Guid id, string name, List<UserStatus> students)
         {
             var instance = new Presence
             {
-                Id = Guid.NewGuid()
+                Id = id
             };
+
             instance.UpdatePresence(name, students);
 
             return instance;

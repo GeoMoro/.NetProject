@@ -1,4 +1,4 @@
-﻿namespace Presentation.Enums
+﻿namespace Data.Persistance
 {
     public enum UserRoles
     {

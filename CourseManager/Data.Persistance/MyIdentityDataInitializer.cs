@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace Presentation.Data
+namespace Data.Persistance
 {
     public static class MyIdentityDataInitializer
     {

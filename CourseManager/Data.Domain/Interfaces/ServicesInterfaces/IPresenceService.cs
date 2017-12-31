@@ -8,5 +8,6 @@ namespace Data.Domain.Interfaces.ServicesInterfaces
     {
         void StartLaboratoryBasedOnValue(Guid factionId, int labValue);
         void ApplyModificationsOnUsers(string name, List<UserStatus> selectedStudents);
+        List<UserStatus> GetUsersGivenGroup(string name, Guid factionId);
     }
 }
