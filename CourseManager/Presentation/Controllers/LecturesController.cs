@@ -253,7 +253,7 @@ namespace Presentation.Controllers
         [HttpPost]
         public IActionResult Download(Guid lectureId, string fileName)
         {
-            var file = _lectureService.SearchLecture(lectureId);
+            var file = _lectureService.SearchLecture(lectureId, fileName);
 
             return File(file, "application/octet-stream", fileName);
         }
