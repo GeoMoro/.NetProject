@@ -148,7 +148,7 @@ namespace Presentation.Controllers
             {
                 return View(lectureModel);
             }
-            
+
             lectureEdited.Title = lectureModel.Title;
             lectureEdited.Description = lectureModel.Description;
 
@@ -245,13 +245,7 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteFile(string fileName, Guid? givenId)
         {
-            {
-                var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
-                if (System.IO.File.Exists(searchedPath))
-                {
-                    System.IO.File.Delete(searchedPath);
-                }
-            }
+            _lectureService.DeleteFile(fileName, givenId);
 
             return RedirectToAction("Delete", "Lectures", new { id = givenId });
         }
@@ -259,8 +253,8 @@ namespace Presentation.Controllers
         [HttpPost]
         public IActionResult Download(Guid lectureId, string fileName)
         {
-            var file = _lectureService.Download(lectureId);
-            
+            var file = _lectureService.SearchLecture(lectureId);
+
             return File(file, "application/octet-stream", fileName);
         }
     }

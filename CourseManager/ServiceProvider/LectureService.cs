@@ -79,7 +79,17 @@ namespace ServicesProvider
             }
         }
 
-        public Stream Download(Guid lectureId, string fileName)
+        public void DeleteFile(string fileName, Guid? givenId)
+        {
+            var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
+
+            if (File.Exists(searchedPath))
+            {
+                File.Delete(searchedPath);
+            }
+        }
+
+        public Stream SearchLecture(Guid lectureId, string fileName)
         {
             var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lectureId + "/" + fileName);
             Stream file = new FileStream(searchedPath, FileMode.Open);

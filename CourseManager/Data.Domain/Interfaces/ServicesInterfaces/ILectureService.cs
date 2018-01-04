@@ -10,6 +10,7 @@ namespace Data.Domain.Interfaces.ServicesInterfaces
         List<string> GetFilesBasedOnDetails(string title, string description);
         void DeleteFilesForGivenId(Guid id);
         void DeleteSpecificFiles(string fileName, Guid? givenId);
-        Stream Download(Guid lectureId);
+        Stream SearchLecture(Guid lectureId, string fileName);
+        void DeleteFile(string fileName, Guid? givenId);
     }
 }
