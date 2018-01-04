@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ServicesProvider
 {
@@ -76,6 +77,14 @@ namespace ServicesProvider
             {
                 File.Delete(searchedPath);
             }
+        }
+
+        public Stream Download(Guid lectureId, string fileName)
+        {
+            var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lectureId + "/" + fileName);
+            Stream file = new FileStream(searchedPath, FileMode.Open);
+
+            return file;
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Data.Domain.Interfaces.ServicesInterfaces
 {
@@ -10,5 +10,6 @@ namespace Data.Domain.Interfaces.ServicesInterfaces
         List<string> GetFilesBasedOnDetails(string title, string description);
         void DeleteFilesForGivenId(Guid id);
         void DeleteSpecificFiles(string fileName, Guid? givenId);
+        Stream Download(Guid lectureId);
     }
 }

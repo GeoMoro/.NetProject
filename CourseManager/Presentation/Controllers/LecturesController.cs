@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
+using Data.Domain.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,13 @@ namespace Presentation.Controllers
     {
         private readonly IHostingEnvironment _env;
         private readonly ILectureRepository _repository;
+        private readonly ILectureService _lectureService;
 
-        public LecturesController(ILectureRepository repository, IHostingEnvironment env)
+        public LecturesController(ILectureRepository repository, IHostingEnvironment env, ILectureService lectureService)
         {
             _env = env;
             _repository = repository;
+            _lectureService = lectureService;
         }
 
         // GET: Lectures
@@ -256,13 +259,9 @@ namespace Presentation.Controllers
         [HttpPost]
         public IActionResult Download(Guid lectureId, string fileName)
         {
-            {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lectureId + "/" + fileName);
-                Stream file = new FileStream(searchedPath, FileMode.Open);
-                string content_type = "application/octet-stream";
-
-                return File(file, content_type, fileName);
-            }
+            var file = _lectureService.Download(lectureId);
+            
+            return File(file, "application/octet-stream", fileName);
         }
     }
 }
