@@ -1,11 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Business.ServicesInterfaces;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Data.Persistance;
-using System.Collections.Generic;
-using Business.ServicesInterfaces;
 
-namespace RecordServiceProvider
+namespace ServicesProvider
 {
     public class RecordService : IRecordService
     {
