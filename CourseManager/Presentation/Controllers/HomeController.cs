@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
+using Business.ServicesInterfaces.Models;
 using Microsoft.AspNetCore.Mvc;
-using Presentation.Models;
 
 namespace Presentation.Controllers
 {

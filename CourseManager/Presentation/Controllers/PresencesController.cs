@@ -4,9 +4,8 @@ using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Models.PresenceViewModels;
-using System.Collections.Generic;
-using Data.Domain.Interfaces.ServicesInterfaces;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.PresenceViewModels;
 using Data.Persistance;
 using Microsoft.AspNetCore.Authorization;
 

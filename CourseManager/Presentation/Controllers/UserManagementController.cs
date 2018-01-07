@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Business.ServicesInterfaces.Models.UserManagementViewModels;
 using Data.Domain.Entities;
 using Data.Persistance;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Presentation.Models.UserManagementViewModels;
 
 namespace Presentation.Controllers
 {

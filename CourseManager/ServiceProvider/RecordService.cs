@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Data.Domain.Interfaces.ServicesInterfaces;
 using Data.Persistance;
 using System.Collections.Generic;
+using Business.ServicesInterfaces;
 
 namespace RecordServiceProvider
 {

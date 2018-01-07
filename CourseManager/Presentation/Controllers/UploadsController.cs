@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Business.ServicesInterfaces.Models.UploadsViewModels;
 using Data.Persistance;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Presentation.Models.UploadsViewModels;
 
 namespace Presentation.Controllers
 {

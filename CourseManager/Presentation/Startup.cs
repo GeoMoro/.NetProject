@@ -1,7 +1,7 @@
 ﻿using Business;
+using Business.ServicesInterfaces;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Data.Domain.Interfaces.ServicesInterfaces;
 using Data.Persistance;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

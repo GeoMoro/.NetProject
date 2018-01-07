@@ -2,14 +2,14 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.KataViewModels;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Models.KataViewModels;
-using Data.Domain.Interfaces.ServicesInterfaces;
 
 namespace Presentation.Controllers
 {

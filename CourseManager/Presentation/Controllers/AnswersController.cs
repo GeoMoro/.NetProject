@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
+using Business.ServicesInterfaces.Models.AnswerViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Presentation.Models.AnswerViewModels;
 
 namespace Presentation.Controllers
 {

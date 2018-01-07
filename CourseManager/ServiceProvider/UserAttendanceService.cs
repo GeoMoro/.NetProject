@@ -1,10 +1,10 @@
 ﻿using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Data.Domain.Interfaces.ServicesInterfaces;
 using Data.Persistance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Business.ServicesInterfaces;
 
 namespace ServicesProvider
 {

@@ -2,14 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Data.Domain.Entities;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.LectureViewModels;
 using Data.Domain.Interfaces;
-using Data.Domain.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Models.LectureViewModels;
 
 namespace Presentation.Controllers
 {
@@ -71,37 +70,7 @@ namespace Presentation.Controllers
                 return View(lectureCreateModel);
             }
 
-            _repository.CreateLecture(
-                Lecture.CreateLecture(
-                    lectureCreateModel.Title,
-                    lectureCreateModel.Description
-                )
-            );
-
-            var currentLecture = _repository.GetLectureInfoByDetails(lectureCreateModel.Title, lectureCreateModel.Description);
-
-            if (lectureCreateModel.File != null)
-            {
-                foreach (var file in lectureCreateModel.File)
-                {
-                    if (file.Length > 0)
-                    {
-                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + currentLecture.Id);
-
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-
-                        // string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
-
-                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
-                        }
-                    }
-                }
-            }
+            await _lectureService.CreateLecture(lectureCreateModel);
 
             return RedirectToAction(nameof(Index));
         }
