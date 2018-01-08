@@ -4,18 +4,15 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+<environment include="Development">
+    <link href="~/css/News.css" rel="stylesheet" />
+</environment>
+
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
-
-<p>
-    <a class="btn btn-default" asp-action="CreateNews">Create new News</a>
-</p>
-
-<table class="table">
-    <thead>
+@*<thead>
     <tr>
         <th style="font-size: 22px;">
             @Html.DisplayNameFor(model => model.Description)
@@ -27,8 +24,8 @@
             Actions
         </th>
     </tr>
-    </thead>
-    <tbody>
+    </thead>*@
+@*<tbody>
         @foreach (var item in Model) {
             <tr>
                 <td style="font-size: 16px;">
@@ -51,15 +48,34 @@
 
             </tr>
          }
-    </tbody>
-</table>
-@using (Html.BeginForm("Index", "News", null, FormMethod.Post, null, new { })) 
+    </tbody>*@
+
+<div class="newsDiv">
+    @foreach (var item in Model)
+    {
+        <b>@Html.DisplayFor(modelItem => item.Title)</b>
+        <p>@Html.DisplayFor(modelItem => item.Description)</p>
+        <div class="buttonsDiv">
+            <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px" class="btn btn-default" asp-action="UpdateNews" asp-route-id="@item.Id">Edit</a>
+            <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px" class="btn btn-default" asp-action="DeleteNews" asp-route-id="@item.Id">Delete</a>
+        </div>
+        <hr />
+    }
+
+</div>
+
+@using (Html.BeginForm("Index", "News", null, FormMethod.Post, null, new { }))
 {
-    for (var index = 0; index <  Service.GetNumberOfElements(); ++index) {
+    for (var index = 0; index < Service.GetNumberOfElements(); ++index)
+    {
         if (index % 5 == 0)
         {
             int value = @index / 5 + 1;
-            <button class="btn btn-default" type="submit" name="loadButton" value="@index">@value</button>
+            <button style="margin-left: 50%" class="btn btn-default" type="submit" name="loadButton" value="@index">@value</button>
         }
     }
 }
+
+<p style="margin-left: 85%;">
+    <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px " class="btn btn-default" asp-action="CreateNews">Add</a>
+</p>
