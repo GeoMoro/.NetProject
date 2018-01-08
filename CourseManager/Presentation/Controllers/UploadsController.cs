@@ -12,13 +12,14 @@ namespace Presentation.Controllers
     public class UploadsController : Controller
     {
         private readonly ApplicationDbContext _application;
-   
         private readonly IHostingEnvironment _env;
+
         public UploadsController(IHostingEnvironment env, ApplicationDbContext application)
         {
             _env = env;
             _application = application;
         }
+
         // GET: Uploads
         public IActionResult Index()
         {
@@ -26,7 +27,7 @@ namespace Presentation.Controllers
             return View();
         }
 
-// GET: Uploads/Details/5
+        // GET: Uploads/Details/5
         public IActionResult Details(int id)
         {
             return View();
@@ -52,25 +53,23 @@ namespace Presentation.Controllers
             {
                 string path = Path.Combine(_env.WebRootPath, "Uploads/" + uploadCreateModel.Type + "//" + uploadCreateModel.Seminar);
 
-                   if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-
-
-                   string extension = userFirstName + "" + userLastName + "" + userGroup + "." + Path.GetExtension(file.FileName).Substring(1);
-                    using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    }
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
                 }
-            
+
+                string extension = userFirstName + "" + userLastName + "" + userGroup + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+            }
 
             // process uploaded files
             // Don't rely on or trust the FileName property without validation.
 
             return RedirectToAction(nameof(Index));
-            
         }
 
         // GET: Uploads/Edit/5
@@ -122,15 +121,11 @@ namespace Presentation.Controllers
         [HttpPost]
         public IActionResult Download(string seminarName, string group, string seminarNumber, string fileName)
         {
-            {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Uploads/" + seminarName + "/" + seminarNumber + "/" + fileName);
+            var searchedPath = Path.Combine(_env.WebRootPath, "Uploads/" + seminarName + "/" + seminarNumber + "/" + fileName);
 
-                Stream file = new FileStream(searchedPath, FileMode.Open);
-                string content_type = "application/octet-stream";
+            Stream file = new FileStream(searchedPath, FileMode.Open);
 
-                return File(file, content_type, fileName);
-            }
+            return File(file, "application/octet-stream", fileName);
         }
-
     }
 }
