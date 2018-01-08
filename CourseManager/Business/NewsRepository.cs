@@ -10,7 +10,7 @@ namespace Business
     public class NewsRepository : INewsRepository
     {
         private readonly DatabaseContext _databaseContext;
-        
+
         public NewsRepository(DatabaseContext databaseContext)
         {
             _databaseContext = databaseContext;

@@ -46,7 +46,7 @@ namespace Data.Domain.Entities
             CreatedDate = DateTime.Now;
             Topic = topic;
             Text = text;
-           // Answers = answers;
+            // Answers = answers;
         }
     }
 }

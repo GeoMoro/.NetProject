@@ -10,7 +10,7 @@ namespace Data.Domain.Entities
         public string Id { get; set; }
 
         public Guid FactionId { get; set; }
-        
+
         public List<Attendance> Attendance { get; set; }
 
         public static UserStatus CreateUsersStatus(string id, Guid factionId)

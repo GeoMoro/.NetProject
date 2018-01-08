@@ -5,7 +5,6 @@ namespace Data.Persistance
 {
     public interface IDatabaseContext
     {
-
         DbSet<UserStatus> UserStatus { get; set; }
         DbSet<Presence> Presences { get; set; }
         DbSet<Lecture> Lectures { get; set; }

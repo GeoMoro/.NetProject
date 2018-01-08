@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Data.Domain.Entities
 {
-    class Homework
+    public class Homework
     {
         [Required(ErrorMessage = "Please enter the seminar week number")]
         public int Seminar { get; set; }
@@ -13,8 +10,7 @@ namespace Data.Domain.Entities
         [Required(ErrorMessage = "Is this a Homework or Kata assignment?")]
         public string Type { get; set; }
 
-
-/*        public static Kata CreateKata(string title, string description)
+        /*public static Kata CreateKata(string title, string description)
         {
             var instance = new Kata { Id = Guid.NewGuid() };
             instance.UpdateKata(title, description);

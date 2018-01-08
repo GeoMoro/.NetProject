@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Data.Domain.Entities
 {
@@ -8,7 +6,7 @@ namespace Data.Domain.Entities
     {
         public Guid Id { get; set; }
 
-        public string UserId {get; set;}
+        public string UserId { get; set; }
 
         public Guid LaboratoryId { get; set; }
 

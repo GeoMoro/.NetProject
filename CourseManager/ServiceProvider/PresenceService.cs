@@ -65,7 +65,7 @@ namespace ServicesProvider
         public List<UserStatus> GetUsersGivenGroup(string name, Guid factionId)
         {
             var check = _repository.GetAllPresences().Where(presences => presences.Name.Contains(name)).ToList();
-            
+
             var selectedStudents = new List<UserStatus>();
 
             if (check.Count == 0)

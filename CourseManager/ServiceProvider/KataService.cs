@@ -55,7 +55,7 @@ namespace ServicesProvider
 
             return fileList;
         }
-        
+
         public void DeleteFilesForGivenId(Guid id)
         {
             var kata = _repository.GetKataById(id);

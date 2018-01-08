@@ -6,7 +6,6 @@ using Business.ServicesInterfaces.Models;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Data.Persistance;
-using Microsoft.EntityFrameworkCore;
 
 namespace ServicesProvider
 {
