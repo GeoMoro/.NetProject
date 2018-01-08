@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.ManageViewModels;
 using Data.Domain.Entities;
-using Data.Domain.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Presentation.Extensions;
-using Presentation.Models.ManageViewModels;
 
 namespace Presentation.Controllers
 {

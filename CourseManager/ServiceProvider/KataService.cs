@@ -1,9 +1,9 @@
 ﻿using Data.Domain.Interfaces;
-using Data.Domain.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Business.ServicesInterfaces;
 
 namespace ServicesProvider
 {

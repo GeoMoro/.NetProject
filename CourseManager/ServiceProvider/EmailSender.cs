@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Data.Domain.Interfaces.ServicesInterfaces;
+using Business.ServicesInterfaces;
 
 namespace ServicesProvider
 {

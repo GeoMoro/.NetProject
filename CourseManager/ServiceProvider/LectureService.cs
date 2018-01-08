@@ -1,9 +1,12 @@
 ﻿using Data.Domain.Interfaces;
-using Data.Domain.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.LectureViewModels;
+using Data.Domain.Entities;
 
 namespace ServicesProvider
 {
@@ -56,6 +59,44 @@ namespace ServicesProvider
             return fileList;
         }
 
+        public async Task CreateLecture(LectureCreateModel lectureCreateModel)
+        {
+            _repository.CreateLecture(Lecture.CreateLecture(
+                lectureCreateModel.Title,
+                lectureCreateModel.Description)
+            );
+
+            var currentLecture = GetLectureInfoByDetails(lectureCreateModel.Title, lectureCreateModel.Description);
+
+            if (lectureCreateModel.File != null)
+            {
+                foreach (var file in lectureCreateModel.File)
+                {
+                    if (file.Length > 0)
+                    {
+                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + currentLecture.Id);
+
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        // string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+                    }
+                }
+            }
+        }
+
+        public Lecture GetLectureInfoByDetails(string title, string description)
+        {
+            return _repository.GetLectureInfoByDetails(title, description);
+        }
+
         public void DeleteFilesForGivenId(Guid id)
         {
             var lecture = _repository.GetLectureById(id);
@@ -76,6 +117,24 @@ namespace ServicesProvider
             {
                 File.Delete(searchedPath);
             }
+        }
+
+        public void DeleteFile(string fileName, Guid? givenId)
+        {
+            var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
+
+            if (File.Exists(searchedPath))
+            {
+                File.Delete(searchedPath);
+            }
+        }
+
+        public Stream SearchLecture(Guid lectureId, string fileName)
+        {
+            var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lectureId + "/" + fileName);
+            Stream file = new FileStream(searchedPath, FileMode.Open);
+
+            return file;
         }
     }
 }

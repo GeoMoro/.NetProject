@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Models;
-using Data.Domain.Interfaces.ServicesInterfaces;
 
 namespace Presentation.Controllers
 {

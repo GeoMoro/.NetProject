@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Data.Domain.Interfaces.ServicesInterfaces;
-using Presentation.Models.AccountViewModels;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.AccountViewModels;
 
 namespace Presentation.Extensions
 {

@@ -2,13 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Data.Domain.Entities;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.LectureViewModels;
 using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Models.LectureViewModels;
 
 namespace Presentation.Controllers
 {
@@ -17,11 +17,13 @@ namespace Presentation.Controllers
     {
         private readonly IHostingEnvironment _env;
         private readonly ILectureRepository _repository;
+        private readonly ILectureService _lectureService;
 
-        public LecturesController(ILectureRepository repository, IHostingEnvironment env)
+        public LecturesController(ILectureRepository repository, IHostingEnvironment env, ILectureService lectureService)
         {
             _env = env;
             _repository = repository;
+            _lectureService = lectureService;
         }
 
         // GET: Lectures
@@ -68,37 +70,7 @@ namespace Presentation.Controllers
                 return View(lectureCreateModel);
             }
 
-            _repository.CreateLecture(
-                Lecture.CreateLecture(
-                    lectureCreateModel.Title,
-                    lectureCreateModel.Description
-                )
-            );
-
-            var currentLecture = _repository.GetLectureInfoByDetails(lectureCreateModel.Title, lectureCreateModel.Description);
-
-            if (lectureCreateModel.File != null)
-            {
-                foreach (var file in lectureCreateModel.File)
-                {
-                    if (file.Length > 0)
-                    {
-                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + currentLecture.Id);
-
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-
-                        // string extension = lectureCreateModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
-
-                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
-                        }
-                    }
-                }
-            }
+            await _lectureService.CreateLecture(lectureCreateModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -145,7 +117,7 @@ namespace Presentation.Controllers
             {
                 return View(lectureModel);
             }
-            
+
             lectureEdited.Title = lectureModel.Title;
             lectureEdited.Description = lectureModel.Description;
 
@@ -242,13 +214,7 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteFile(string fileName, Guid? givenId)
         {
-            {
-                var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
-                if (System.IO.File.Exists(searchedPath))
-                {
-                    System.IO.File.Delete(searchedPath);
-                }
-            }
+            _lectureService.DeleteFile(fileName, givenId);
 
             return RedirectToAction("Delete", "Lectures", new { id = givenId });
         }
@@ -256,13 +222,9 @@ namespace Presentation.Controllers
         [HttpPost]
         public IActionResult Download(Guid lectureId, string fileName)
         {
-            {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + lectureId + "/" + fileName);
-                Stream file = new FileStream(searchedPath, FileMode.Open);
-                string content_type = "application/octet-stream";
+            var file = _lectureService.SearchLecture(lectureId, fileName);
 
-                return File(file, content_type, fileName);
-            }
+            return File(file, "application/octet-stream", fileName);
         }
     }
 }
