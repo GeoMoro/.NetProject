@@ -14,19 +14,19 @@
 <h2>Index</h2>
 
 <p>
-    <a  class="btn btn-default" asp-action="Create" asp-route-id="@UserManager.GetUserId(User)">Upload a Homework or Kata file</a>
+    <a class="btn btn-default" asp-action="Create" asp-route-id="@UserManager.GetUserId(User)">Upload a Homework or Kata file</a>
 </p>
-<table class="table">
+<table class="table uploadtable">
     <thead>
         <tr>
             <th style="font-size: 22px;">
-                <p align="left"><b>Contents</b></p>
+                <p align="left"><b>Katas</b></p>
             </th>
             @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
             {
                 <th style="font-size: 22px;">
                     <p align="left">
-                        <b>Actions</b>
+                        <b>Laboratory</b>
                     </p>
                 </th>
             }
@@ -37,7 +37,7 @@
 
         <tr>
             <td style="font-size: 16px;">
-                <p>
+                @*                <p>
                     @{
                         var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == UserManager.GetUserId(User));
                         foreach (var file in Service.GetFiles("Laboratory", "1", currentUser.FirstName + "" + currentUser.LastName + "" + currentUser.Group))
@@ -47,25 +47,62 @@
                         }
                     }
 
-                </p>
+                </p>*@
+                @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                {
+                    <button type="button" class="btn btn-info headbutton" data-toggle="collapse" data-target="#kata">Kata</button>
+                    <br />
+                    <div id="kata" class="collapse">
+                        @for (var index = 1; index <= 7; ++index)
+                        {
+                            var value = Guid.NewGuid();
+                            <div>
+                                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#@value">Kata nr. @index</button>
+
+                                <div id="@value" class="collapse">
+                                    @foreach (var file in Service.GetAllFiles("Kata", index.ToString()))
+                                    {
+                                        using (Html.BeginForm("Download", "Uploads", new { seminarName = "Kata", seminarNumber = index.ToString(), fileName = @file }, FormMethod.Post, null, new { }))
+                                        {
+                                            <button class="btn btn-default">@file</button>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    
+                }
+
             </td>
             <td>
                 @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                 {
-                    var value = 0;
-                    for (var index = 1; index <= 7; ++index)
-                    {
-                        <button class="btn btn-default" value="@index">Laborator @index</button>
-                    }
+                    
+                    <button type="button" class="btn btn-info headbutton" data-toggle="collapse" data-target="#lecture">Laboratory</button>
 
-                    foreach (var file in Service.GetAllFiles("Laboratory", "1"))
-                    {
-                        using (Html.BeginForm("Download", "Uploads", new { seminarName = "Seminar", seminarNumber = "1", fileName = @file }, FormMethod.Post, null, new { }))
+                    <br />
+                    <div id="lecture" class="collapse">
+                        @for (var index = 1; index <= 7; ++index)
                         {
-                            <button class="btn btn-default">@file</button>
+                            var value = Guid.NewGuid();
+                            <div>
+                            <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#@value">Laboratory nr. @index</button>
+
+                                <div id="@value" class="collapse">
+                                    @foreach (var file in Service.GetAllFiles("Laboratory", index.ToString()))
+                                    {
+                                        using (Html.BeginForm("Download", "Uploads", new { seminarName = "Laboratory", seminarNumber = index.ToString(), fileName = @file }, FormMethod.Post, null, new { }))
+                                        {
+                                            <button class="btn btn-default">@file</button>
+                                        }
+                                    }
+                                </div>
+                            </div>
                         }
-                    }
-                 }
+                    </div>
+
+                }
             </td>
         </tr>
     </tbody>

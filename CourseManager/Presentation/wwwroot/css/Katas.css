@@ -11,3 +11,15 @@
 .delete:hover {
     color: #ff0000;
 }
+
+
+.uploadtable tbody tr td {
+    width: 50%;
+}
+.headbutton {
+    width: 20rem;
+    background: darkblue;
+}
+    .headbutton:hover,.headbutton:focus,.headbutton.active {
+        background: darkblue;
+    }
