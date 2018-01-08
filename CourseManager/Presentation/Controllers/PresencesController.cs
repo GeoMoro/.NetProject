@@ -15,20 +15,18 @@ namespace Presentation.Controllers
     public class PresencesController : Controller
     {
         private readonly IPresenceRepository _repository;
-        private readonly ApplicationDbContext _application;
         private readonly IUserStatusRepository _userRepo;
+        private readonly IAttendanceRepository _attendanceRepository;
         private readonly IUserStatusService _service;
-        private readonly IAttendanceRepository _attendance;
         private readonly IPresenceService _presenceServ;
         private readonly IUserAttendanceService _attServ;
 
-        public PresencesController(IPresenceRepository repository, ApplicationDbContext application, IUserStatusRepository userRepo, IUserStatusService service, IAttendanceRepository attendance, IPresenceService presenceServ, IUserAttendanceService attServ)
+        public PresencesController(IPresenceRepository repository, ApplicationDbContext application, IUserStatusRepository userRepo, IUserStatusService service, IAttendanceRepository attendanceRepository, IPresenceService presenceServ, IUserAttendanceService attServ)
         {
             _repository = repository;
-            _application = application;
             _userRepo = userRepo;
             _service = service;
-            _attendance = attendance;
+            _attendanceRepository = attendanceRepository;
             _presenceServ = presenceServ;
             _attServ = attServ;
         }
@@ -100,18 +98,18 @@ namespace Presentation.Controllers
                 return View(userCreateModel);
             }
 
-            var check = _attendance.GetAllAttendances().Where(att => att.UserId == userId).ToList().Count;
+            var check = _attendanceRepository.GetAllAttendances().Where(att => att.UserId == userId).ToList().Count;
 
             if (check != 0)
             {
                 try
                 {
-                    var modifyPresence = _attendance.GetAllAttendances().Where(attend => attend.UserId == userId).OrderByDescending(attend => attend.StartDate).FirstOrDefault();
+                    var modifyPresence = _attendanceRepository.GetAllAttendances().Where(attend => attend.UserId == userId).OrderByDescending(attend => attend.StartDate).FirstOrDefault();
                     if (modifyPresence != null)
                     {
                         modifyPresence.Presence = userCreateModel.Presence;
 
-                        _attendance.EditAttendance(modifyPresence);
+                        _attendanceRepository.EditAttendance(modifyPresence);
                     }
                 }
                 catch (DbUpdateConcurrencyException)
@@ -138,7 +136,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var userActivity = _attendance.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
+            var userActivity = _attendanceRepository.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
             if (userActivity == null)
             {
                 return NotFound();
@@ -158,7 +156,7 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult UpdatePresence(Guid attendanceId, [Bind("LaboratoryMark, KataMark, Presence")] UserStatusEditModel userStatusEditModel)
         {
-            var userToBeEdited = _attendance.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
+            var userToBeEdited = _attendanceRepository.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
 
             if (userToBeEdited == null)
             {
@@ -176,7 +174,7 @@ namespace Presentation.Controllers
 
             try
             {
-                _attendance.EditAttendance(userToBeEdited);
+                _attendanceRepository.EditAttendance(userToBeEdited);
             }
             catch (DbUpdateConcurrencyException)
             {

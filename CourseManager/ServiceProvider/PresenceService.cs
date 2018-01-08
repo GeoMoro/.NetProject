@@ -1,9 +1,9 @@
-﻿using Data.Domain.Entities;
-using Data.Domain.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Business.ServicesInterfaces;
+using Data.Domain.Entities;
+using Data.Domain.Interfaces;
 using Data.Persistance;
 
 namespace ServicesProvider
@@ -12,8 +12,8 @@ namespace ServicesProvider
     {
         private readonly IPresenceRepository _repository;
         private readonly IUserStatusRepository _userRepo;
-        private readonly IUserStatusService _service;
         private readonly IAttendanceRepository _attendance;
+        private readonly IUserStatusService _service;
         private readonly ApplicationDbContext _application;
 
         public PresenceService(IPresenceRepository repository, ApplicationDbContext application,
@@ -30,30 +30,30 @@ namespace ServicesProvider
         {
             var laboratory = Guid.NewGuid();
             var studentList = _service.GetUsersByFactionId(factionId);
-            var getUser = _userRepo.GetAllUsers().Where(user => user.FactionId == factionId).FirstOrDefault();
+            var getUser = _userRepo.GetAllUsers().FirstOrDefault(user => user.FactionId == factionId);
             var check = _attendance.GetAllAttendances()
                 .Where(attend => attend.UserId == getUser.Id && attend.LaboratoryNumber == labValue).ToList().Count;
 
-            if (check == 0)
+            if (check != 0) return;
+
+            foreach (var students in studentList)
             {
-                foreach (var students in studentList)
-                {
-                    _attendance.CreateAttendance(
-                        Attendance.CreateAttendance(
-                            labValue,
-                            laboratory,
-                            students.Id,
-                            0,
-                            0,
-                            false
-                        ));
-                }
+                _attendance.CreateAttendance(
+                    Attendance.CreateAttendance(
+                        labValue,
+                        laboratory,
+                        students.Id,
+                        0,
+                        0,
+                        false
+                    ));
             }
         }
 
         public void ApplyModificationsOnUsers(string name, List<UserStatus> selectedStudents)
         {
             var modify = _repository.GetPresenceByName(name);
+
             foreach (var student in selectedStudents)
             {
                 var searchedUser = _userRepo.GetUserById(student.Id);
@@ -70,15 +70,10 @@ namespace ServicesProvider
 
             if (check.Count == 0)
             {
-                foreach (var student in _application.Users.ToList())
-                {
-                    if (student.Group != null && name.Contains(student.Group))
-                    {
-                        selectedStudents.Add(
-                            _service.CreateAndReturnLatestUser(student.Id, factionId)
-                        );
-                    }
-                }
+                selectedStudents.AddRange(from student in _application.Users.ToList()
+                                          where student.Group != null && name.Contains(student.Group)
+                                          select _service.CreateAndReturnLatestUser(student.Id, factionId)
+                );
             }
 
             return selectedStudents;
