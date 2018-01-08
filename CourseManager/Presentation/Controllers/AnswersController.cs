@@ -23,6 +23,7 @@ namespace Presentation.Controllers
         public IActionResult Index(Guid? questionId)
         {
             TempData["Id"] = questionId;
+
             return View(_repository.GetAllAnswersForGivenQuestion(questionId.Value));
         }
         
@@ -35,6 +36,7 @@ namespace Presentation.Controllers
             }
 
             var answer = _repository.GetAnswerById(id.Value);
+
             if (answer == null)
             {
                 return NotFound();
