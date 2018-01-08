@@ -19,22 +19,20 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.Students)
         </dt>
         <dd>
-            @{
-                foreach (var student in Model.Students)
-                {
-                    var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
-                    var displayName = currentUser.FirstName + currentUser.LastName;
+            @foreach (var student in Model.Students)
+            {
+                var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
+                var displayName = currentUser.FirstName + currentUser.LastName;
                     
-                    @Html.DisplayFor(modelItem => displayName)
+                @Html.DisplayFor(modelItem => displayName)
                     
-                    <br />
-                }
+                <br />
             }
-        </dd>
+        </dd>*@
     </dl>
 
     <form asp-action="Delete">

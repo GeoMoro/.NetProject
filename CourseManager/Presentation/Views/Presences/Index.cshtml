@@ -36,13 +36,15 @@ else
     <tbody>
         @foreach (var item in Model)
         {
+            var value = Guid.NewGuid();
             <tr>
                 <td>
-                    <b>@Html.DisplayFor(modelItem => item.Name)</b>
+                    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#@value">@item.Name</button>
                 </td>
 
                 <td>
-                    <table class="table">
+                    <div id="@value" class="collapse">
+                        <table class="table">
                             <tr>
                                 @{
                                     var space = "---------";
@@ -80,7 +82,7 @@ else
                                             @Html.DisplayFor(modelItem => presence)
                                             @Html.DisplayFor(modelItem => lab)
                                             @Html.DisplayFor(modelItem => kata)
-                                            
+
                                             @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                                             {
                                                 @Html.DisplayFor(modelItem => actions)
@@ -89,49 +91,43 @@ else
                                     }
                                 }
                             </tr>
-                            <tr>
-                                @{
-                                    foreach (var student in item.Students)
-                                    {
-                                        <tr>
-                                            @{
-                                                var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
-                                                var displayName = currentUser.FirstName + currentUser.LastName;
-                                                <th>
-                                                    @Html.DisplayFor(modelItem => displayName)
-                                                </th>
+                            @foreach (var student in item.Students)
+                            {
+                                <tr>
+                                    @{
+                                        var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
+                                        var displayName = currentUser.FirstName + currentUser.LastName;
+                                        <th>
+                                            @Html.DisplayFor(modelItem => displayName)
+                                        </th>
 
-                                                foreach (var activ in student.Attendance)
+                                        foreach (var activ in student.Attendance)
+                                        {
+                                            <td>
+                                                @Html.DisplayFor(modelItem => activ.Presence)
+                                                @Html.DisplayFor(modelItem => activ.LaboratoryMark)
+                                                @Html.DisplayFor(modelItem => activ.KataMark)
+
+                                                @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                                                 {
-                                                    <td>
-                                                        @Html.DisplayFor(modelItem => activ.Presence)
-                                                        @Html.DisplayFor(modelItem => activ.LaboratoryMark)
-                                                        @Html.DisplayFor(modelItem => activ.KataMark)
-                                                        
-                                                        @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
-                                                        {
-                                                             @Html.ActionLink("Edit", "UpdatePresence", "Presences", new { attendanceId = activ.Id }, null)
-                                                        }
-                                                    </td>
-
+                                                    @Html.ActionLink("Edit", "UpdatePresence", "Presences", new { attendanceId = activ.Id }, null)
                                                 }
-                                              }
-                                        </tr>
-                                    }
-                                  }
-                            
-                        </tr>
-                    </table>
+                                            </td>
+                                        }
+                                        }
+                                    </tr>
+                            }
+                        </table>
+                    </div>
                 </td>
-                
-                <td>
-          		@if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
-                 {
-                    <a class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                 }
-                </td>
-             </tr>
-         }
-   </tbody>
-</table>
 
+                <td>
+                    @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                    {
+                        <a class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
+           </tr>
+         }
+        </tbody>
+        </table>
