@@ -34,7 +34,6 @@ namespace Presentation.Controllers
         }
 
 
-
         public IActionResult CreateNews(string createdBy)
         {
             return View();
@@ -49,13 +48,7 @@ namespace Presentation.Controllers
                 return View(newsCreateModel);
             }
 
-            _repository.CreateNews(
-                News.CreateNews(
-                    newsCreateModel.Title,
-                    newsCreateModel.Description,
-                    createdBy
-                )
-            );
+            _service.Create(createdBy, newsCreateModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -67,7 +60,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var news = _repository.GetNewsById(id.Value);
+            var news = _service.GetNewsById(id.Value);
             if (news == null)
             {
                 return NotFound();
@@ -85,7 +78,7 @@ namespace Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdateNews(Guid id, [Bind("Title,Description, CreatedBy")] NewsEditModel newsEditModel)
         {
-            var newsEdited = _repository.GetNewsById(id);
+            var newsEdited = _service.GetNewsById(id);
 
             if (newsEdited == null)
             {
@@ -102,11 +95,11 @@ namespace Presentation.Controllers
 
             try
             {
-                _repository.UpdateNews(newsEdited);
+                _service.Update(newsEdited);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!NewsExists(_repository.GetNewsById(id).Id))
+                if (!NewsExists(_service.GetNewsById(id).Id))
                 {
                     return NotFound();
                 }
@@ -124,7 +117,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var news = _repository.GetNewsById(id.Value);
+            var news = _service.GetNewsById(id.Value);
             if (news == null)
             {
                 return NotFound();
@@ -137,16 +130,16 @@ namespace Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            var news = _repository.GetNewsById(id);
+            var news = _service.GetNewsById(id);
 
-            _repository.DeleteNews(news);
+            _service.Delete(news);
 
             return RedirectToAction(nameof(Index));
         }
 
         private bool NewsExists(Guid id)
         {
-            return _repository.GetAllNews().Any(e => e.Id == id);
+           return _service.NewsExists(id);
         }
     }
 }
