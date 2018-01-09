@@ -24,7 +24,6 @@ namespace ServicesProvider
 
         public List<string> GetFiles(Guid id)
         {
-            var currentLecture = _repository.GetLectureById(id);
             var fileList = new List<string>();
             var path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + id;
 
@@ -162,7 +161,7 @@ namespace ServicesProvider
                 {
                     if (file.Length > 0)
                     {
-                        string path = Path.Combine(_env.WebRootPath, "Lectures/" + id);
+                        var path = Path.Combine(_env.WebRootPath, "Lectures/" + id);
 
                         if (!Directory.Exists(path))
                         {
