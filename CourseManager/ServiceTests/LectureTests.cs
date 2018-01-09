@@ -74,6 +74,19 @@ namespace ServiceTests
             Assert.AreEqual(Mock.Lectures[0], searchedLecture);
         }
 
+        [TestMethod]
+        public void GetAllLectures_WhenCalled_ExpectToGetAllLectures()
+        {
+            // Arrange
+            var sut = CreateSut();
+
+            // Act
+            var allLectures = sut.GetAllLectures();
+
+            // Assert
+            Assert.AreEqual(allLectures.Count, 5);
+        }
+
         private LectureService CreateSut()
         {
             return new LectureService(Mock, new HostingEnvironment());
