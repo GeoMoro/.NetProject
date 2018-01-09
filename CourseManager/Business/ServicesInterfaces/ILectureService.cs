@@ -14,7 +14,6 @@ namespace Business.ServicesInterfaces
         Task CreateLecture(LectureCreateModel lectureToBeCreated);
         Lecture GetLectureInfoByDetails(string title, string description);
         void DeleteFilesForGivenId(Guid id);
-        void DeleteSpecificFiles(string fileName, Guid? givenId);
         Stream SearchLecture(Guid lectureId, string fileName);
         void DeleteFile(string fileName, Guid? givenId);
         Lecture GetLectureById(Guid idValue);

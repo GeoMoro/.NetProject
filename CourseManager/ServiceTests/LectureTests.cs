@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Business.ServicesInterfaces.Models.LectureViewModels;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using ServicesProvider;
 
 namespace ServiceTests
@@ -21,12 +24,19 @@ namespace ServiceTests
         {
             // Arrange
             var sut = CreateSut();
+            var mockFile = new Mock<IFormFile>();
+
+            mockFile.Setup(_ => _.FileName).Returns("TestFile.txt");
             var lectureTobeCreate = new LectureCreateModel
             {
                 Title = "TitleX",
-                Description = "DescriptionX"
+                Description = "DescriptionX",
+                File = new List<IFormFile>
+                {
+                    mockFile.Object
+                }
             };
-
+            
             // Act
             await sut.CreateLecture(lectureTobeCreate);
 
@@ -39,28 +49,135 @@ namespace ServiceTests
         {
             // Arrange
             var sut = CreateSut();
-
-            // TODO: create some test files for the first lecture in MockRepository, make a folder named TestFiles or sth like this
-            // TODO: ask Alex Corfu for more information about how this work exactly or inspect the code to find out yourself
-
+            var folder = Guid.NewGuid();
+            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + folder;
+            
+            CreateFile(searchedPath, "MyTest.txt");
+            
             // Act
-            var files = sut.GetFiles(new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986"));
-
+            var files = sut.GetFiles(folder);
+    
             // Assert
+            Assert.AreEqual(files[0], "MyTest.txt");
 
+            DeleteFile(searchedPath);
         }
 
         [TestMethod]
         public void GetFilesBasedOnDetails_GivendDetails_GetTheProperFiles()
         {
             // Arrange
+            var sut = CreateSut();
+            var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
+            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + idValue;
+
+            CreateFile(searchedPath, "MyTest.txt");
 
             // Act
+            var files = sut.GetFilesBasedOnDetails("Title1", "Description1");
 
             // Assert
+            Assert.AreEqual(files[0], "MyTest.txt");
 
+            DeleteFile(searchedPath);
         }
 
+        [TestMethod]
+        public void DeleteFilesForGivenId_GivendDetails_DeleteTheProperFiles()
+        {
+            // Arrange
+            var sut = CreateSut();
+            var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
+            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + idValue;
+           
+            CreateFile(searchedPath, "MyTest.txt");
+            
+            // Act
+            sut.DeleteFilesForGivenId(idValue);
+
+            // Assert
+            Assert.AreEqual(Directory.Exists(searchedPath), false);
+        }
+        
+        [TestMethod]
+        public void DeleteFile_GivendDetails_DeleteTheProperFiles()
+        {
+            // Arrange
+            var sut = CreateSut();
+            var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
+            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + idValue;
+
+            CreateFile(searchedPath, "MyTest.txt");
+
+            // Act
+            sut.DeleteFile("MyTest.txt", idValue);
+
+            // Assert
+            Assert.AreEqual(File.Exists(searchedPath + "/MyTest.txt"), false);
+        }
+
+        [TestMethod]
+        public void SearchLecture_GivendDetails_SearchTheProperLectures()
+        {
+            // Arrange
+            var sut = CreateSut();
+            var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
+            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + idValue;
+
+            CreateFile(searchedPath, "MyTest.txt");
+
+            // Act
+            var file = sut.SearchLecture(idValue, "MyTest.txt");
+
+            // Assert
+            Assert.AreEqual(file.CanRead, true);
+        }
+
+        [TestMethod]
+        public void DeleteLecture_GivendDetails_EliminateTheLecture()
+        {
+            // Arrange
+            var sut = CreateSut();
+            var lecture = Lecture.CreateLecture("B-Bam", "Description");
+            Mock.Lectures.Add(lecture);
+
+            // Act
+            sut.DeleteLecture(lecture);
+
+            // Assert
+            Assert.AreEqual(Mock.Lectures.Count, 5);
+        }
+        
+        [TestMethod]
+        public async Task EditLecture_WhenCalled_ExpectToEditALecture()
+        {
+            // Arrange
+            var sut = CreateSut();
+            var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
+            var mockFile = new Mock<IFormFile>();
+            mockFile.Setup(_ => _.FileName).Returns("TestFile.txt");
+
+            var lectureTobeEdited = new LectureEditModel
+            {
+                Title = "NewTitle",
+                Description = "DescriptionA",
+                File = new List<IFormFile>
+                {
+                    mockFile.Object
+                }
+            };
+
+
+            Mock.Lectures[0].Description = lectureTobeEdited.Description;
+            Mock.Lectures[0].Title = lectureTobeEdited.Title;
+
+            // Act
+            await sut.Edit(idValue, Mock.Lectures[0], lectureTobeEdited);
+
+            // Assert
+            Assert.AreEqual(Mock.Lectures[0].Description, "DescriptionA");
+        }
+        
         [TestMethod]
         public void GetLectureById_GivenAnId_GetTheLectureWithThatId()
         {
@@ -102,9 +219,38 @@ namespace ServiceTests
 
         private LectureService CreateSut()
         {
-            return new LectureService(Mock, new HostingEnvironment());
+            var mockEnvironment = new Mock<IHostingEnvironment>();
+            mockEnvironment
+                .Setup(m => m.WebRootPath)
+                .Returns(Directory.GetCurrentDirectory() + "\\wwwroot");
+            return new LectureService(Mock, mockEnvironment.Object);
         }
 
+        private void CreateFile(string path, string file)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var fileName = path + "/" + file;
+            if (!File.Exists(fileName))
+            {
+                using (StreamWriter streamwrite = File.CreateText(fileName))
+                {
+                    streamwrite.WriteLine("A file created for testing!");
+                }
+            }
+        }
+        
+        private void DeleteFile(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+            }
+        }
+        
         #region Repository Mock Class
 
         public class LectureRepositoryMock : ILectureRepository

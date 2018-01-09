@@ -110,15 +110,6 @@ namespace ServicesProvider
             _repository.DeleteLecture(lecture);
         }
 
-        public void DeleteSpecificFiles(string fileName, Guid? givenId)
-        {
-            var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
-            if (File.Exists(searchedPath))
-            {
-                File.Delete(searchedPath);
-            }
-        }
-
         public void DeleteFile(string fileName, Guid? givenId)
         {
             var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
