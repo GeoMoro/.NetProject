@@ -139,7 +139,7 @@ namespace ServicesProvider
             return _repository.GetAllLectures();
         }
 
-        public bool GetAll(Guid id)
+        public bool CheckIfLecturesExists(Guid id)
         {
             return _repository.GetAllLectures().Any(e => e.Id == id);
         }

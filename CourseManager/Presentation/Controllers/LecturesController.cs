@@ -184,7 +184,7 @@ namespace Presentation.Controllers
 
         private bool LectureExists(Guid id)
         {
-            return _lectureService.GetAll(id);
+            return _lectureService.CheckIfLecturesExists(id);
         }
     }
 }

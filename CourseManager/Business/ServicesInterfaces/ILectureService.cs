@@ -19,7 +19,7 @@ namespace Business.ServicesInterfaces
         void DeleteFile(string fileName, Guid? givenId);
         Lecture GetLectureById(Guid idValue);
         IReadOnlyList<Lecture> GetAllLectures();
-        bool GetAll(Guid id);
+        bool CheckIfLecturesExists(Guid id);
         Task Edit(Guid id, Lecture lectureEdited, LectureEditModel lectureModel);
         void DeleteLecture(Lecture lecture);
         void DeleFromPath(Guid id);

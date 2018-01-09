@@ -87,6 +87,19 @@ namespace ServiceTests
             Assert.AreEqual(allLectures.Count, 5);
         }
 
+        [TestMethod]
+        public void CheckIfLecturesExists_GivenAnId_ShouldReturnTrueIfALectureWithThatIdExists()
+        {
+            // Arrange
+            var sut = CreateSut();
+
+            // Act
+            var exists = sut.CheckIfLecturesExists(new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986"));
+
+            // Assert
+            Assert.AreEqual(exists, true);
+        }
+
         private LectureService CreateSut()
         {
             return new LectureService(Mock, new HostingEnvironment());
