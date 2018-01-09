@@ -20,7 +20,7 @@ namespace ServiceTests
         public async Task CreateLecture_WhenCalled_ExpectToCreateALecture()
         {
             // Arrange
-            var sut = new LectureService(Mock, new HostingEnvironment());
+            var sut = CreateSut();
             var lectureTobeCreate = new LectureCreateModel
             {
                 Title = "TitleX",
@@ -33,6 +33,53 @@ namespace ServiceTests
             // Assert
             Assert.AreEqual(Mock.Lectures.Count, 6);
         }
+
+        [TestMethod]
+        public void GetFile_GivenALectureID_ExpectToReturnThatLectureFiles()
+        {
+            // Arrange
+            var sut = CreateSut();
+
+            // TODO: create some test files for the first lecture in MockRepository, make a folder named TestFiles or sth like this
+            // TODO: ask Alex Corfu for more information about how this work exactly or inspect the code to find out yourself
+
+            // Act
+            var files = sut.GetFiles(new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986"));
+
+            // Assert
+
+        }
+
+        [TestMethod]
+        public void GetFilesBasedOnDetails_GivendDetails_GetTheProperFiles()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+
+        }
+
+        [TestMethod]
+        public void GetLectureById_GivenAnId_GetTheLectureWithThatId()
+        {
+            // Arrange
+            var sut = CreateSut();
+
+            // Act
+            var searchedLecture = sut.GetLectureById(new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986"));
+
+            // Assert
+            Assert.AreEqual(Mock.Lectures[0], searchedLecture);
+        }
+
+        private LectureService CreateSut()
+        {
+            return new LectureService(Mock, new HostingEnvironment());
+        }
+
+        #region Repository Mock Class
 
         public class LectureRepositoryMock : ILectureRepository
         {
@@ -48,6 +95,8 @@ namespace ServiceTests
                     Lecture.CreateLecture("Title4", "Description4"),
                     Lecture.CreateLecture("Title5", "Description5")
                 };
+
+                Lectures[0].Id = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
             }
 
             public IReadOnlyList<Lecture> GetAllLectures()
@@ -83,5 +132,7 @@ namespace ServiceTests
                 Lectures.Remove(lecture);
             }
         }
+
+        #endregion
     }
 }
