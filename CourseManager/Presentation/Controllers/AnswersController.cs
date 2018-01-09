@@ -23,6 +23,7 @@ namespace Presentation.Controllers
         public IActionResult Index(Guid? questionId)
         {
             TempData["Id"] = questionId;
+
             return View(_repository.GetAllAnswersForGivenQuestion(questionId.Value));
         }
         
@@ -35,6 +36,7 @@ namespace Presentation.Controllers
             }
 
             var answer = _repository.GetAnswerById(id.Value);
+
             if (answer == null)
             {
                 return NotFound();
@@ -47,6 +49,7 @@ namespace Presentation.Controllers
         public IActionResult Create(Guid? id)
         {
             TempData["Id"] = id;
+
             return View();
         }
 
@@ -82,6 +85,7 @@ namespace Presentation.Controllers
             }
 
             var answer = _repository.GetAnswerById(id.Value);
+
             if (answer == null)
             {
                 return NotFound();
@@ -147,6 +151,7 @@ namespace Presentation.Controllers
             }
 
             var answer = _repository.GetAnswerById(id.Value);
+
             if (answer == null)
             {
                 return NotFound();
@@ -178,6 +183,7 @@ namespace Presentation.Controllers
             TempData["QId"] = qid;
             TempData["UId"] = uid;
             TempData["QText"] = text;
+
             return View();
         }
 
