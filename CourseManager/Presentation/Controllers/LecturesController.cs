@@ -1,12 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models.LectureViewModels;
-using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,21 +11,17 @@ namespace Presentation.Controllers
     [Authorize]
     public class LecturesController : Controller
     {
-        private readonly IHostingEnvironment _env;
-        private readonly ILectureRepository _repository;
         private readonly ILectureService _lectureService;
 
-        public LecturesController(ILectureRepository repository, IHostingEnvironment env, ILectureService lectureService)
+        public LecturesController(ILectureService lectureService)
         {
-            _env = env;
-            _repository = repository;
             _lectureService = lectureService;
         }
 
         // GET: Lectures
         public IActionResult Index()
         {
-            return View(_repository.GetAllLectures());
+            return View(_lectureService.GetAllLectures());
         }
 
         // GET: Lectures/Details/5
@@ -40,12 +32,12 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var lecture = _repository.GetLectureById(id.Value);
+            var lecture = _lectureService.GetLectureById(id.Value);
+
             if (lecture == null)
             {
                 return NotFound();
             }
-
 
             return View(lecture);
         }
@@ -84,7 +76,8 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var lecture = _repository.GetLectureById(id.Value);
+            var lecture = _lectureService.GetLectureById(id.Value);
+
             if (lecture == null)
             {
                 return NotFound();
@@ -106,7 +99,7 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Title,Description,File")] LectureEditModel lectureModel)
         {
-            var lectureEdited = _repository.GetLectureById(id);
+            var lectureEdited = _lectureService.GetLectureById(id);
 
             if (lectureEdited == null)
             {
@@ -123,41 +116,11 @@ namespace Presentation.Controllers
 
             try
             {
-                _repository.EditLecture(lectureEdited);
-
-                //var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
-
-                //if (Directory.Exists(searchedPath) && oldTitle.Equals(lectureModel.Title) == false)
-                //{
-                //    Directory.Delete(searchedPath, true);
-                //}
-
-                if (lectureModel.File != null)
-                {
-                    foreach (var file in lectureModel.File)
-                    {
-                        if (file.Length > 0)
-                        {
-                            string path = Path.Combine(_env.WebRootPath, "Lectures/" + id);
-
-                            if (!Directory.Exists(path))
-                            {
-                                Directory.CreateDirectory(path);
-                            }
-
-                            // string extension = lectureModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
-
-                            using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
-                            {
-                                await file.CopyToAsync(fileStream);
-                            }
-                        }
-                    }
-                }
+                await _lectureService.Edit(id, lectureEdited, lectureModel);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!LectureExists(_repository.GetLectureById(id).Id))
+                if (!LectureExists(_lectureService.GetLectureById(id).Id))
                 {
                     return NotFound();
                 }
@@ -177,7 +140,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var lecture = _repository.GetLectureById(id.Value);
+            var lecture = _lectureService.GetLectureById(id.Value);
 
             if (lecture == null)
             {
@@ -193,21 +156,13 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            var lecture = _repository.GetLectureById(id);
+            var lecture = _lectureService.GetLectureById(id);
 
-            string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
-            if (Directory.Exists(searchedPath))
-            {
-                Directory.Delete(searchedPath, true);
-            }
-            _repository.DeleteLecture(lecture);
+            _lectureService.DeleFromPath(id);
+
+            _lectureService.DeleteLecture(lecture);
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool LectureExists(Guid id)
-        {
-            return _repository.GetAllLectures().Any(e => e.Id == id);
         }
 
         [HttpPost]
@@ -225,6 +180,11 @@ namespace Presentation.Controllers
             var file = _lectureService.SearchLecture(lectureId, fileName);
 
             return File(file, "application/octet-stream", fileName);
+        }
+
+        private bool LectureExists(Guid id)
+        {
+            return _lectureService.CheckIfLecturesExists(id);
         }
     }
 }

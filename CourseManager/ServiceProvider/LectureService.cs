@@ -1,12 +1,13 @@
-﻿using Data.Domain.Interfaces;
-using Microsoft.AspNetCore.Hosting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models.LectureViewModels;
 using Data.Domain.Entities;
+using Data.Domain.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ServicesProvider
 {
@@ -23,7 +24,6 @@ namespace ServicesProvider
 
         public List<string> GetFiles(Guid id)
         {
-            var currentLecture = _repository.GetLectureById(id);
             var fileList = new List<string>();
             var path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + id;
 
@@ -110,15 +110,6 @@ namespace ServicesProvider
             _repository.DeleteLecture(lecture);
         }
 
-        public void DeleteSpecificFiles(string fileName, Guid? givenId)
-        {
-            var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
-            if (File.Exists(searchedPath))
-            {
-                File.Delete(searchedPath);
-            }
-        }
-
         public void DeleteFile(string fileName, Guid? givenId)
         {
             var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + givenId.Value + "/" + fileName);
@@ -126,6 +117,70 @@ namespace ServicesProvider
             if (File.Exists(searchedPath))
             {
                 File.Delete(searchedPath);
+            }
+        }
+
+        public Lecture GetLectureById(Guid idValue)
+        {
+            return _repository.GetLectureById(idValue);
+        }
+
+        public IReadOnlyList<Lecture> GetAllLectures()
+        {
+            return _repository.GetAllLectures();
+        }
+
+        public bool CheckIfLecturesExists(Guid id)
+        {
+            return _repository.GetAllLectures().Any(e => e.Id == id);
+        }
+
+        public async Task Edit(Guid id, Lecture lectureEdited, LectureEditModel lectureModel)
+        {
+            _repository.EditLecture(lectureEdited);
+
+            //var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
+
+            //if (Directory.Exists(searchedPath) && oldTitle.Equals(lectureModel.Title) == false)
+            //{
+            //    Directory.Delete(searchedPath, true);
+            //}
+
+            if (lectureModel.File != null)
+            {
+                foreach (var file in lectureModel.File)
+                {
+                    if (file.Length > 0)
+                    {
+                        var path = Path.Combine(_env.WebRootPath, "Lectures/" + id);
+
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        // string extension = lectureModel.Title + "." + Path.GetExtension(file.FileName).Substring(1);
+
+                        using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void DeleteLecture(Lecture lecture)
+        {
+            _repository.DeleteLecture(lecture);
+        }
+
+        public void DeleFromPath(Guid id)
+        {
+            string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
+            if (Directory.Exists(searchedPath))
+            {
+                Directory.Delete(searchedPath, true);
             }
         }
 
