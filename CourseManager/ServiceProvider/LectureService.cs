@@ -177,7 +177,8 @@ namespace ServicesProvider
 
         public void DeleFromPath(Guid id)
         {
-            string searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
+            var searchedPath = Path.Combine(_env.WebRootPath, "Lectures/" + id);
+
             if (Directory.Exists(searchedPath))
             {
                 Directory.Delete(searchedPath, true);

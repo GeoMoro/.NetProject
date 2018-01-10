@@ -45,7 +45,7 @@ namespace ServiceTests
         }
 
         [TestMethod]
-        public void GetFile_GivenALectureID_ExpectToReturnThatLectureFiles()
+        public void GetFiles_GivenALectureID_ExpectToReturnThatLectureFiles()
         {
             // Arrange
             var sut = CreateSut();
@@ -60,7 +60,26 @@ namespace ServiceTests
             // Assert
             Assert.AreEqual(files[0], "MyTest.txt");
 
+            // Clean up
             DeleteFile(searchedPath);
+        }
+
+        [TestMethod]
+        public void GetFiles_GivenALectureId_ExpectAFileToBeCreatedForThatLectureIfItDoesNotAlreadyExist()
+        {
+            // Arange
+            var sut = CreateSut();
+            var randomLectureId = Guid.NewGuid();
+            var path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + randomLectureId;
+
+            // Act
+            sut.GetFiles(randomLectureId);
+
+            // Assert
+            Assert.AreEqual(Directory.Exists(path), true);
+
+            // Clean up
+            DeleteFile(path);
         }
 
         [TestMethod]
@@ -71,15 +90,34 @@ namespace ServiceTests
             var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
             var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + idValue;
 
-            CreateFile(searchedPath, "MyTest.txt");
+            CreateFile(searchedPath, "MyTest2.txt");
 
             // Act
             var files = sut.GetFilesBasedOnDetails("Title1", "Description1");
 
             // Assert
-            Assert.AreEqual(files[0], "MyTest.txt");
+            Assert.AreEqual(files[0], "MyTest2.txt");
 
+            // Clean up
             DeleteFile(searchedPath);
+        }
+
+        [TestMethod]
+        public void GetFilesBasedOnDetails_GivenALectureId_ExpectAFileToBeCreatedForThatLectureIfItDoesNotAlreadyExist()
+        {
+            // Arange
+            var sut = CreateSut();
+            var lectureId = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
+            var path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + lectureId;
+
+            // Act
+            sut.GetFilesBasedOnDetails("Title1", "Description1");
+
+            // Assert
+            Assert.AreEqual(Directory.Exists(path), true);
+
+            // Clean up
+            DeleteFile(path);
         }
 
         [TestMethod]
@@ -87,10 +125,10 @@ namespace ServiceTests
         {
             // Arrange
             var sut = CreateSut();
-            var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
+            var idValue = new Guid("d3ba2f3b-2a1f-4175-bc05-a0a89a14942d"); 
             var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + idValue;
            
-            CreateFile(searchedPath, "MyTest.txt");
+            CreateFile(searchedPath, "MyTest3.txt");
             
             // Act
             sut.DeleteFilesForGivenId(idValue);
@@ -107,13 +145,13 @@ namespace ServiceTests
             var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
             var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + idValue;
 
-            CreateFile(searchedPath, "MyTest.txt");
+            CreateFile(searchedPath, "MyTest4.txt");
 
             // Act
-            sut.DeleteFile("MyTest.txt", idValue);
+            sut.DeleteFile("MyTest4.txt", idValue);
 
             // Assert
-            Assert.AreEqual(File.Exists(searchedPath + "/MyTest.txt"), false);
+            Assert.AreEqual(File.Exists(searchedPath + "/MyTest4.txt"), false);
         }
 
         [TestMethod]
@@ -124,10 +162,10 @@ namespace ServiceTests
             var idValue = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
             var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\" + idValue;
 
-            CreateFile(searchedPath, "MyTest.txt");
+            CreateFile(searchedPath, "MyTest5.txt");
 
             // Act
-            var file = sut.SearchLecture(idValue, "MyTest.txt");
+            var file = sut.SearchLecture(idValue, "MyTest5.txt");
 
             // Assert
             Assert.AreEqual(file.CanRead, true);
@@ -166,7 +204,6 @@ namespace ServiceTests
                     mockFile.Object
                 }
             };
-
 
             Mock.Lectures[0].Description = lectureTobeEdited.Description;
             Mock.Lectures[0].Title = lectureTobeEdited.Title;
@@ -226,7 +263,7 @@ namespace ServiceTests
             return new LectureService(Mock, mockEnvironment.Object);
         }
 
-        private void CreateFile(string path, string file)
+        private static void CreateFile(string path, string file)
         {
             if (!Directory.Exists(path))
             {
@@ -243,7 +280,7 @@ namespace ServiceTests
             }
         }
         
-        private void DeleteFile(string path)
+        private static void DeleteFile(string path)
         {
             if (Directory.Exists(path))
             {
@@ -269,6 +306,7 @@ namespace ServiceTests
                 };
 
                 Lectures[0].Id = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
+                Lectures[1].Id = new Guid("d3ba2f3b-2a1f-4175-bc05-a0a89a14942d");
             }
 
             public IReadOnlyList<Lecture> GetAllLectures()
