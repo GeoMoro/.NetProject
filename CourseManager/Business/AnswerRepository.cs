@@ -29,7 +29,7 @@ namespace Business
 
         public List<Answer> GetAllAnswersForGivenUserId(Guid uid)
         {
-            return _databaseService.Answers.Where(answer => answer.QuestionId == uid).ToList();
+            return _databaseService.Answers.Where(answer => answer.UserId == uid).ToList();
         }
 
         public Answer GetAnswerById(Guid id)

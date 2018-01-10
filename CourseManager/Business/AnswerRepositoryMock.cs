@@ -6,14 +6,23 @@ using System.Text;
 
 namespace Business
 {
-    public class AnswerRepositoryMock: IAnswerRepository
+    public class AnswerRepositoryMock : IAnswerRepository
     {
         public List<Answer> Answers;
 
         public AnswerRepositoryMock()
         {
 
-            Answer answer1 = Answer.CreateAnswer(new Guid(), new Guid(), "answer1");
+            Answers = new List<Answer>
+            {
+                Answer.CreateAnswer(new Guid(), new Guid(), "answer1"),
+                Answer.CreateAnswer(new Guid(), new Guid(), "answer2"),
+                Answer.CreateAnswer(new Guid(), new Guid(), "answer3"),
+                Answer.CreateAnswer(new Guid(), new Guid(), "answer4"),
+                Answer.CreateAnswer(new Guid(), new Guid(), "answer5")
+            };
+
+          /*  Answer answer1 = Answer.CreateAnswer(new Guid(), new Guid(), "answer1");
             Answer answer2 = Answer.CreateAnswer(new Guid(), new Guid(), "answer2");
             Answer answer3 = Answer.CreateAnswer(new Guid(), new Guid(), "answer3");
             Answer answer4 = Answer.CreateAnswer(new Guid(), new Guid(), "answer4");
@@ -23,40 +32,85 @@ namespace Business
             Answers.Add(answer2);
             Answers.Add(answer3);
             Answers.Add(answer4);
-            Answers.Add(answer5);
+            Answers.Add(answer5);*/
         }
 
-        public IReadOnlyList<Answer> GetAllAnswers()
+        public List<Answer> GetAllAnswers()
         {
             return Answers;
         }
 
-        public Lecture GetLectureById(Guid id)
+        public List<Answer> GetAllAnswersForGivenQuestion(Guid qid)
         {
-            return Lectures.SingleOrDefault(lecture => lecture.Id.Equals(id));
+            List<Answer> ans = new List<Answer>();
+            foreach(Answer a in Answers)
+            {
+                if (a.QuestionId == qid)
+                {
+                    ans.Add(a);
+                }
+            }
+            return ans;
         }
 
-        public Lecture GetLectureInfoByDetails(string title, string description)
+        public List<Answer> GetAllAnswersForGivenUserId(Guid uid)
         {
-            return Lectures.SingleOrDefault(lecture => lecture.Title == title && lecture.Description == description);
+            List<Answer> ans = new List<Answer>();
+            foreach (Answer a in Answers)
+            {
+                if (a.UserId == uid)
+                {
+                    ans.Add(a);
+                }
+            }
+            return ans;
         }
 
-        public void CreateLecture(Lecture lecture)
+        public Answer GetAnswerById(Guid id)
         {
-            Lectures.Add(lecture);
+            Answer ans = new Answer();
+
+            foreach (Answer a in Answers)
+            {
+                if (a.Id == id)
+                {
+                    ans.UserId = a.UserId;
+                    ans.QuestionId = a.QuestionId;
+                    ans.Text = a.Text;
+                    ans.AnswerDate = a.AnswerDate;
+                    ans.Id = a.Id;
+
+                }
+            }
+            return ans;
         }
 
-        public void EditLecture(Lecture lecture)
+        public void CreateAnswer(Answer answer)
         {
-            var lectureToBeUpdate = GetLectureById(lecture.Id);
-
-            lectureToBeUpdate.Title = lecture.Title;
-            lectureToBeUpdate.Description = lecture.Description;
+            Answers.Add(answer);
         }
 
-        public void DeleteLecture(Lecture lecture)
+        public void CreateAnswerForGivenQuestion(Guid qid, Answer answer)
         {
-            Lectures.Remove(lecture);
+            answer.QuestionId = qid;
+            Answers.Add(answer);
+        }
+
+
+        public void EditAnswer(Answer answer)
+        {
+            var answerToBeUpdate = GetAnswerById(answer.Id);
+
+            answerToBeUpdate.UserId = answer.UserId;
+            answerToBeUpdate.QuestionId = answer.QuestionId;
+            answerToBeUpdate.Text = answer.Text;
+            answerToBeUpdate.AnswerDate = answer.AnswerDate;
+        }
+
+
+        public void DeleteAnswer(Answer answer)
+        {
+            Answers.Remove(answer);
         }
     }
 }
