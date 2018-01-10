@@ -31,7 +31,7 @@ namespace ServiceTests
             {
                 Katas = new List<Kata>
                 {
-                    Kata.CreateKata("Kata1", "Description1"),
+                    Kata.CreateKata("Title1", "Description1"),
                     Kata.CreateKata("Title2", "Description2"),
                     Kata.CreateKata("Title3", "Description3"),
                     Kata.CreateKata("Title4", "Description4"),
