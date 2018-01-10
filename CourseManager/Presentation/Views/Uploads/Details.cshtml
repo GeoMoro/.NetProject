@@ -1,0 +1,40 @@
+﻿@model Kata
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Kata</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt style="font-size: 18px;">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd style="font-size: 16px;">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt style="font-size: 18px;">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd style="font-size: 16px;">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt style="font-size: 18px;">
+            UploadedFiles
+        </dt>
+        <dd style="font-size: 16px;">
+            @foreach (var file in Model.GetFiles())
+            {
+                @file
+                <br />
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+    <a class="btn btn-default" asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a class="btn btn-default" asp-action="Index">Back to List</a>
+</div>

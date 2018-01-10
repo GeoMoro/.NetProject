@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Business.ServicesInterfaces;
+using Data.Domain.Entities;
+using Data.Domain.Interfaces;
+using Data.Persistance;
+
+namespace ServicesProvider
+{
+    public class PresenceService : IPresenceService
+    {
+        private readonly IPresenceRepository _repository;
+        private readonly IUserStatusRepository _userRepo;
+        private readonly IAttendanceRepository _attendance;
+        private readonly IUserStatusService _service;
+        private readonly ApplicationDbContext _application;
+
+        public PresenceService(IPresenceRepository repository, ApplicationDbContext application,
+            IUserStatusRepository userRepo, IUserStatusService service, IAttendanceRepository attendance)
+        {
+            _repository = repository;
+            _userRepo = userRepo;
+            _service = service;
+            _attendance = attendance;
+            _application = application;
+        }
+
+        public void StartLaboratoryBasedOnValue(Guid factionId, int labValue)
+        {
+            var laboratory = Guid.NewGuid();
+            var studentList = _service.GetUsersByFactionId(factionId);
+            var getUser = _userRepo.GetAllUsers().FirstOrDefault(user => user.FactionId == factionId);
+            var check = _attendance.GetAllAttendances()
+                .Where(attend => attend.UserId == getUser.Id && attend.LaboratoryNumber == labValue).ToList().Count;
+
+            if (check != 0) return;
+
+            foreach (var students in studentList)
+            {
+                _attendance.CreateAttendance(
+                    Attendance.CreateAttendance(
+                        labValue,
+                        laboratory,
+                        students.Id,
+                        0,
+                        0,
+                        false
+                    ));
+            }
+        }
+
+        public void ApplyModificationsOnUsers(string name, List<UserStatus> selectedStudents)
+        {
+            var modify = _repository.GetPresenceByName(name);
+
+            foreach (var student in selectedStudents)
+            {
+                var searchedUser = _userRepo.GetUserById(student.Id);
+                searchedUser.FactionId = modify.Id;
+                _userRepo.EditUser(searchedUser);
+            }
+        }
+
+        public List<UserStatus> GetUsersGivenGroup(string name, Guid factionId)
+        {
+            var check = _repository.GetAllPresences().Where(presences => presences.Name.Contains(name)).ToList();
+
+            var selectedStudents = new List<UserStatus>();
+
+            if (check.Count == 0)
+            {
+                selectedStudents.AddRange(from student in _application.Users.ToList()
+                                          where student.Group != null && name.Contains(student.Group)
+                                          select _service.CreateAndReturnLatestUser(student.Id, factionId)
+                );
+            }
+
+            return selectedStudents;
+        }
+    }
+}

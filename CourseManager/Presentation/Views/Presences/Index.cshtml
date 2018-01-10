@@ -1,42 +1,133 @@
-﻿@model IEnumerable<Data.Domain.Entities.Presence>
-
+﻿@using Business.ServicesInterfaces
+@model IEnumerable<Presence>
+@inject IUserStatusService service
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Presences</h2>
 
-<p>
-    <a asp-action="CreatePresence">Create New Presence</a>
-</p>
+@if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+{
+    <p>
+        <a class="btn btn-default" asp-action="CreateFaction">Create Faction</a>
+    </p>
+}
+else
+{
+    <p>
+        <a class="btn btn-default" asp-action="MarkAsPresent">Mark as present</a>
+    </p>
+}
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Laboratory)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Present)
+                Informations
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
+            var value = Guid.NewGuid();
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Laboratory)
+                    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#@value">@item.Name</button>
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Present)
-                </td>
-                <td>
-                    <a asp-action="UpdatePresence" asp-route-id="@item.Id">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-                
-            </tr>
-         }
-    </tbody>
-</table>
 
+                <td>
+                    <div id="@value" class="collapse">
+                        <table class="table">
+                            <tr>
+                                @{
+                                    var space = "---------";
+                                    <th>
+                                        @Html.DisplayFor(modelItem => space)
+                                    </th>
+
+                                    for (var index = 1; index <= 7; ++index)
+                                    {
+                                        <th>
+                                            @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                                            {
+                                                @Html.ActionLink("Start the lab", "StartLaboratory", "Presences", new { factionId = item.Id, labValue = index }, null)
+                                            }
+
+                                            Week @Html.DisplayFor(modelItem => index)
+                                        </th>
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                @{
+                                    var presence = "P|";
+                                    var lab = "L|";
+                                    var kata = "K|";
+                                    var actions = "Actions";
+                                    var stud = "Student";
+                                    <th>
+                                        @Html.DisplayFor(modelItem => stud)
+                                    </th>
+
+                                    for (var index = 1; index <= 7; ++index)
+                                    {
+                                        <th>
+                                            @Html.DisplayFor(modelItem => presence)
+                                            @Html.DisplayFor(modelItem => lab)
+                                            @Html.DisplayFor(modelItem => kata)
+
+                                            @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                                            {
+                                                @Html.DisplayFor(modelItem => actions)
+                                            }
+                                        </th>
+                                    }
+                                }
+                            </tr>
+                            @foreach (var student in item.Students)
+                            {
+                                <tr>
+                                    @{
+                                        var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == student.Id);
+                                        var displayName = currentUser.FirstName + currentUser.LastName;
+                                        <th>
+                                            @Html.DisplayFor(modelItem => displayName)
+                                        </th>
+
+                                        foreach (var activ in student.Attendance)
+                                        {
+                                            <td>
+                                                @Html.DisplayFor(modelItem => activ.Presence)
+                                                @Html.DisplayFor(modelItem => activ.LaboratoryMark)
+                                                @Html.DisplayFor(modelItem => activ.KataMark)
+
+                                                @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                                                {
+                                                    @Html.ActionLink("Edit", "UpdatePresence", "Presences", new { attendanceId = activ.Id }, null)
+                                                }
+                                            </td>
+                                        }
+                                        }
+                                    </tr>
+                            }
+                        </table>
+                    </div>
+                </td>
+
+                <td>
+                    @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                    {
+                        <a class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
+           </tr>
+         }
+        </tbody>
+        </table>

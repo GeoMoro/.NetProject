@@ -1,7 +1,12 @@
-﻿@model AnswerCreateModel
+﻿@model Business.ServicesInterfaces.Models.AnswerViewModels.AnswerCreateModel
 
 @{
     ViewData["Title"] = "Create";
+}
+
+@{
+    var save = TempData["Id"];
+    var userxd = TempData["myVar"];
 }
 
 <h2>Create</h2>
@@ -10,26 +15,19 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" asp-route-id="@save">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <!-- O sa se ia automat in viitor -->
             <div class="form-group">
                 <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
+                <input asp-for="UserId" class="form-control" value="@save" />
                 <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-
-            <!-- O sa se ia automat in viitor -->
-            <div class="form-group">
-                <label asp-for="QuestionId" class="control-label"></label>
-                <input asp-for="QuestionId" class="form-control" />
-                <span asp-validation-for="QuestionId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Text" class="control-label"></label>
-                <input asp-for="Text" class="form-control" />
+                <input asp-for="Text" class="form-control" value="@userxd"/>
                 <span asp-validation-for="Text" class="text-danger"></span>
             </div>
 
@@ -39,10 +37,10 @@
         </form>
     </div>
 </div>
-
+<!--
 <div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <a asp-action="Index" asp-route-id="@save">Back to List</a>
+</div>-->
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

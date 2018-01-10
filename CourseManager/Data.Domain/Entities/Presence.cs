@@ -1,39 +1,32 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
-using Data.Domain.Interfaces;
+using System.Collections.Generic;
 
 namespace Data.Domain.Entities
 {
     public class Presence
     {
-        public Presence()
-        {
-            //EF
-        }
-
-        [Key]
         public Guid Id { get; set; }
 
-        public string Laboratory { get; set; }
+        public string Name { get; set; }
 
-        public bool Present { get; set; }
+        public List<UserStatus> Students { get; set; }
 
-        public static Presence CreatePresence(string laboratory, bool present)
+        public static Presence CreatePresence(Guid id, string name, List<UserStatus> students)
         {
             var instance = new Presence
             {
-                Id = Guid.NewGuid()
+                Id = id
             };
-            instance.UpdatePresence(laboratory, present);
+
+            instance.UpdatePresence(name, students);
 
             return instance;
         }
 
-        private void UpdatePresence(string laboratory, bool present)
+        private void UpdatePresence(string name, List<UserStatus> students)
         {
-            Laboratory = laboratory;
-            Present = present;
+            Name = name;
+            Students = students;
         }
     }
 }

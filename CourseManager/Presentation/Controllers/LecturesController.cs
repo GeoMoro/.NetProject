@@ -1,26 +1,27 @@
 ﻿using System;
-using System.Linq;
+using System.Threading.Tasks;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.LectureViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Data.Domain.Entities;
-using Data.Domain.Interfaces;
-using Presentation.Models;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class LecturesController : Controller
     {
-        private readonly ILectureRepository _repository;
+        private readonly ILectureService _lectureService;
 
-        public LecturesController(ILectureRepository repository)
+        public LecturesController(ILectureService lectureService)
         {
-            _repository = repository;
+            _lectureService = lectureService;
         }
 
         // GET: Lectures
         public IActionResult Index()
         {
-            return View(_repository.GetAllLectures());
+            return View(_lectureService.GetAllLectures());
         }
 
         // GET: Lectures/Details/5
@@ -31,7 +32,8 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var lecture = _repository.GetLectureById(id.Value);
+            var lecture = _lectureService.GetLectureById(id.Value);
+
             if (lecture == null)
             {
                 return NotFound();
@@ -41,6 +43,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Lectures/Create
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Create()
         {
             return View();
@@ -51,24 +54,21 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Title,Description")] LectureCreateModel lectureCreateModel)
+        [Authorize(Roles = "Owner, Assistant")]
+        public async Task<IActionResult> Create([Bind("Title,Description,File")] LectureCreateModel lectureCreateModel)
         {
             if (!ModelState.IsValid)
             {
-               return View(lectureCreateModel);
+                return View(lectureCreateModel);
             }
 
-            _repository.CreateLecture(
-                Lecture.CreateLecture(
-                    lectureCreateModel.Title,
-                    lectureCreateModel.Description
-                )
-            );
+            await _lectureService.CreateLecture(lectureCreateModel);
 
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Lectures/Edit/5
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -76,7 +76,8 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var lecture = _repository.GetLectureById(id.Value);
+            var lecture = _lectureService.GetLectureById(id.Value);
+
             if (lecture == null)
             {
                 return NotFound();
@@ -95,9 +96,10 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, [Bind("Title,Description")] LectureEditModel lectureModel)
+        [Authorize(Roles = "Owner, Assistant")]
+        public async Task<IActionResult> Edit(Guid id, [Bind("Title,Description,File")] LectureEditModel lectureModel)
         {
-            var lectureEdited = _repository.GetLectureById(id);
+            var lectureEdited = _lectureService.GetLectureById(id);
 
             if (lectureEdited == null)
             {
@@ -114,11 +116,11 @@ namespace Presentation.Controllers
 
             try
             {
-                _repository.EditLecture(lectureEdited);
+                await _lectureService.Edit(id, lectureEdited, lectureModel);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!LectureExists(_repository.GetLectureById(id).Id))
+                if (!LectureExists(_lectureService.GetLectureById(id).Id))
                 {
                     return NotFound();
                 }
@@ -130,6 +132,7 @@ namespace Presentation.Controllers
         }
 
         // GET: Lectures/Delete/5
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -137,7 +140,8 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var lecture = _repository.GetLectureById(id.Value);
+            var lecture = _lectureService.GetLectureById(id.Value);
+
             if (lecture == null)
             {
                 return NotFound();
@@ -149,18 +153,38 @@ namespace Presentation.Controllers
         // POST: Lectures/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            var lecture = _repository.GetLectureById(id);
+            var lecture = _lectureService.GetLectureById(id);
 
-            _repository.DeleteLecture(lecture);
+            _lectureService.DeleFromPath(id);
+
+            _lectureService.DeleteLecture(lecture);
 
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Owner, Assistant")]
+        public IActionResult DeleteFile(string fileName, Guid? givenId)
+        {
+            _lectureService.DeleteFile(fileName, givenId);
+
+            return RedirectToAction("Delete", "Lectures", new { id = givenId });
+        }
+
+        [HttpPost]
+        public IActionResult Download(Guid lectureId, string fileName)
+        {
+            var file = _lectureService.SearchLecture(lectureId, fileName);
+
+            return File(file, "application/octet-stream", fileName);
+        }
+
         private bool LectureExists(Guid id)
         {
-            return _repository.GetAllLectures().Any(e => e.Id == id);
+            return _lectureService.CheckIfLecturesExists(id);
         }
     }
 }

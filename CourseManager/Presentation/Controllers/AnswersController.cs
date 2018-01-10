@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Linq;
+using Business.ServicesInterfaces.Models.AnswerViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Presentation.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class AnswersController : Controller
     {
         private readonly IAnswerRepository _repository;
@@ -18,18 +20,13 @@ namespace Presentation.Controllers
         }
 
         // GET: Answers
-        public IActionResult Index()
+        public IActionResult Index(Guid? questionId)
         {
-            return View(_repository.GetAllAnswers());
-        }
+            TempData["Id"] = questionId;
 
-        // Get: AnswerList
-        public IActionResult AnswerList(Guid QuestionId)
-        {
-            ViewData["QID"] = QuestionId;
-            return View(_repository.GetAllAnswersForGivenQuestion(QuestionId));
+            return View(_repository.GetAllAnswersForGivenQuestion(questionId.Value));
         }
-
+        
         // GET: Answers/Details/5
         public IActionResult Details(Guid? id)
         {
@@ -39,6 +36,7 @@ namespace Presentation.Controllers
             }
 
             var answer = _repository.GetAnswerById(id.Value);
+
             if (answer == null)
             {
                 return NotFound();
@@ -48,8 +46,10 @@ namespace Presentation.Controllers
         }
 
         // GET: Answers/Create
-        public IActionResult Create()
+        public IActionResult Create(Guid? id)
         {
+            TempData["Id"] = id;
+
             return View();
         }
 
@@ -58,58 +58,24 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("UserId,QuestionId,AnswerDate,Text")] AnswerCreateModel answerCreateModel)
+        public IActionResult Create(Guid? id, [Bind("UserId,QuestionId,Text")] AnswerCreateModel answerCreateModel)
         {
             if (!ModelState.IsValid)
             {
                 return View(answerCreateModel);
             }
-
+            
             _repository.CreateAnswer(
                 Answer.CreateAnswer(
                     answerCreateModel.UserId,
-                    answerCreateModel.QuestionId,
+                    id.Value,
                     answerCreateModel.Text
                 )
             );
-
-            return RedirectToAction(nameof(Index));
-        }
-
-
-        // GET: Answers/CreateNewAnswerForGivenQuestion
-        public IActionResult CreateNewAnswerForGivenQuestion(Guid? QuestionId)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CreateNewAnswerForGivenQuestion(Guid? QuestionId,
-            [Bind("UserId,QuestionId,AnswerDate,Text")]AnswerCreateModel answerCreateModel)
-        {
             
-            if (!ModelState.IsValid)
-            {
-                return View(answerCreateModel);
-            }
-
-            var newAnswer = Answer.CreateAnswer(
-                answerCreateModel.UserId,
-                answerCreateModel.QuestionId,
-                answerCreateModel.Text
-            );
-            Guid qid = new Guid();
-            if (QuestionId.HasValue)
-                qid = QuestionId.Value;
-
-            _repository.CreateAnswerForGivenQuestion(
-                qid,
-                newAnswer
-            );
-            return RedirectToAction("AnswerList", "Answers", qid);
+           return RedirectToAction("Index","Questions");
         }
-
+        
         // GET: Answers/Edit/5
         public IActionResult Edit(Guid? id)
         {
@@ -119,6 +85,7 @@ namespace Presentation.Controllers
             }
 
             var answer = _repository.GetAnswerById(id.Value);
+
             if (answer == null)
             {
                 return NotFound();
@@ -138,9 +105,9 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, [Bind("UserId,QuestionId,AnswerDate,Text")] AnswerEditModel answerEditModel)
+        public IActionResult Edit(Guid? id, [Bind("UserId,QuestionId,AnswerDate,Text")] AnswerEditModel answerEditModel)
         {
-            var answerToBeEdited = _repository.GetAnswerById(id);
+            var answerToBeEdited = _repository.GetAnswerById(id.Value);
 
             if (answerToBeEdited == null)
             {
@@ -157,14 +124,13 @@ namespace Presentation.Controllers
             answerToBeEdited.AnswerDate = answerEditModel.AnswerDate;
             answerToBeEdited.Text = answerEditModel.Text;
 
-
             try
             {
                 _repository.EditAnswer(answerToBeEdited);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AnswerExists(_repository.GetAnswerById(id).Id))
+                if (!AnswerExists(_repository.GetAnswerById(id.Value).Id))
                 {
                     return NotFound();
                 }
@@ -172,7 +138,7 @@ namespace Presentation.Controllers
                 throw;
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Questions");
             
         }
 
@@ -185,6 +151,7 @@ namespace Presentation.Controllers
             }
 
             var answer = _repository.GetAnswerById(id.Value);
+
             if (answer == null)
             {
                 return NotFound();
@@ -202,12 +169,62 @@ namespace Presentation.Controllers
 
             _repository.DeleteAnswer(answer);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Questions");
         }
 
         private bool AnswerExists(Guid id)
         {
             return _repository.GetAllAnswers().Any(answer => answer.Id == id);
+        }
+
+        // GET: Answers/Create
+        public IActionResult CreateNew(Guid? qid, Guid? uid, String text)
+        {
+            TempData["QId"] = qid;
+            TempData["UId"] = uid;
+            TempData["QText"] = text;
+
+            return View();
+        }
+
+        // POST: Answers/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateNew(Guid? qid, Guid? uid, String text, [Bind("UserId,QuestionId,Text")] AnswerCreateModel answerCreateModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(answerCreateModel);
+            }
+
+            _repository.CreateAnswer(
+                Answer.CreateAnswer(
+                    uid.Value,
+                    qid.Value,
+                    text
+                )
+            );
+
+            return RedirectToAction("Index", "Questions");
+        }
+
+        [HttpPost]
+        public IActionResult CreateNewAnswer(Guid? uid, Guid? qid, string qtext)
+        {
+            if (qtext != null)
+            {
+                _repository.CreateAnswer(
+                    Answer.CreateAnswer(
+                        uid.Value,
+                        qid.Value,
+                        qtext
+                    )
+                );
+            }
+
+            return RedirectToAction("Index", "Questions");
         }
     }
 }

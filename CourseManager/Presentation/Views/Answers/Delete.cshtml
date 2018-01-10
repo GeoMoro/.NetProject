@@ -1,4 +1,4 @@
-﻿@model Data.Domain.Entities.Answer
+﻿@model Answer
 
 @{
     ViewData["Title"] = "Delete";
@@ -39,7 +39,12 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-default" />
+        <div>
+            @using (Html.BeginForm("Index", "Answers", new { questionId = Model.QuestionId }, FormMethod.Post, null, new { }))
+            {
+                <!--<button>Back to list</button>-->
+            }
+        </div>
     </form>
 </div>

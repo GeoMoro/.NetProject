@@ -1,0 +1,53 @@
+﻿@model Business.ServicesInterfaces.Models.KataViewModels.KataEditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Modify the kata</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form runat="server" enctype="multipart/form-data" asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="ckeditor"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span><b>Current Files:</b></span>
+                <br />
+                @foreach (var file in Model.GetFiles())
+                {
+                    @file
+                    <br />
+                }
+            </div>
+            <div class="form-group">
+                <label asp-for="File" class="control-label"></label>
+                <input type="file" multiple="multiple" asp-for="File" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-default" asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/ckeditor/ckeditor.js"></script>
+}

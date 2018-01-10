@@ -1,8 +1,13 @@
-﻿@model Data.Domain.Entities.Lecture
-
+﻿@model Lecture
+@using Business.ServicesInterfaces
+@inject ILectureService services
 @{
     ViewData["Title"] = "Delete";
 }
+
+<environment include="Development">
+    <link href="~/css/Lectures.css" rel="stylesheet" />
+</environment>
 
 <h2>Delete</h2>
 
@@ -11,23 +16,35 @@
     <h4>Lecture</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
+        <dt style="font-size: 18px;">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd>
+        <dd style="font-size: 16px;">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt>
+        <dt style="font-size: 18px;">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd>
+        <dd style="font-size: 16px;">
             @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt style="font-size: 18px;">
+            Uploaded Files
+        </dt>
+        <dd style="font-size: 16px;">
+            @foreach (var file in services.GetFiles(Model.Id))
+            {
+                @using (Html.BeginForm("DeleteFile", "Lectures", new { fileName = @file, givenId = Model.Id}, FormMethod.Post, null, new { }))
+                {
+                    <button class="buttonLectures">@file</button>
+                }
+            }
         </dd>
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Index">Back to List</a>
+        <a class="btn btn-default" asp-action="Index">Back to List</a>
     </form>
 </div>

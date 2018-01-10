@@ -1,0 +1,20 @@
+﻿@model Business.ServicesInterfaces.Models.UserManagementViewModels.UserManagementAddRoleViewModel
+
+@{
+    ViewBag.Title = "Add Role";
+    Layout = "_Layout";
+}
+
+<h2>Add Role</h2>
+
+<h3>Add Role for @Model.Fullname</h3>
+
+<div asp-validation-summary="All"></div>
+
+<form asp-controller="UserManagement" asp-action="AddRole">
+    <input asp-for="UserId" type="hidden" />
+
+    <select asp-for="NewRole" asp-items="Model.Roles"></select>
+
+    <input type="submit" value="Add Role" />
+</form>

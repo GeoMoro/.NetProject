@@ -1,18 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Presentation.Services;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.AccountViewModels;
 
-namespace Presentation.Services
+namespace Presentation.Extensions
 {
     public static class EmailSenderExtensions
     {
+        private const string AssistantConfirmerEmail = "coursemanager.noreply@gmail.com";
+
         public static Task SendEmailConfirmationAsync(this IEmailSender emailSender, string email, string link)
         {
             return emailSender.SendEmailAsync(email, "Confirm your email",
-                $"Please confirm your account by clicking this link: <a href='{HtmlEncoder.Default.Encode(link)}'>link</a>");
+                $"Please confirm your account by clicking this link: {link}");
+        }
+
+        public static Task SendAssistantEmailConfirmationAsync(this IEmailSender emailSender, RegisterAssistantViewModel model, string link)
+        {
+            return emailSender.SendEmailAsync(AssistantConfirmerEmail, $"Confirm {model.FirstName} {model.LastName} email",
+                "Assistant details:\n" +
+                $"First name: {model.FirstName}\n" +
+                $"Last name: {model.LastName}\n" +
+                $"Email: {model.Email}\n" +
+                $"Secret word: {model.SecretWord}\n\n" +
+                $"Please confirm the account by clicking this link: {link}");
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Data.Domain.Interfaces
     {
         IReadOnlyList<Lecture> GetAllLectures();
         Lecture GetLectureById(Guid id);
+        Lecture GetLectureInfoByDetails(string title, string description);
         void CreateLecture(Lecture lecture);
         void EditLecture(Lecture lecture);
         void DeleteLecture(Lecture lecture);

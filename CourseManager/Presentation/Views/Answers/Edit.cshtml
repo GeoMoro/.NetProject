@@ -1,4 +1,4 @@
-﻿@model AnswerEditModel
+﻿@model Business.ServicesInterfaces.Models.AnswerViewModels.AnswerEditModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -41,7 +41,10 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @using (Html.BeginForm("Index", "Answers", new { questionId = Model.QuestionId }, FormMethod.Post, null, new { }))
+    {
+        <!----<button>Back to list</button>-->
+    }
 </div>
 
 @section Scripts {

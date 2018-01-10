@@ -5,11 +5,6 @@ namespace Data.Domain.Entities
 {
     public class Lecture
     {
-        public Lecture()
-        {
-            //EF Core
-        }
-
         [Key]
         public Guid Id { get; set; }
 

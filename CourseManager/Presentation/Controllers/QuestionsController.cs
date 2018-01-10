@@ -1,33 +1,31 @@
 ﻿using System;
-using System.Linq;
+using Business.ServicesInterfaces;
+using Business.ServicesInterfaces.Models.QuestionViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Data.Domain.Entities;
-using Data.Domain.Interfaces;
-using Presentation.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class QuestionsController : Controller
     {
-        private readonly IQuestionRepository _repository;
+        private readonly IQuestionService _questionService;
+        //private readonly IAnswerRepository _answerRepository; unused wtf, Juanito explain yourself
 
-        public readonly IAnswerRepository _answerRepository;
-
-        public QuestionsController(IQuestionRepository repository, IAnswerRepository answerRepository)
+        public QuestionsController(IQuestionService questionService)
         {
-            _repository = repository;
-
-            _answerRepository = answerRepository;
-
+            _questionService = questionService;
         }
-        
+
         // GET: Questions
         public IActionResult Index()
         {
-            return View(_repository.GetAllQuestions());
+            _questionService.GetQuestionsWithAnswers();
+
+            return View(_questionService.GetAllQuestions());
         }
-        
+
         // GET: Questions/Details/5
         public IActionResult Details(Guid? id)
         {
@@ -36,7 +34,8 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var question = _repository.GetQuestionById(id.Value);
+            var question = _questionService.GetQuestionById(id.Value);
+
             if (question == null)
             {
                 return NotFound();
@@ -46,15 +45,16 @@ namespace Presentation.Controllers
         }
 
         // GET: Questions/AnswerList/5
-        public IActionResult AnswerList(Guid? id)
+        public IActionResult Answers(Guid? id)
         {
-            ViewData["QuestionId"] = id.Value; //id.Value;
-            return RedirectToAction("AnswerList", "Answers", new{ QuestionId=id});
+            return RedirectToAction("Index", "Answers", new { questionId = id });
         }
 
         // GET: Questions/Create
-        public IActionResult Create()
+        public IActionResult Create(Guid? uid)
         {
+            TempData["UId"] = uid;
+
             return View();
         }
 
@@ -63,20 +63,16 @@ namespace Presentation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("UserId,CreatedDate,Topic,Text")] QuestionCreateModel questionCreateModel)
+        public IActionResult Create(Guid? uid, [Bind("UserId,CreatedDate,Topic,Text")] QuestionCreateModel questionCreateModel)
         {
+            TempData["UId"] = uid;
+
             if (!ModelState.IsValid)
             {
                 return View(questionCreateModel);
             }
 
-            _repository.CreateQuestion(
-                Question.CreateQuestion(
-                    questionCreateModel.UserId,
-                    questionCreateModel.Topic,
-                    questionCreateModel.Text
-                )
-            );
+            _questionService.Create(questionCreateModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -89,7 +85,8 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var question = _repository.GetQuestionById(id.Value);
+            var question = _questionService.GetQuestionById(id.Value);
+
             if (question == null)
             {
                 return NotFound();
@@ -111,31 +108,25 @@ namespace Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, [Bind("UserId,CreatedDate,Topic,Text")] QuestionEditModel questionEditModel)
         {
-            var questionToBeEdited = _repository.GetQuestionById(id);
+            if (!ModelState.IsValid)
+            {
+                return View(questionEditModel);
+            }
+
+            var questionToBeEdited = _questionService.GetQuestionById(id);
 
             if (questionToBeEdited == null)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid)
-            {
-                return View(questionEditModel);
-            }
-
-            questionToBeEdited.UserId = questionEditModel.UserId;
-            questionToBeEdited.CreatedDate = questionEditModel.CreatedDate;
-            questionToBeEdited.Topic = questionEditModel.Topic;
-            questionToBeEdited.Text = questionEditModel.Text;
-
-
             try
             {
-                _repository.EditQuestion(questionToBeEdited);
+                _questionService.Edit(questionToBeEdited, questionEditModel);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!QuestionExists(_repository.GetQuestionById(id).Id))
+                if (!QuestionExists(_questionService.GetQuestionById(id).Id))
                 {
                     return NotFound();
                 }
@@ -154,7 +145,8 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var question = _repository.GetQuestionById(id.Value);
+            var question = _questionService.GetQuestionById(id.Value);
+
             if (question == null)
             {
                 return NotFound();
@@ -162,22 +154,22 @@ namespace Presentation.Controllers
 
             return View(question);
         }
-        
+
         // POST: Questions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            var question = _repository.GetQuestionById(id);
+            var question = _questionService.GetQuestionById(id);
 
-            _repository.DeleteQuestion(question);
+            _questionService.Delete(question);
 
             return RedirectToAction(nameof(Index));
         }
 
         private bool QuestionExists(Guid id)
         {
-            return _repository.GetAllQuestions().Any(question => question.Id == id);
+            return _questionService.VerifyIfQuestionExists(id);
         }
     }
 }

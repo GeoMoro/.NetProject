@@ -1,0 +1,63 @@
+﻿@using Business.ServicesInterfaces
+@model IEnumerable<Kata>
+@inject IKataService services
+@{
+    ViewData["Title"] = "Katas";
+}
+
+<environment include="Development">
+    <link href="~/css/Katas.css" rel="stylesheet" />
+</environment>
+
+<h2>Katas</h2>
+
+@if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+{
+    <p>
+        <a class="btn btn-default" asp-action="Create">Add a new kata</a>
+    </p>
+}
+<table class="table">
+    @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+    {
+        <thead>
+            <tr>
+                <th style="font-size: 22px;">
+                    <p align="left"><b>Contents</b></p>
+                </th>
+                <th style="font-size: 22px;">
+                    <p align="left"><b>Actions</b></p>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+    }
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="font-size: 16px;">
+                    <p>
+                        <b>@Html.DisplayFor(modelItem => item.Title)</b>
+                        <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
+                        @foreach (var file in services.GetFiles(item.Id))
+                        {
+                            @using (Html.BeginForm("Download", "Katas", new { kataId = item.Id, fileName = @file }, FormMethod.Post, null, new { }))
+                            {
+                                <button class="buttonFile">@file</button>
+                            }
+                        }
+                    </p>
+                </td>
+                @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                {
+                    <td>
+                        <a class="btn btn-default" asp-action="Edit" asp-route-id="@item.Id">Modify</a> 
+                        <a class="btn btn-default" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                        <a class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

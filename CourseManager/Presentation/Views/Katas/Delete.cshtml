@@ -1,0 +1,51 @@
+﻿@using Business.ServicesInterfaces
+@model Kata
+@inject IKataService services
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<environment include="Development">
+    <link href="~/css/Katas.css" rel="stylesheet" />
+</environment>
+
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Kata</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt style="font-size: 18px;">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd style="font-size: 16px;">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt style="font-size: 18px;">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd style="font-size: 16px;">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt style="font-size: 18px;">
+            Uploaded Files
+        </dt>
+        <dd style="font-size: 16px;">
+            @foreach (var file in services.GetFiles(Model.Id))
+            {
+                @using (Html.BeginForm("DeleteFile", "Katas", new { fileName = @file, givenId = Model.Id }, FormMethod.Post, null, new { }))
+                {
+                    <button class="buttonFile">@file</button>
+                }
+            }
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a class="btn btn-default" asp-action="Index">Back to List</a>
+    </form>
+</div>

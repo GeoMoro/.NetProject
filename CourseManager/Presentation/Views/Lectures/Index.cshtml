@@ -1,41 +1,68 @@
-﻿@model IEnumerable<Data.Domain.Entities.Lecture>
-
+﻿@model IEnumerable<Lecture>
+@using Business.ServicesInterfaces
+@inject ILectureService services
 @{
     ViewData["Title"] = "Lectures";
 }
 
+<environment include="Development">
+    <link href="~/css/Lectures.css" rel="stylesheet" />
+</environment>
+
 <h2>Lectures</h2>
 
-<p>
-    <a asp-action="Create">Add a new lecture</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-                <th style="font-size: 22px;">
-                    <p align="left"><b>Contents</b></p>
-                </th>
-                <th style="font-size: 22px;">
-                    <p align="left"><b>Actions</b></p>
-                </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td style="font-size: 16px;">
-                <p>
-                    <b>@Html.DisplayFor(modelItem => item.Title)</b>
-                    <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
-                </p>
-</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Modify</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+{
+    <p>
+        <a class="btn btn-default"  asp-action="Create">Add a new lecture</a>
+    </p>
 }
+<table class="table">
+    @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+    {
+        <thead>
+            <tr>
+                <th style="font-size: 22px;">
+                    <p align="left">
+                        <b>Contents</b>
+                    </p>
+                </th>
+                <th style="font-size: 22px;">
+                    <p align="left">
+                        <b>Actions</b>
+                    </p>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+    }
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="font-size: 16px;">
+                    <p>
+                        <b>@Html.DisplayFor(modelItem => item.Title)</b>
+                        <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
+                
+                        @foreach (var file in services.GetFiles(item.Id))
+                        {
+                            using (Html.BeginForm("Download", "Lectures", new { lectureId = item.Id, fileName = @file }, FormMethod.Post, null, new { }))
+                            {
+                                <button class="buttonLectures">@file</button>
+                            }
+                        }
+                    </p>
+                </td>
+                @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                {
+                    <td>
+                        <a  class="btn btn-default"  asp-action="Edit" asp-route-id="@item.Id">Modify</a> 
+                        <a  class="btn btn-default" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                        <a  class="btn btn-default" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+            </tr>
+        }
     </tbody>
 </table>
