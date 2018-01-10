@@ -45,7 +45,7 @@ namespace Business
             _databaseService.SaveChanges();
         }
 
-        public void Delete(Question question)
+        public void DeleteQuestion(Question question)
         {
             _databaseService.Questions.Remove(question);
             

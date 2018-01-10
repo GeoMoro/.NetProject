@@ -11,6 +11,6 @@ namespace Data.Domain.Interfaces
         Question GetQuestionById(Guid id);
         void CreateQuestion(Question question);
         void EditQuestion(Question question);
-        void Delete(Question question);
+        void DeleteQuestion(Question question);
     }
 }
