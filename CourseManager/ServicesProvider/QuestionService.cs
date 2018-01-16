@@ -11,14 +11,11 @@ namespace ServicesProvider
     {
         private readonly IQuestionRepository _qrepository;
 
-        private readonly IAnswerRepository _arepository;
 
-        public QuestionService(IQuestionRepository qrepository, IAnswerRepository arepository)
+        public QuestionService(IQuestionRepository qrepository)
         {
             _qrepository = qrepository;
-
-            _arepository = arepository;
-
+            
         }
 
         public IList<Answer> GetAllAnswersForQuestion(Guid id)

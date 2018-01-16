@@ -1,6 +1,7 @@
 ﻿using Business;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
+using Data.Domain.Interfaces.ServicesInterfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace PresentationTests
     [TestClass]
     public class QuestionsTests
     {
-        public class QuestionsTestsRepositoryMock : IQuestionRepository
+        public class QuestionsTestsRepositoryMock : IQuestionService
         {
             public List<Question> Questions = new List<Question>();
 
@@ -77,12 +78,12 @@ namespace PresentationTests
             
         }
 
-        QuestionsTestsRepositoryMock repository = new QuestionsTestsRepositoryMock();
+        QuestionsTestsRepositoryMock mock = new QuestionsTestsRepositoryMock();
 
         [TestMethod]
         public void Check_GetAll()
         {
-            IReadOnlyList<Question> Questions = repository.GetAllQuestions();
+            IReadOnlyList<Question> Questions = mock.GetAllQuestions();
             Assert.AreEqual(Questions.Count, 5);
         }
         
@@ -92,7 +93,7 @@ namespace PresentationTests
         public void Check_GetAllAnswersForQuestion()
         {
             Guid id = new Guid("4a1eacef-78ad-4da3-a94e-2cfd2400651a");
-            IList<Answer> Answerss = repository.GetAllAnswersForQuestion(id);
+            IList<Answer> Answerss = mock.GetAllAnswersForQuestion(id);
             Assert.AreEqual(Answerss.Count, 0);
         }
 
@@ -101,7 +102,7 @@ namespace PresentationTests
         public void Check_GetQuestionById()
         {
             Guid id = new Guid("4a1eacef-78ad-4da3-a94e-2cfd2400651a");
-            Question ans = repository.GetQuestionById(id);
+            Question ans = mock.GetQuestionById(id);
             Assert.AreEqual(ans.Topic, "Topic1");
         }
         
@@ -117,8 +118,12 @@ namespace PresentationTests
                 Text = "Text6"
             };
 
-            repository.CreateQuestion(qu);
-            Assert.AreEqual(repository.Questions.Count, 6);
+            mock.CreateQuestion(qu);
+
+            Assert.AreEqual(mock.Questions.Count, 6);
+
+            mock.DeleteQuestion(qu);
+
         }
         
         
@@ -127,15 +132,19 @@ namespace PresentationTests
         {
             Guid id = new Guid("4a1eacef-78ad-4da3-a94e-2cfd2400651a");  // answer3
 
-            Question qu = repository.GetQuestionById(id);
+            Question qu = mock.GetQuestionById(id);
+
+            Question qucopy = qu;
 
             qu.Text = "Text1Edited";
 
-            repository.EditQuestion(qu);
+            mock.EditQuestion(qu);
 
-            Question rezQu = repository.GetQuestionById(id);
+            Question rezQu = mock.GetQuestionById(id);
 
             Assert.AreEqual(rezQu.Text, "Text1Edited");
+
+            mock.EditQuestion(qucopy);
         }
 
         
@@ -143,10 +152,14 @@ namespace PresentationTests
         public void Check_DeleteQuestion()
         {
             Guid id = new Guid("4a1eacef-78ad-4da3-a94e-2cfd2400651a"); // answer3
-            Question qu = repository.GetQuestionById(id);
-            repository.DeleteQuestion(qu);
 
-            Assert.AreEqual(repository.Questions.Count, 4);
+            Question qu = mock.GetQuestionById(id);
+
+            mock.DeleteQuestion(qu);
+
+            Assert.AreEqual(mock.Questions.Count, 4);
+
+            mock.DeleteQuestion(qu);
         }
         
     }
