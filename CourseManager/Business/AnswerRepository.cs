@@ -4,6 +4,7 @@ using System.Linq;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
 using Data.Persistance;
+using Microsoft.IdentityModel.Protocols;
 
 namespace Business
 {
@@ -24,6 +25,11 @@ namespace Business
         public List<Answer> GetAllAnswersForGivenQuestion(Guid qid)
         {
             return _databaseService.Answers.Where(answer => answer.QuestionId == qid).ToList();
+        }
+
+        public List<Answer> GetAllAnswersForGivenUserId(Guid uid)
+        {
+            return _databaseService.Answers.Where(answer => answer.UserId == uid).ToList();
         }
 
         public Answer GetAnswerById(Guid id)
@@ -60,5 +66,6 @@ namespace Business
 
             _databaseService.SaveChanges();
         }
+        
     }
 }

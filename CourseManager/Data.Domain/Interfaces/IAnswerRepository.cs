@@ -8,6 +8,7 @@ namespace Data.Domain.Interfaces
     {
         List<Answer> GetAllAnswers();
         List<Answer> GetAllAnswersForGivenQuestion(Guid qid);
+        List<Answer> GetAllAnswersForGivenUserId(Guid uid);
         Answer GetAnswerById(Guid id);
         void CreateAnswer(Answer answer);
         void CreateAnswerForGivenQuestion(Guid qid, Answer answer);

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Data.Domain.Entities;
+using System;
 using System.Collections.Generic;
-using Data.Domain.Entities;
+using System.Text;
 
-namespace Data.Domain.Interfaces
+namespace Data.Domain.Interfaces.ServicesInterfaces
 {
-    public interface IQuestionRepository
+    public interface IQuestionService
     {
         IReadOnlyList<Question> GetAllQuestions();
         IList<Answer> GetAllAnswersForQuestion(Guid id);

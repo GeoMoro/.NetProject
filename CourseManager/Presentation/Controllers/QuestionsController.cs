@@ -14,14 +14,13 @@ namespace Presentation.Controllers
     {
         private readonly IQuestionRepository _repository;
 
-        private readonly IAnswerRepository _answerRepository;
-
-        public QuestionsController(IQuestionRepository repository, IAnswerRepository answerRepository)
+       // private readonly IQuestionService _service;
+        
+        public QuestionsController(IQuestionRepository repository/*, IQuestionService service*/)
         {
             _repository = repository;
 
-            _answerRepository = answerRepository;
-
+            //_service = service;
         }
         
         // GET: Questions
@@ -179,6 +178,8 @@ namespace Presentation.Controllers
         {
             var question = _repository.GetQuestionById(id);
 
+            //_service.DeleteQuestion(question);
+
             _repository.DeleteQuestion(question);
 
             return RedirectToAction(nameof(Index));
@@ -188,5 +189,6 @@ namespace Presentation.Controllers
         {
             return _repository.GetAllQuestions().Any(question => question.Id == id);
         }
+        
     }
 }
