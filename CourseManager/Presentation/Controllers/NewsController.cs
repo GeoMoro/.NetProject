@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
 using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models;
-using Data.Domain.Entities;
-using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,12 +8,10 @@ namespace Presentation.Controllers
 {
     public class NewsController : Controller
     {
-        private readonly INewsRepository _repository;
         private readonly IRecordService _service;
 
-        public NewsController(INewsRepository repository, IRecordService service)
+        public NewsController(IRecordService service)
         {
-            _repository = repository;
             _service = service;
         }
 
