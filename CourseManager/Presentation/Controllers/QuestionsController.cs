@@ -15,13 +15,13 @@ namespace Presentation.Controllers
     {
         private readonly IQuestionRepository _repository;
 
-        private readonly IQuestionService _service;
+       // private readonly IQuestionService _service;
         
-        public QuestionsController(IQuestionRepository repository, IQuestionService service)
+        public QuestionsController(IQuestionRepository repository/*, IQuestionService service*/)
         {
             _repository = repository;
 
-            _service = service;
+            //_service = service;
         }
         
         // GET: Questions
@@ -179,8 +179,10 @@ namespace Presentation.Controllers
         {
             var question = _repository.GetQuestionById(id);
 
-            _service.DeleteQuestion(question);
-            
+            //_service.DeleteQuestion(question);
+
+            _repository.DeleteQuestion(question);
+
             return RedirectToAction(nameof(Index));
         }
 

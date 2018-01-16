@@ -70,7 +70,7 @@ namespace PresentationTests
                 }
             }
 
-            public void Delete(Question question)
+            public void DeleteQuestion(Question question)
             {
                 Questions.Remove(question);
             }
@@ -144,7 +144,7 @@ namespace PresentationTests
         {
             Guid id = new Guid("4a1eacef-78ad-4da3-a94e-2cfd2400651a"); // answer3
             Question qu = repository.GetQuestionById(id);
-            repository.Delete(qu);
+            repository.DeleteQuestion(qu);
 
             Assert.AreEqual(repository.Questions.Count, 4);
         }

@@ -49,7 +49,6 @@ namespace Presentation
             services.AddTransient<IKataRepository, KataRepository>();
             services.AddTransient<ILectureService, LectureService>();
             services.AddTransient<IKataService, KataService>();
-            services.AddTransient<IQuestionService, QuestionService>();
 
 
         /*
