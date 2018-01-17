@@ -1,9 +1,9 @@
-﻿using Data.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Business.ServicesInterfaces.Models.QuestionViewModels;
+using Data.Domain.Entities;
 
-namespace Data.Domain.Interfaces.ServicesInterfaces
+namespace Business.ServicesInterfaces
 {
     public interface IQuestionService
     {
@@ -13,5 +13,7 @@ namespace Data.Domain.Interfaces.ServicesInterfaces
         void CreateQuestion(Question question);
         void EditQuestion(Question question);
         void DeleteQuestion(Question question);
+        void CreateQuestion(QuestionCreateModel questionCreateModel);
+        bool CheckIfQuestionExists(Guid id);
     }
 }

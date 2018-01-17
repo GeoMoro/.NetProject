@@ -56,6 +56,8 @@ namespace Presentation
             services.AddTransient<IAttendanceRepository, AttendanceRepository>();
             services.AddTransient<IUserAttendanceService, UserAttendanceService>();
             services.AddTransient<IPresenceService, PresenceService>();
+            services.AddTransient<IQuestionService, QuestionService>();
+            services.AddTransient<IAnswerService, AnswerService>();
 
             /*
                         const string connection = @"Server = .\SQLEXPRESS; Database = Project.Development; Trusted_Connection = true;";

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
+using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models.AnswerViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Data.Domain.Entities;
-using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
@@ -12,11 +10,11 @@ namespace Presentation.Controllers
     [Authorize]
     public class AnswersController : Controller
     {
-        private readonly IAnswerRepository _repository;
+        private readonly IAnswerService _service;
 
-        public AnswersController(IAnswerRepository repository)
+        public AnswersController(IAnswerService service)
         {
-            _repository = repository;
+            _service = service;
         }
 
         // GET: Answers
@@ -24,7 +22,7 @@ namespace Presentation.Controllers
         {
             TempData["Id"] = questionId;
 
-            return View(_repository.GetAllAnswersForGivenQuestion(questionId.Value));
+            return View(_service.GetAllAnswersForGivenQuestion(questionId.Value));
         }
         
         // GET: Answers/Details/5
@@ -35,7 +33,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var answer = _repository.GetAnswerById(id.Value);
+            var answer = _service.GetAnswerById(id.Value);
 
             if (answer == null)
             {
@@ -64,13 +62,7 @@ namespace Presentation.Controllers
                 return View(answerCreateModel);
             }
             
-            _repository.CreateAnswer(
-                Answer.CreateAnswer(
-                    answerCreateModel.UserId,
-                    id.Value,
-                    answerCreateModel.Text
-                )
-            );
+            _service.CreateAnswer(id, answerCreateModel);
             
            return RedirectToAction("Index","Questions");
         }
@@ -83,7 +75,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var answer = _repository.GetAnswerById(id.Value);
+            var answer = _service.GetAnswerById(id.Value);
             if (answer == null)
             {
                 return NotFound();
@@ -105,7 +97,7 @@ namespace Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid? id, [Bind("UserId,QuestionId,AnswerDate,Text")] AnswerEditModel answerEditModel)
         {
-            var answerToBeEdited = _repository.GetAnswerById(id.Value);
+            var answerToBeEdited = _service.GetAnswerById(id.Value);
 
             if (answerToBeEdited == null)
             {
@@ -124,11 +116,11 @@ namespace Presentation.Controllers
 
             try
             {
-                _repository.EditAnswer(answerToBeEdited);
+                _service.EditAnswer(answerToBeEdited);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AnswerExists(_repository.GetAnswerById(id.Value).Id))
+                if (!AnswerExists(_service.GetAnswerById(id.Value).Id))
                 {
                     return NotFound();
                 }
@@ -148,7 +140,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var answer = _repository.GetAnswerById(id.Value);
+            var answer = _service.GetAnswerById(id.Value);
             if (answer == null)
             {
                 return NotFound();
@@ -162,16 +154,16 @@ namespace Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            var answer = _repository.GetAnswerById(id);
+            var answer = _service.GetAnswerById(id);
 
-            _repository.DeleteAnswer(answer);
+            _service.DeleteAnswer(answer);
 
             return RedirectToAction("Index", "Questions");
         }
 
         private bool AnswerExists(Guid id)
         {
-            return _repository.GetAllAnswers().Any(answer => answer.Id == id);
+            return _service.CheckIfAnswerExists(id);
         }
 
         // GET: Answers/Create
@@ -195,13 +187,7 @@ namespace Presentation.Controllers
                 return View(answerCreateModel);
             }
 
-            _repository.CreateAnswer(
-                Answer.CreateAnswer(
-                    uid.Value,
-                    qid.Value,
-                    text
-                )
-            );
+            _service.CreateNew(qid, uid, text);
 
             return RedirectToAction("Index", "Questions");
         }
@@ -209,16 +195,7 @@ namespace Presentation.Controllers
         [HttpPost]
         public IActionResult CreateNewAnswer(Guid? uid, Guid? qid, string qtext)
         {
-            if (qtext != null)
-            {
-                _repository.CreateAnswer(
-                    Answer.CreateAnswer(
-                        uid.Value,
-                        qid.Value,
-                        qtext
-                    )
-                );
-            }
+            _service.CreateNewAnswer(uid, qid, qtext);
 
             return RedirectToAction("Index", "Questions");
         }
