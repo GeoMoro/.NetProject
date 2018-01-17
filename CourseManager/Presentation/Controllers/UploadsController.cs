@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Business.ServicesInterfaces.Models.UploadsViewModels;
@@ -50,21 +51,38 @@ namespace Presentation.Controllers
             var file = uploadCreateModel.File;
             if (file.Length > 0)
             {
-                string path = Path.Combine(_env.WebRootPath, "Uploads/" + uploadCreateModel.Type + "//" + uploadCreateModel.Seminar);
-
-                   if (!Directory.Exists(path))
+                string path = Path.Combine(_env.WebRootPath,
+                    "Uploads/" + uploadCreateModel.Type + "//" + uploadCreateModel.Seminar);
+                var extensions = new List<string>
+                {
+                    ".zip",
+                    ".rar",
+                    ".7z"
+                };
+                var types = new List<string>
+                {
+                    "Seminar",
+                    "Laboratory",
+                    "Kata"
+                };
+                if (!extensions.Contains(Path.GetExtension(file.FileName)) || !types.Contains(uploadCreateModel.Type))
+                    return View("Create");
+                
+                    if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
                     }
 
 
-                   string extension = userFirstName + "" + userLastName + "" + userGroup + "." + Path.GetExtension(file.FileName).Substring(1);
+                    string extension = userFirstName + "" + userLastName + "" + userGroup + "." +
+                                       Path.GetExtension(file.FileName).Substring(1);
                     using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }
-                }
-            
+                
+            }
+
 
             // process uploaded files
             // Don't rely on or trust the FileName property without validation.
