@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Data.Domain.Entities;
-using Data.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models.PresenceViewModels;
-using Data.Persistance;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
@@ -14,38 +11,26 @@ namespace Presentation.Controllers
     [Authorize]
     public class PresencesController : Controller
     {
-        private readonly IPresenceRepository _repository;
-        private readonly ApplicationDbContext _application;
-        private readonly IUserStatusRepository _userRepo;
-        private readonly IUserStatusService _service;
-        private readonly IAttendanceRepository _attendance;
-        private readonly IPresenceService _presenceServ;
-        private readonly IUserAttendanceService _attServ;
+        private readonly IPresenceService _service;
 
-        public PresencesController(IPresenceRepository repository, ApplicationDbContext application, IUserStatusRepository userRepo, IUserStatusService service, IAttendanceRepository attendance, IPresenceService presenceServ, IUserAttendanceService attServ)
+        public PresencesController(IPresenceService service)
         {
-            _repository = repository;
-            _application = application;
-            _userRepo = userRepo;
             _service = service;
-            _attendance = attendance;
-            _presenceServ = presenceServ;
-            _attServ = attServ;
         }
 
         //GET: Presences
         public IActionResult Index()
         {
-            foreach(var item in _repository.GetAllPresences())
+            foreach(var item in _service.GetAllPresences())
             {
                 item.Students = _service.GetUsersByFactionId(item.Id).ToList();
                 foreach(var student in item.Students)
                 {
-                    student.Attendance = _attServ.GetAttendanceByUserId(student.Id).OrderBy(att => att.StartDate).ToList();
+                    student.Attendance = _service.GetAttendanceByUserId(student.Id).OrderBy(att => att.StartDate).ToList();
                 }
             }
 
-            return View(_repository.GetAllPresences());
+            return View(_service.GetAllPresences());
         }
 
         [Authorize(Roles = "Owner, Assistant")]
@@ -63,17 +48,7 @@ namespace Presentation.Controllers
                 return View(presenceCreateModel);
             }
 
-            var factionId = Guid.NewGuid();
-
-            _repository.CreatePresence(
-                    Presence.CreatePresence(
-                        factionId,
-                        presenceCreateModel.Name,
-                        _presenceServ.GetUsersGivenGroup(presenceCreateModel.Name, factionId)
-                    )
-                );
-                
-               // _presenceServ.ApplyModificationsOnUsers(presenceCreateModel.Name, selectedStudents);
+            _service.CreateFaction(presenceCreateModel);
             
             return RedirectToAction(nameof(Index));
         }
@@ -81,7 +56,7 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult StartLaboratory(Guid factionId, int labValue)
         {
-            _presenceServ.StartLaboratoryBasedOnValue(factionId, labValue);
+            _service.StartLaboratoryBasedOnValue(factionId, labValue);
             
             return RedirectToAction(nameof(Index));
         }
@@ -100,23 +75,17 @@ namespace Presentation.Controllers
                 return View(userCreateModel);
             }
 
-            var check = _attendance.GetAllAttendances().Where(att => att.UserId == userId).ToList().Count;
+            var check = _service.GetAllAttendances().Where(att => att.UserId == userId).ToList().Count;
 
             if (check != 0)
             {
                 try
                 {
-                    var modifyPresence = _attendance.GetAllAttendances().Where(attend => attend.UserId == userId).OrderByDescending(attend => attend.StartDate).FirstOrDefault();
-                    if (modifyPresence != null)
-                    {
-                        modifyPresence.Presence = userCreateModel.Presence;
-
-                        _attendance.EditAttendance(modifyPresence);
-                    }
+                    _service.ModifyPresence(userId, userCreateModel);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserStatusExists(_userRepo.GetUserById(userId).Id))
+                    if (!_service.UserStatusExists(_service.GetUserById(userId).Id))
                     {
                         return NotFound();
                     }
@@ -138,7 +107,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var userActivity = _attendance.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
+            var userActivity = _service.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
             if (userActivity == null)
             {
                 return NotFound();
@@ -158,7 +127,7 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult UpdatePresence(Guid attendanceId, [Bind("LaboratoryMark, KataMark, Presence")] UserStatusEditModel userStatusEditModel)
         {
-            var userToBeEdited = _attendance.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
+            var userToBeEdited = _service.GetAllAttendances().SingleOrDefault(user => user.Id == attendanceId);
 
             if (userToBeEdited == null)
             {
@@ -176,11 +145,11 @@ namespace Presentation.Controllers
 
             try
             {
-                _attendance.EditAttendance(userToBeEdited);
+                _service.EditAttendance(userToBeEdited);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserStatusExists(_userRepo.GetUserById(userToBeEdited.UserId).Id))
+                if (!_service.UserStatusExists(_service.GetUserById(userToBeEdited.UserId).Id))
                 {
                     return NotFound();
                 }
@@ -199,14 +168,14 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var presence = _repository.GetPresenceById(id.Value);
+            var presence = _service.GetPresenceById(id.Value);
 
             if (presence == null)
             {
                 return NotFound();
             }
 
-            var userStatus = _userRepo.GetAllUsers().Where(user => user.FactionId == id.Value);
+            var userStatus = _service.GetAllUsers().Where(user => user.FactionId == id.Value);
             
             if(userStatus.Equals(null))
             {
@@ -222,13 +191,8 @@ namespace Presentation.Controllers
         [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            _attServ.DeleteData(id);
+            _service.DeleteData(id);
             return RedirectToAction(nameof(Index));
-        }
-        
-        private bool UserStatusExists(string id)
-        {
-            return _userRepo.GetAllUsers().Any(e => e.Id == id);
         }
     }
 }
