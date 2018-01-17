@@ -5,11 +5,11 @@
     ViewData["Title"] = "Lectures";
 }
 
+<h2>Lectures</h2>
+
 <environment include="Development">
     <link href="~/css/Lectures.css" rel="stylesheet" />
 </environment>
-
-<h2>Lectures</h2>
 
 @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
 {

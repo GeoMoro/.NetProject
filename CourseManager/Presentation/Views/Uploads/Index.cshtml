@@ -11,7 +11,7 @@
     <link href="~/css/Katas.css" rel="stylesheet" />
 </environment>
 
-<h2>Index</h2>
+<h2>Uploads</h2>
 
 <p>
     <a class="btn btn-default" asp-action="Create" asp-route-id="@UserManager.GetUserId(User)">Upload a Homework or Kata file</a>
@@ -19,11 +19,12 @@
 <table class="table uploadtable">
     <thead>
         <tr>
-            <th style="font-size: 22px;">
-                <p align="left"><b>Katas</b></p>
-            </th>
             @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
             {
+                <th style="font-size: 22px;">
+                    <p align="left"><b>Katas</b></p>
+                </th>
+
                 <th style="font-size: 22px;">
                     <p align="left">
                         <b>Laboratory</b>
@@ -37,17 +38,6 @@
 
         <tr>
             <td style="font-size: 16px;">
-                @*                <p>
-                    @{
-                        var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == UserManager.GetUserId(User));
-                        foreach (var file in Service.GetFiles("Laboratory", "1", currentUser.FirstName + "" + currentUser.LastName + "" + currentUser.Group))
-                        {
-                            @file
-                            <br />
-                        }
-                    }
-
-                </p>*@
                 @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                 {
                     <button type="button" class="btn btn-info headbutton" data-toggle="collapse" data-target="#kata">Kata</button>

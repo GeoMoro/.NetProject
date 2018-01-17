@@ -1,6 +1,5 @@
 ﻿using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Data.Persistance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,25 +10,19 @@ namespace ServicesProvider
     public class UserAttendanceService : IUserAttendanceService
     {
         private readonly IPresenceRepository _repository;
-        private readonly DatabaseContext _databaseService;
         private readonly IUserStatusRepository _userRepo;
-        private readonly IUserStatusService _service;
         private readonly IAttendanceRepository _attendance;
-        private readonly IPresenceService _presenceServ;
 
-        public UserAttendanceService(IPresenceRepository repository, DatabaseContext databaseService, IUserStatusRepository userRepo, IUserStatusService service, IAttendanceRepository attendance, IPresenceService presenceServ)
+        public UserAttendanceService(IPresenceRepository repository, IUserStatusRepository userRepo, IAttendanceRepository attendance)
         {
             _repository = repository;
-            _databaseService = databaseService;
             _userRepo = userRepo;
-            _service = service;
             _attendance = attendance;
-            _presenceServ = presenceServ;
         }
 
         public List<Attendance> GetAttendanceByUserId(string id)
         {
-            return _databaseService.Attendances.Where(attendance => attendance.UserId == id).ToList();
+            return _attendance.GetAllAttendances().Where(attendance => attendance.UserId == id).ToList();
         }
 
         public void DeleteData(Guid id)

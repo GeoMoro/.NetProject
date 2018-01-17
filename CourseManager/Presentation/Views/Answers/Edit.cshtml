@@ -3,50 +3,45 @@
 @{
     ViewData["Title"] = "Edit";
 }
+<center>
 
-<h2>Edit</h2>
+    <h2>Edit this Answer</h2>
 
-<h4>Answer</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <hr />
+
+    <div class="row" style="margin: auto; width: 50%;">
+        
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
-            <!-- O sa se ia automat in viitor -->
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
             
-            <!-- O sa se ia automat in viitor -->
-            <div class="form-group">
-                <label asp-for="QuestionId" class="control-label"></label>
-                <input asp-for="QuestionId" class="form-control" />
-                <span asp-validation-for="QuestionId" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <!-- <label asp-for="UserId" class="control-label" type="hidden"></label> -->
+                    <input asp-for="UserId" class="form-control" type="hidden" style="text-align:center"/>
+                    <!-- <span asp-validation-for="UserId" class="text-danger" type="hidden"></span> -->
+                </div>
+            
+            
+                <div class="form-group">
+                    <!--  <label asp-for="QuestionId" class="control-label" type="hidden"></label> -->
+                    <input asp-for="QuestionId" class="form-control" type="hidden" style="text-align:center"/>
+                    <!--  <span asp-validation-for="QuestionId" class="text-danger"></span> -->
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Text" class="control-label"></label>
-                <input asp-for="Text" class="form-control" />
-                <span asp-validation-for="Text" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Text" class="control-label"></label>
+                    <input asp-for="Text" class="form-control" style="text-align:center" />
+                    <span asp-validation-for="Text" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </form>
+        
     </div>
-</div>
 
-<div>
-    @using (Html.BeginForm("Index", "Answers", new { questionId = Model.QuestionId }, FormMethod.Post, null, new { }))
-    {
-        <!----<button>Back to list</button>-->
-    }
-</div>
-
+</center>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

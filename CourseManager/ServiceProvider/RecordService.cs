@@ -13,9 +13,9 @@ namespace ServicesProvider
     {
         private readonly INewsRepository _repository;
         public int Count;
-        private readonly DatabaseContext _databaseContext;
+        private readonly IDatabaseContext _databaseContext;
 
-        public RecordService(DatabaseContext databaseContext, INewsRepository repository)
+        public RecordService(IDatabaseContext databaseContext, INewsRepository repository)
         {
             _databaseContext = databaseContext;
 

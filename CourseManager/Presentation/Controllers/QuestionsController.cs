@@ -10,20 +10,22 @@ namespace Presentation.Controllers
     [Authorize]
     public class QuestionsController : Controller
     {
-        private readonly IQuestionService _questionService;
-        //private readonly IAnswerRepository _answerRepository; unused wtf, Juanito explain yourself
-
-        public QuestionsController(IQuestionService questionService)
+        private readonly IQuestionService _service;
+        
+        public QuestionsController(IQuestionService service)
         {
-            _questionService = questionService;
+            _service = service;
         }
-
+        
         // GET: Questions
         public IActionResult Index()
         {
-            _questionService.GetQuestionsWithAnswers();
+            foreach(var item in _service.GetAllQuestions())
+            {
+               item.Answers = _service.GetAllAnswersForQuestion(item.Id);
+            }
 
-            return View(_questionService.GetAllQuestions());
+            return View(_service.GetAllQuestions());
         }
 
         // GET: Questions/Details/5
@@ -34,8 +36,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var question = _questionService.GetQuestionById(id.Value);
-
+            var question = _service.GetQuestionById(id.Value);
             if (question == null)
             {
                 return NotFound();
@@ -54,7 +55,6 @@ namespace Presentation.Controllers
         public IActionResult Create(Guid? uid)
         {
             TempData["UId"] = uid;
-
             return View();
         }
 
@@ -66,13 +66,12 @@ namespace Presentation.Controllers
         public IActionResult Create(Guid? uid, [Bind("UserId,CreatedDate,Topic,Text")] QuestionCreateModel questionCreateModel)
         {
             TempData["UId"] = uid;
-
             if (!ModelState.IsValid)
             {
                 return View(questionCreateModel);
             }
 
-            _questionService.Create(questionCreateModel);
+            _service.CreateQuestion(questionCreateModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -85,7 +84,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var question = _questionService.GetQuestionById(id.Value);
+            var question = _service.GetQuestionById(id.Value);
 
             if (question == null)
             {
@@ -108,25 +107,31 @@ namespace Presentation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, [Bind("UserId,CreatedDate,Topic,Text")] QuestionEditModel questionEditModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(questionEditModel);
-            }
-
-            var questionToBeEdited = _questionService.GetQuestionById(id);
+            var questionToBeEdited = _service.GetQuestionById(id);
 
             if (questionToBeEdited == null)
             {
                 return NotFound();
             }
 
+            if (!ModelState.IsValid)
+            {
+                return View(questionEditModel);
+            }
+
+            questionToBeEdited.UserId = questionEditModel.UserId;
+            questionToBeEdited.CreatedDate = questionEditModel.CreatedDate;
+            questionToBeEdited.Topic = questionEditModel.Topic;
+            questionToBeEdited.Text = questionEditModel.Text;
+
+
             try
             {
-                _questionService.Edit(questionToBeEdited, questionEditModel);
+                _service.EditQuestion(questionToBeEdited);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!QuestionExists(_questionService.GetQuestionById(id).Id))
+                if (!QuestionExists(_service.GetQuestionById(id).Id))
                 {
                     return NotFound();
                 }
@@ -145,7 +150,7 @@ namespace Presentation.Controllers
                 return NotFound();
             }
 
-            var question = _questionService.GetQuestionById(id.Value);
+            var question = _service.GetQuestionById(id.Value);
 
             if (question == null)
             {
@@ -154,22 +159,23 @@ namespace Presentation.Controllers
 
             return View(question);
         }
-
+        
         // POST: Questions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)
         {
-            var question = _questionService.GetQuestionById(id);
+            var question = _service.GetQuestionById(id);
 
-            _questionService.Delete(question);
+            _service.DeleteQuestion(question);
 
             return RedirectToAction(nameof(Index));
         }
 
         private bool QuestionExists(Guid id)
         {
-            return _questionService.VerifyIfQuestionExists(id);
+            return _service.CheckIfQuestionExists(id);
         }
+        
     }
 }
