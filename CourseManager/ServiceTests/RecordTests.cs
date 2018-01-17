@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 using Business.ServicesInterfaces.Models;
 using Data.Domain.Entities;
 using Data.Domain.Interfaces;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Data.Persistance;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServicesProvider;
@@ -17,6 +15,7 @@ namespace ServiceTests
     [TestClass]
     public class RecordTests
     {
+        public RecordRepositoryMock Mock = new RecordRepositoryMock();
 
         #region Repository Mock Class
 
@@ -37,7 +36,7 @@ namespace ServiceTests
 
                 };
 
-                Newses[0].Id=new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986"); 
+                Newses[0].Id = new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986");
             }
 
             public IReadOnlyList<News> GetAllNews()
@@ -58,8 +57,8 @@ namespace ServiceTests
             public void UpdateNews(News news)
             {
                 var newsToBeUpdate = GetNewsById(news.Id);
-                newsToBeUpdate.Title = news.Title;
-                newsToBeUpdate.Description = news.Description;
+                newsToBeUpdate.Title = "Good title";
+                newsToBeUpdate.Description = "descript";
             }
 
             public void DeleteNews(News news)
@@ -70,31 +69,7 @@ namespace ServiceTests
         }
 
         #endregion
-
-
-
-
-
-
-        [TestMethod]
-        public void GetNextFiveOrTheRest_WhenCalled_ExpectToGetNextFiveNews()
-        {
-            //Arrange
-
-            var sut = CreateSut();
-            var count = 0;
-            
-            //Act
-
-            var nextNews = sut.GetNextFiveOrTheRest(count);
-
-            //Arrange
-
-            Assert.AreEqual(nextNews.Count,5);
-        }
-
-
-
+        
         [TestMethod]
         public void GetNumberOfElements_WhenCalled_ExpectedToGetNumberOfNews()
         {
@@ -105,21 +80,71 @@ namespace ServiceTests
             var allNews = sut.GetNumberOfElements();
 
             //Assert
-            Assert.AreEqual(allNews,5);
+            Assert.AreEqual(allNews, 5);
         }
 
         [TestMethod]
-        public void NewsExists_GivenAnId_ShouldReturnTrueIfNewsWithThatIdExists()
+        public void Create_WhenCalled_ExpectedToCreateNews()
+        {
+            //Arrange
+            var sut = CreateSut();
+            var newsCreateModel = new NewsCreateModel
+            {
+                Title = "for tests",
+                Description = "Sure!"
+            };
+
+            //Act
+           sut.Create("A user made for testing!", newsCreateModel);
+
+            //Assert
+            Assert.AreEqual(Mock.Newses.Count, 6);
+        }
+
+        [TestMethod]
+        public void CheckIfNewsExists_WhenCalled_ExpectedToReturnTrue()
         {
             //Arrange
             var sut = CreateSut();
 
             //Act
-            var exists = sut.NewsExists(new Guid("e7c51c3a-3f56-40a7-832c-96246fdfe986"));
+            var result = sut.GetNewsById(Mock.Newses[0].Id);
 
             //Assert
+            Assert.AreEqual(result, true);
+        }
 
-            Assert.AreEqual(exists,true);
+        [TestMethod]
+        public void Delete_WhenCalled_ExpectedToDeleteNews()
+        {
+            //Arrange
+            var sut = CreateSut();
+
+            //Act
+            sut.Delete(Mock.Newses[0]);
+
+            //Assert
+            Assert.AreEqual(Mock.Newses.Count, 4);
+        }
+
+        [TestMethod]
+        public void Update_WhenCalled_ExpectedToUpdateNews()
+        {
+            //Arrange
+            var sut = CreateSut();
+
+            //Act
+            sut.Update(Mock.Newses[0]);
+
+            //Assert
+            Assert.AreEqual(Mock.Newses[0].Title, "Good title");
+        }
+
+        private RecordService CreateSut()
+        {
+            var mockDb = new Mock<IDatabaseContext>();
+
+            return new RecordService(mockDb.Object, Mock);
         }
 
 

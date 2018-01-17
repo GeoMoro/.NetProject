@@ -7,12 +7,13 @@ namespace Business.ServicesInterfaces
 {
     public interface IQuestionService
     {
-        void GetQuestionsWithAnswers();
         IReadOnlyList<Question> GetAllQuestions();
-        Question GetQuestionById(Guid idValue);
-        void Create(QuestionCreateModel questionCreateModel);
-        void Edit(Question questionToBeEdited, QuestionEditModel questionEditModel);
-        void Delete(Question question);
-        bool VerifyIfQuestionExists(Guid id);
+        IList<Answer> GetAllAnswersForQuestion(Guid id);
+        Question GetQuestionById(Guid id);
+        void CreateQuestion(Question question);
+        void EditQuestion(Question question);
+        void DeleteQuestion(Question question);
+        void CreateQuestion(QuestionCreateModel questionCreateModel);
+        bool CheckIfQuestionExists(Guid id);
     }
 }

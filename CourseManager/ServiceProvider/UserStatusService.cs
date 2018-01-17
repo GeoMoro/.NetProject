@@ -20,13 +20,8 @@ namespace ServicesProvider
         {
             return _repository.GetAllUsers().Where(user => user.FactionId == id).ToList();
         }
-
-        //public IReadOnlyList<UserStatus> GetUsersByPresence(Guid id)
-        //{
-        //    return _repository.GetAllUsers().Where(user => user. == id).ToList();
-        //}
-
-        public UserStatus CreateAndReturnLatestUser(string id, Guid factionId)//, double labMark, double kataMark, bool presence)
+        
+        public UserStatus CreateAndReturnLatestUser(string id, Guid factionId)
         {
             _repository.CreateUser(
                     UserStatus.CreateUsersStatus(

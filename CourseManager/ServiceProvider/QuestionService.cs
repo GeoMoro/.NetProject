@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models.QuestionViewModels;
 using Data.Domain.Entities;
@@ -10,61 +11,57 @@ namespace ServicesProvider
 {
     public class QuestionService : IQuestionService
     {
-        private readonly IQuestionRepository _questionRepository;
+        private readonly IQuestionRepository _repository;
 
-        public QuestionService(IQuestionRepository questionRepository)
+        public QuestionService(IQuestionRepository repository)
         {
-            _questionRepository = questionRepository;
+            _repository = repository;
         }
 
-        public void GetQuestionsWithAnswers()
+        public IList<Answer> GetAllAnswersForQuestion(Guid id)
         {
-            foreach (var item in _questionRepository.GetAllQuestions())
-            {
-                item.Answers = _questionRepository.GetAllAnswersForQuestion(item.Id);
-            }
+            return _repository.GetAllAnswersForQuestion(id);
         }
 
         public IReadOnlyList<Question> GetAllQuestions()
         {
-            return _questionRepository.GetAllQuestions();
+            return _repository.GetAllQuestions();
         }
 
-        public Question GetQuestionById(Guid idValue)
+        public Question GetQuestionById(Guid id)
         {
-            return _questionRepository.GetQuestionById(idValue);
+            return _repository.GetQuestionById(id);
         }
 
-        public void Create(QuestionCreateModel questionCreateModel)
+        public void CreateQuestion(Question question)
         {
-            _questionRepository.CreateQuestion(
+            _repository.CreateQuestion(question);
+        }
+
+        public void EditQuestion(Question question)
+        {
+            _repository.EditQuestion(question);
+        }
+
+        public void DeleteQuestion(Question question)
+        {
+            _repository.DeleteQuestion(question);
+        }
+
+        public void CreateQuestion(QuestionCreateModel questionCreateModel)
+        {
+            _repository.CreateQuestion(
                 Question.CreateQuestion(
                     questionCreateModel.UserId,
                     questionCreateModel.Topic,
-                    questionCreateModel.Text//,
-                    // new List<string> { "FE", "BU" }
+                    questionCreateModel.Text
                 )
             );
         }
 
-        public void Edit(Question questionToBeEdited, QuestionEditModel questionEditModel)
+        public bool CheckIfQuestionExists(Guid id)
         {
-            questionToBeEdited.UserId = questionEditModel.UserId;
-            questionToBeEdited.CreatedDate = questionEditModel.CreatedDate;
-            questionToBeEdited.Topic = questionEditModel.Topic;
-            questionToBeEdited.Text = questionEditModel.Text;
-
-            _questionRepository.EditQuestion(questionToBeEdited);
+            return _repository.GetAllQuestions().Any(question => question.Id == id);
         }
-
-        public void Delete(Question question)
-        {
-            _questionRepository.DeleteQuestion(question);
-        }
-
-        public bool VerifyIfQuestionExists(Guid id)
-        {
-            return GetAllQuestions().Any(question => question.Id == id);
-        }  
     }
 }
