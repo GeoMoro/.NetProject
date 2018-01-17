@@ -3,40 +3,52 @@
 @{
     ViewData["Title"] = "Details";
 }
+<center>
 
-<h2>Details</h2>
+    <h2>Questions</h2>
 
-<div>
-    <h4>Question</h4>
+    <h4>Details about this Question</h4>
+
     <hr />
-    <dl class="dl-horizontal">
-        <!--<dt>
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.UserId)
-        </dd>-->
-        <dt>
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Topic)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Topic)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Text)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Text)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+    <table align="center">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width: 160px;text-align: center;font-weight: bold;">
+                    Created at: 
+                </td>
+                <td style="width: 160px; text-align: center;">
+                    @Html.DisplayFor(model => model.CreatedDate)
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 160px;text-align: center;font-weight: bold;">
+                    Topic: 
+                </td>
+                <td style="width: 160px; text-align: center;">
+                    @Html.DisplayFor(model => model.Topic)
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 160px;text-align: center;font-weight: bold;">
+                   Question: 
+                </td>
+                <td style="width: 160px; text-align: center;">
+                    @Html.DisplayFor(model => model.Text)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit this Question</a>
+        <br>
+        <a asp-action="Index">Back to all Questions</a>
+    </div>
+</center>

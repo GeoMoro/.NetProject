@@ -4,32 +4,37 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<center>
 
-<div>
-    <h4>Answer</h4>
+    <h2>Details about this Answer</h2>
+
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.AnswerDate)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.AnswerDate)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Text)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Text)
-        </dd>
-    </dl>
-</div>
-<!----
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-        @using (Html.BeginForm("Index", "Answers", new { questionId = Model.QuestionId }, FormMethod.Post, null, new { }))
-        {
-            <button>Back to list</button>
-        }
-</div>
--->
+
+    <table align="center">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width: 160px;text-align: center;font-weight: bold;">
+                    Created at:
+                </td>
+                <td style="width: 160px; text-align: center;">
+                    @Html.DisplayFor(model => model.AnswerDate)
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 160px;text-align: center;font-weight: bold;">
+                    Answer:
+                </td>
+                <td style="width: 160px; text-align: center;">
+                    @Html.DisplayFor(model => model.Text)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</center>
