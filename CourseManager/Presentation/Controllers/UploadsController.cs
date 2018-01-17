@@ -13,7 +13,6 @@ namespace Presentation.Controllers
     public class UploadsController : Controller
     {
         private readonly IUploadService _service;
-        private readonly IHostingEnvironment _env;
 
         public UploadsController(IUploadService service)
         {
