@@ -1,11 +1,13 @@
 ﻿using System;
 using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class NewsController : Controller
     {
         private readonly IRecordService _service;
@@ -28,7 +30,7 @@ namespace Presentation.Controllers
             return View(_service.GetNextFiveOrTheRest(0));
         }
 
-
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult CreateNews(string createdBy)
         {
             return View();
@@ -36,6 +38,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult CreateNews(string createdBy,[Bind("Title, Description")] NewsCreateModel newsCreateModel)
         {
             if (!ModelState.IsValid)
@@ -48,6 +51,7 @@ namespace Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult UpdateNews(Guid? id)
         {
             if (id == null)
@@ -71,6 +75,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult UpdateNews(Guid id, [Bind("Title,Description, CreatedBy")] NewsEditModel newsEditModel)
         {
             var newsEdited = _service.GetNewsById(id);
@@ -105,6 +110,7 @@ namespace Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteNews(Guid? id)
         {
             if (id == null)
@@ -123,6 +129,7 @@ namespace Presentation.Controllers
         
         [HttpPost, ActionName("DeleteNews")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Owner, Assistant")]
         public IActionResult DeleteConfirmed(Guid id)
         {
             var news = _service.GetNewsById(id);

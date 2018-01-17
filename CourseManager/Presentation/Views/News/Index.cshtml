@@ -12,53 +12,18 @@
     ViewData["Title"] = "Index";
 }
 
-@*<thead>
-    <tr>
-        <th style="font-size: 22px;">
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th style="font-size: 22px;">
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </th>
-        <th style="font-size: 22px;">
-            Actions
-        </th>
-    </tr>
-    </thead>*@
-@*<tbody>
-        @foreach (var item in Model) {
-            <tr>
-                <td style="font-size: 16px;">
-                    <p>
-                        <b>@Html.DisplayFor(modelItem => item.Title)</b>
-                        <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
-                    </p>
-                </td>
-                <td style="font-size: 16px;">
-                    @{
-                        var creator = UserManager.Users.SingleOrDefault(user => user.Email == item.CreatedBy);
-                        var author = creator.FirstName + " " + creator.LastName;
-                    }
-                    @Html.DisplayFor(modelItem => author)
-                </td>
-                <td>
-                    <a class="btn btn-default" asp-action="UpdateNews" asp-route-id="@item.Id">Edit</a>
-                    <a class="btn btn-default" asp-action="DeleteNews" asp-route-id="@item.Id">Delete</a>
-                </td>
-
-            </tr>
-         }
-    </tbody>*@
-
 <div class="newsDiv">
     @foreach (var item in Model)
     {
         <b>@Html.DisplayFor(modelItem => item.Title)</b>
         <p>@Html.DisplayFor(modelItem => item.Description)</p>
-        <div class="buttonsDiv">
-            <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px" class="btn btn-default" asp-action="UpdateNews" asp-route-id="@item.Id">Edit</a>
-            <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px" class="btn btn-default" asp-action="DeleteNews" asp-route-id="@item.Id">Delete</a>
-        </div>
+         if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+         {
+             <div class="buttonsDiv">
+                 <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px" class="btn btn-default" asp-action="UpdateNews" asp-route-id="@item.Id">Edit</a>
+                 <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px" class="btn btn-default" asp-action="DeleteNews" asp-route-id="@item.Id">Delete</a>
+             </div>
+         }
         <hr />
     }
 
@@ -76,6 +41,9 @@
     }
 }
 
-<p style="margin-left: 85%;">
-    <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px " class="btn btn-default" asp-action="CreateNews">Add</a>
-</p>
+@if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+{
+    <p style="margin-left: 85%;">
+        <a style="padding: 2% 10%; font-family: Georgia; font-size: 16px " class="btn btn-default" asp-action="CreateNews">Add</a>
+    </p>
+}

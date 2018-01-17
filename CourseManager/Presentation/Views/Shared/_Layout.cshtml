@@ -21,9 +21,9 @@
 <nav class="nav">
     <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
+            <li><a asp-area="" asp-controller="Home" asp-action="Index">CourseManager</a></li>
             @if (User.Identity.IsAuthenticated)
             {
-                <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                 <li><a asp-area="" asp-controller="News" asp-action="">News</a></li>
                 <li><a asp-area="" asp-controller="Lectures" asp-action="">Lectures</a></li>
                 <li><a asp-area="" asp-controller="Katas" asp-action="">Katas</a></li>
@@ -39,9 +39,6 @@
 <div class="container body-content">
     @RenderBody()
 
-    <footer>
-        <p>&copy; CourseManager</p>
-    </footer>
 </div>
 
 <environment include="Development">
