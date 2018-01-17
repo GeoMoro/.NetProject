@@ -29,13 +29,29 @@ namespace ServicesProvider
         {
             var file = uploadCreateModel.File;
             var path = Path.Combine(_env.WebRootPath, "Uploads\\" + uploadCreateModel.Type + "\\" + uploadCreateModel.Seminar);
+            var extensions = new List<string>
+            {
+                ".zip",
+                ".rar",
+                ".7z"
+            };
+
+            var types = new List<string>
+            {
+                "Seminar",
+                "Laboratory",
+                "Kata"
+            };
+
+            if (!extensions.Contains(Path.GetExtension(file.FileName)) || !types.Contains(uploadCreateModel.Type)) return;
 
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-                
-            var extension = userFirstName + userLastName + userGroup + "." + Path.GetExtension(file.FileName).Substring(1);
+            
+            var extension = userFirstName + "" + userLastName + "" + userGroup + "." +
+                               Path.GetExtension(file.FileName).Substring(1);
             using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
