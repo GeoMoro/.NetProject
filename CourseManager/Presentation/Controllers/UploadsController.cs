@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models.UploadsViewModels;
 using Data.Persistance;
 using Microsoft.AspNetCore.Hosting;
@@ -11,13 +12,12 @@ namespace Presentation.Controllers
 {
     public class UploadsController : Controller
     {
-        private readonly ApplicationDbContext _application;
-   
+        private readonly IUploadService _service;
         private readonly IHostingEnvironment _env;
-        public UploadsController(IHostingEnvironment env, ApplicationDbContext application)
+
+        public UploadsController(IUploadService service)
         {
-            _env = env;
-            _application = application;
+            _service = service;
         }
         // GET: Uploads
         public IActionResult Index()
@@ -43,34 +43,8 @@ namespace Presentation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string userGroup, string userFirstName, string userLastName, [Bind("Type,Seminar,File")] UploadsCreateModel uploadCreateModel)
         {
-            //long size = uploadCreateModel.File;
-
-            // full path to file in temp location
-            var filePath = Path.GetTempFileName();
-            var file = uploadCreateModel.File;
-            if (file.Length > 0)
-            {
-                string path = Path.Combine(_env.WebRootPath, "Uploads/" + uploadCreateModel.Type + "//" + uploadCreateModel.Seminar);
-
-                   if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-
-
-                   string extension = userFirstName + "" + userLastName + "" + userGroup + "." + Path.GetExtension(file.FileName).Substring(1);
-                    using (var fileStream = new FileStream(Path.Combine(path, extension), FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    }
-                }
-            
-
-            // process uploaded files
-            // Don't rely on or trust the FileName property without validation.
-
-            return RedirectToAction(nameof(Index));
-            
+            await _service.CreateUploads(userGroup, userFirstName, userLastName, uploadCreateModel);
+            return RedirectToAction(nameof(Index));           
         }
 
         // GET: Uploads/Edit/5
@@ -123,12 +97,9 @@ namespace Presentation.Controllers
         public IActionResult Download(string seminarName, string group, string seminarNumber, string fileName)
         {
             {
-                string searchedPath = Path.Combine(_env.WebRootPath, "Uploads/" + seminarName + "/" + seminarNumber + "/" + fileName);
+                var file = _service.DownloadFile(seminarName, group, seminarNumber, fileName);
 
-                Stream file = new FileStream(searchedPath, FileMode.Open);
-                string content_type = "application/octet-stream";
-
-                return File(file, content_type, fileName);
+                return File(file, "application/octet-stream", fileName);
             }
         }
 
