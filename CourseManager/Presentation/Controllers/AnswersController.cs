@@ -25,24 +25,6 @@ namespace Presentation.Controllers
             return View(_service.GetAllAnswersForGivenQuestion(questionId.Value));
         }
         
-        // GET: Answers/Details/5
-        public IActionResult Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var answer = _service.GetAnswerById(id.Value);
-
-            if (answer == null)
-            {
-                return NotFound();
-            }
-
-            return View(answer);
-        }
-
         // GET: Answers/Create
         public IActionResult Create(Guid? id)
         {
