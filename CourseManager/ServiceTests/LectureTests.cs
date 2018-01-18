@@ -260,6 +260,7 @@ namespace ServiceTests
             mockEnvironment
                 .Setup(m => m.WebRootPath)
                 .Returns(Directory.GetCurrentDirectory() + "\\wwwroot");
+
             return new LectureService(Mock, mockEnvironment.Object);
         }
 
