@@ -72,7 +72,8 @@ namespace ServicesProvider
             {
                 foreach (var file in lectureCreateModel.File)
                 {
-                    if (file.Length > 0)
+                    if (file != null)
+                    //if (file.Length > 0)
                     {
                         string path = Path.Combine(_env.WebRootPath, "Lectures/" + currentLecture.Id);
 
