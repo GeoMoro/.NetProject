@@ -45,6 +45,37 @@ namespace ServiceTests
         }
 
         [TestMethod]
+        public async Task CreateLecture_GivenALectureCreateModelThatContainsFiles_ExpectToCreateAFolderForThatLecture()
+        {
+            // Arrange
+            var sut = CreateSut();
+            var path = Directory.GetCurrentDirectory() + "\\wwwroot\\Lectures\\";
+
+            var filesInDirectory = Directory.Exists(path) ? Directory.GetDirectories(path).Length : 0;
+
+            var mockFile = new Mock<IFormFile>();
+            mockFile.Setup(_ => _.FileName).Returns("TestFile.txt");
+            var lectureTobeCreate = new LectureCreateModel
+            {
+                Title = "TitleX",
+                Description = "DescriptionX",
+                File = new List<IFormFile>
+                {
+                    mockFile.Object
+                }
+            };
+
+            // Act
+            await sut.CreateLecture(lectureTobeCreate);
+
+            // Assert
+            Assert.AreEqual(filesInDirectory + 1, Directory.GetDirectories(path).Length);
+
+            // Clean up
+            DeleteFile(path);
+        }
+
+        [TestMethod]
         public void GetFiles_GivenALectureID_ExpectToReturnThatLectureFiles()
         {
             // Arrange
@@ -286,6 +317,11 @@ namespace ServiceTests
             {
                 Directory.Delete(path, true);
             }
+        }
+
+        private static DirectoryInfo GetCourseManagerPath()
+        {
+            return Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).ToString()).ToString()).ToString());
         }
         
         #region Repository Mock Class
