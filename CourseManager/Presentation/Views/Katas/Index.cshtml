@@ -42,10 +42,9 @@
                         <blockquote>@Html.DisplayFor(modelItem => item.Description)</blockquote>
                         @foreach (var file in services.GetFiles(item.Id))
                         {
-                            @using (Html.BeginForm("Download", "Katas", new { kataId = item.Id, fileName = @file }, FormMethod.Post, null, new { }))
-                            {
-                                <button class="buttonFile">@file</button>
-                            }
+                                <video width="400" height="400" controls>
+                                    <source src="/Katas/@item.Id/@file" type="video/mp4">
+                                </video>
                         }
                     </p>
                 </td>
