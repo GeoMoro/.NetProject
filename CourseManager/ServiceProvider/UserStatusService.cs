@@ -26,7 +26,8 @@ namespace ServicesProvider
             _repository.CreateUser(
                     UserStatus.CreateUsersStatus(
                         id,
-                        factionId
+                        factionId,
+                        false
                     )
                 );
 

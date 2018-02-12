@@ -13,13 +13,16 @@ namespace Data.Domain.Entities
 
         public List<Attendance> Attendance { get; set; }
 
-        public static UserStatus CreateUsersStatus(string id, Guid factionId)
+        public bool CanMarkAsPresent { get; set; }
+
+        public static UserStatus CreateUsersStatus(string id, Guid factionId, bool canMarkAsPresent)
         {
             var instance = new UserStatus
             {
                 Id = id,
                 FactionId = factionId,
-                Attendance = new List<Attendance>()
+                Attendance = new List<Attendance>(),
+                CanMarkAsPresent = canMarkAsPresent
             };
 
             return instance;

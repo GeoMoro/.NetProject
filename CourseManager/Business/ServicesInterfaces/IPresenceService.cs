@@ -7,8 +7,8 @@ namespace Business.ServicesInterfaces
 {
     public interface IPresenceService
     {
-        void StartLaboratoryBasedOnValue(Guid factionId, int labValue);
-        void ApplyModificationsOnUsers(string name, List<UserStatus> selectedStudents);
+        void StartPresenceBasedOnValue(Guid factionId, int labValue);
+        void StopPresence(Guid factionId);
         List<UserStatus> GetUsersGivenGroup(string name, Guid factionId);
         IReadOnlyList<Presence> GetAllPresences();
         Presence GetPresenceById(Guid id);

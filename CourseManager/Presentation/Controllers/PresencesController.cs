@@ -54,10 +54,18 @@ namespace Presentation.Controllers
         }
 
         [Authorize(Roles = "Owner, Assistant")]
-        public IActionResult StartLaboratory(Guid factionId, int labValue)
+        public IActionResult StartPresence(Guid factionId, int labValue)
         {
-            _service.StartLaboratoryBasedOnValue(factionId, labValue);
-            
+            _service.StartPresenceBasedOnValue(factionId, labValue);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Owner, Assistant")]
+        public IActionResult StopPresence(Guid factionId)
+        {
+            _service.StopPresence(factionId);
+
             return RedirectToAction(nameof(Index));
         }
 

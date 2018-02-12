@@ -71,7 +71,7 @@ namespace ServicesProvider
             _attendance.EditAttendance(attendance);
         }
         
-        public void StartLaboratoryBasedOnValue(Guid factionId, int labValue)
+        public void StartPresenceBasedOnValue(Guid factionId, int labValue)
         {
             var laboratory = Guid.NewGuid();
             var studentList = _service.GetUsersByFactionId(factionId);
@@ -83,6 +83,9 @@ namespace ServicesProvider
             {
                 foreach (var students in studentList)
                 {
+                    students.CanMarkAsPresent = true;
+                    _userRepo.EditUser(students);
+
                     _attendance.CreateAttendance(
                         Attendance.CreateAttendance(
                             labValue,
@@ -96,17 +99,18 @@ namespace ServicesProvider
             }
         }
 
-        public void ApplyModificationsOnUsers(string name, List<UserStatus> selectedStudents)
+        public void StopPresence(Guid factionId)
         {
-            var modify = _repository.GetPresenceByName(name);
-            foreach (var student in selectedStudents)
+            var modifyStudents = _service.GetUsersByFactionId(factionId);
+
+            foreach (var student in modifyStudents)
             {
-                var searchedUser = _userRepo.GetUserById(student.Id);
-                searchedUser.FactionId = modify.Id;
-                _userRepo.EditUser(searchedUser);
+                student.CanMarkAsPresent = false;
+
+                _userRepo.EditUser(student);
             }
         }
-
+        
         public List<UserStatus> GetUsersGivenGroup(string name, Guid factionId)
         {
             var check = _repository.GetAllPresences().Where(presences => presences.Name.Contains(name)).ToList();
@@ -132,14 +136,27 @@ namespace ServicesProvider
         public void CreateFaction(PresenceCreateModel presenceCreateModel)
         {
             var factionId = Guid.NewGuid();
+            var givenValues = presenceCreateModel.Name.Split(',');
+            var verify = true;
 
-            _repository.CreatePresence(
-                Presence.CreatePresence(
-                    factionId,
-                    presenceCreateModel.Name,
-                    GetUsersGivenGroup(presenceCreateModel.Name, factionId)
-                )
-            );
+            foreach (var group in givenValues)
+            {
+                var checkNameInDb = _repository.GetAllPresences()
+                    .Where(presence => presence.Name.Contains(group)).ToList().Count;
+                if (checkNameInDb > 0) verify = false;
+            }
+
+            if (verify)
+            {
+                _repository.CreatePresence(
+                    Presence.CreatePresence(
+                        factionId,
+                        presenceCreateModel.Name,
+                        GetUsersGivenGroup(presenceCreateModel.Name, factionId)
+                    )
+                );
+                
+            }
         }
 
         public bool UserStatusExists(string id)
@@ -150,11 +167,17 @@ namespace ServicesProvider
         public void ModifyPresence(string userId, UserStatusCreateModel userCreateModel)
         {
             var modifyPresence = GetAllAttendances().Where(attend => attend.UserId == userId).OrderByDescending(attend => attend.StartDate).FirstOrDefault();
+            
             if (modifyPresence != null)
             {
-                modifyPresence.Presence = userCreateModel.Presence;
+                var checkIfItsAvailable = _userRepo.GetUserById(userId).CanMarkAsPresent;
 
-                EditAttendance(modifyPresence);
+                if (checkIfItsAvailable)
+                {
+                    modifyPresence.Presence = userCreateModel.Presence;
+
+                    EditAttendance(modifyPresence);
+                }
             }
         }
 

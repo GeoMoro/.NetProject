@@ -135,37 +135,12 @@ namespace ServiceTests
             var sut = CreateSut();
 
             // Act
-            sut.StartLaboratoryBasedOnValue(new Guid(), 1);
+            sut.StartPresenceBasedOnValue(new Guid(), 1);
 
             // Assert
             Assert.AreEqual(true, true);
         }
-
-        [TestMethod]
-        public void ModificationOnUsers_WhenCalled_ExpectToModifyUsers()
-        {
-            // Arrange
-            var sut = CreateSut();
-
-            // Act
-            sut.ApplyModificationsOnUsers("new faction", new List<UserStatus>());
-
-            // Assert
-            Assert.AreEqual(true, true);
-        }
-
-        [TestMethod]
-        public void ApplyModificationsOnUsers_WhenCalled_ExpectToUpdate()
-        {
-            // Arrange
-            var sut = CreateSut();
-
-            // Act
-            sut.ApplyModificationsOnUsers("new modification", new List<UserStatus>());
-
-            // Assert
-            Assert.AreEqual(true, true);
-        }
+        
 
         [TestMethod]
         public void GetAllPresences_WhenCalled_ExpectToGetPresences()
@@ -200,7 +175,7 @@ namespace ServiceTests
             public PresenceRepositoryMock()
             {
                 var users = new List<UserStatus>();
-                users.Add(UserStatus.CreateUsersStatus(new Guid().ToString(), new Guid()));
+                users.Add(UserStatus.CreateUsersStatus(new Guid().ToString(), new Guid(), false));
                 Presences = new List<Presence>
                 {
                     Presence.CreatePresence(new Guid(), "B3", users),
