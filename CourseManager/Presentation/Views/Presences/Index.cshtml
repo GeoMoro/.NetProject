@@ -1,6 +1,6 @@
 ﻿@using Business.ServicesInterfaces
 @model IEnumerable<Presence>
-@inject IPresenceService service
+@inject IPresenceService Service
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @{
@@ -48,6 +48,8 @@ else
                         <tr>
                             @{
                                 var space = "---------";
+                                var numberOfStudents = Service.GetUsersByFactionId(item.Id);
+                                var userList = Service.GetUsersByFactionId(item.Id).Select(index => index.Id).ToList();
 
                                 <th>
                                     @Html.DisplayFor(modelItem => space)
@@ -55,9 +57,15 @@ else
 
                                 for (var index = 1; index <= 7; ++index)
                                 {
-                                    var numberOfLaboratories = service.GetAllAttendances().Count;
-                                    var numberOfStudents = service.GetUsersByFactionId(item.Id);
+                                    var numberOfLaboratories = 0;
+
+                                    foreach (var givenUser in userList)
+                                    {
+                                        numberOfLaboratories += Service.GetAllAttendances().Count(att => att.UserId == givenUser);
+                                    }
+                                    
                                     var pastLaboratories = numberOfLaboratories / numberOfStudents.Count;
+                                    var pass = false;
 
                                     <th>
                                         @{
@@ -65,7 +73,7 @@ else
 
                                             if (index - pastLaboratories < 0)
                                             {
-                                                <button class="btn btn-default">Laboratory finished</button>
+                                                <button class="btn btn-default">Finished</button>
                                             }
                                             else if (index - pastLaboratories == 0)
                                             {
@@ -73,7 +81,7 @@ else
                                                 {
                                                     if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                                                     {
-                                                        using (Html.BeginForm("StopPresence", "Presences", new { factionId = item.Id }, FormMethod.Post, null, new { }))
+                                                        using (Html.BeginForm("StopPresence", "Presences", new {factionId = item.Id}, FormMethod.Post, null, new {}))
                                                         {
                                                             <button class="btn btn-default">Stop presence</button>
                                                         }
@@ -81,14 +89,14 @@ else
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-default">Laboratory finished</button>
+                                                    <button class="btn btn-default">Finished</button>
                                                 }
                                             }
                                             else
                                             {
                                                 if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                                                 {
-                                                    if (change)
+                                                    if (change && pass)
                                                     {
                                                         using (Html.BeginForm("StopPresence", "Presences", new {factionId = item.Id}, FormMethod.Post, null, new {}))
                                                         {
@@ -101,14 +109,18 @@ else
                                                         {
                                                             <button class="btn btn-default">Start presence</button>
                                                         }
+
+                                                        pass = true;
                                                     }
                                                 }
-                                            }                                          
+                                            }
                                         }
 
                                         Week @Html.DisplayFor(modelItem => index)
                                     </th>
+                                        
                                 }
+
                             }
                         </tr>
                         <tr>
