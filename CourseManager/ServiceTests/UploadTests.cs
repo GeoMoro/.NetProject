@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
-using Business.ServicesInterfaces;
 using Business.ServicesInterfaces.Models.UploadsViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,12 +22,13 @@ namespace ServiceTests
 
             var uploadCreateModel = new UploadsCreateModel
             {
-                Seminar = "2",
+                Teacher = "Best teacher",
+                Week = "2",
                 Type = "Laboratory",
                 File = mockFile.Object
             };
 
-            var path = Directory.GetCurrentDirectory() + "\\wwwroot\\Uploads\\" + uploadCreateModel.Type + "\\" + uploadCreateModel.Seminar;
+            var path = Directory.GetCurrentDirectory() + "\\wwwroot\\Uploads\\" + uploadCreateModel.Teacher + "\\" + uploadCreateModel.Type + "\\" + uploadCreateModel.Week;
             // Act
             await sut.CreateUploads("B3", "Test", "Test", uploadCreateModel);
 
@@ -43,12 +41,12 @@ namespace ServiceTests
         {
             // Arrange
             var sut = CreateSut();
-            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Uploads\\Seminar\\2";
+            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Uploads\\BestTeacher\\Laboratory\\2";
      
             CreateFile(searchedPath, "MyTest.txt");
 
             // Act
-            var files = sut.GetFiles("Seminar", "2", "MyTest");
+            var files = sut.GetFiles("Laboratory", "2", "MyTest", "BestTeacher");
 
             // Assert
             Assert.AreEqual(files[0], "MyTest.txt");
@@ -61,12 +59,12 @@ namespace ServiceTests
         {
             // Arrange
             var sut = CreateSut();
-            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Uploads\\Seminar\\2";
+            var searchedPath = Directory.GetCurrentDirectory() + "\\wwwroot\\Uploads\\BestTeacher\\Laboratory\\2";
 
             CreateFile(searchedPath, "MyTest.txt");
 
             // Act
-            var files = sut.GetAllFiles("Seminar", "2");
+            var files = sut.GetAllFiles("Laboratory", "2", "BestTeacher");
 
             // Assert
             Assert.AreEqual(files[0], "MyTest.txt");
