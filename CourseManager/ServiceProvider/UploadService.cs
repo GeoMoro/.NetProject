@@ -16,10 +16,10 @@ namespace ServicesProvider
             _env = env;
         }
 
-        public Stream DownloadFile(string seminarName, string group, string seminarNumber, string fileName)
+        public Stream DownloadFile(string seminarName, string group, string week, string fileName, string teacher)
         {
-            var searchedPath = Path.Combine(_env.WebRootPath, "Uploads/" + seminarName + "/" + seminarNumber + "/" + fileName);
-
+            var searchedPath = Path.Combine(_env.WebRootPath, "Uploads/" + teacher + "/" + seminarName + "/" + week + "/" + fileName);
+            
             Stream file = new FileStream(searchedPath, FileMode.Open);
 
             return file;
@@ -28,7 +28,8 @@ namespace ServicesProvider
         public async Task CreateUploads(string userGroup, string userFirstName, string userLastName, UploadsCreateModel uploadCreateModel)
         {
             var file = uploadCreateModel.File;
-            var path = Path.Combine(_env.WebRootPath, "Uploads\\" + uploadCreateModel.Type + "\\" + uploadCreateModel.Seminar);
+            var path = Path.Combine(_env.WebRootPath, "Uploads\\" + uploadCreateModel.Teacher + "\\" + uploadCreateModel.Type + "\\" + uploadCreateModel.Week);
+            
             var extensions = new List<string>
             {
                 ".zip",
@@ -38,7 +39,6 @@ namespace ServicesProvider
 
             var types = new List<string>
             {
-                "Seminar",
                 "Laboratory",
                 "Kata"
             };
@@ -58,10 +58,10 @@ namespace ServicesProvider
             }
         }
 
-        public List<string> GetFiles(string type, string seminar, string name)
+        public List<string> GetFiles(string type, string week, string name, string teacher)
         {
             var fileList = new List<string>();
-            var path = Path.Combine(_env.WebRootPath, "Uploads\\" + type + "\\" + seminar);
+            var path = Path.Combine(_env.WebRootPath, "Uploads\\" + teacher +"\\" + type + "\\" + week);
 
             if (!Directory.Exists(path))
             {
@@ -77,10 +77,10 @@ namespace ServicesProvider
             return fileList;
         }
 
-        public List<string> GetAllFiles(string type, string seminar)
+        public List<string> GetAllFiles(string type, string week, string teacher)
         {
             var fileList = new List<string>();
-            var path = Path.Combine(_env.WebRootPath, "Uploads\\" + type + "\\" + seminar);
+            var path = Path.Combine(_env.WebRootPath, "Uploads\\" + teacher + "\\" + type + "\\" + week);
 
             if (!Directory.Exists(path))
             {

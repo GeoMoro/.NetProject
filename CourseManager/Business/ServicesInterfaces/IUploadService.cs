@@ -7,9 +7,9 @@ namespace Business.ServicesInterfaces
 {
     public interface IUploadService
     {
-        List<string> GetFiles(string type, string seminar, string name);
-        List<string> GetAllFiles(string type, string seminar);
+        List<string> GetFiles(string type, string week, string name, string teacher);
+        List<string> GetAllFiles(string type, string week, string teacher);
         Task CreateUploads(string userGroup, string userFirstName, string userLastName, UploadsCreateModel uploadCreateModel);
-        Stream DownloadFile(string seminarName, string group, string seminarNumber, string fileName);
+        Stream DownloadFile(string seminarName, string group, string week, string fileName, string teacher);
     }
 }

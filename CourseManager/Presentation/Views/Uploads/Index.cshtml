@@ -18,82 +18,177 @@
 </p>
 <table class="table uploadtable">
     <thead>
-        <tr>
-            @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
-            {
-                <th style="font-size: 22px;">
-                    <p align="left"><b>Katas</b></p>
-                </th>
+    <tr>
+        @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+        {
+            <th style="font-size: 22px;">
+                <p align="left"><b>Type</b></p>
+            </th>
 
-                <th style="font-size: 22px;">
-                    <p align="left">
-                        <b>Laboratory</b>
-                    </p>
-                </th>
-            }
-            <th></th>
-        </tr>
+            <th style="font-size: 22px;">
+                <p align="left"><b>Week</b></p>
+            </th>
+            <th style="font-size: 22px;">
+                <p align="left"><b>Content</b></p>
+            </th>
+        }
+        else
+        {
+            <th style="font-size: 22px;">
+                <p align="left"><b>Type</b></p>
+            </th>
+            <th style="font-size: 22px;">
+                <p align="left"><b>Content Uploaded</b></p>
+            </th>
+        }
+    </tr>
     </thead>
     <tbody>
-
         <tr>
-            <td style="font-size: 16px;">
-                @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+            @{
+                if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
                 {
-                    <button type="button" class="btn btn-info headbutton" data-toggle="collapse" data-target="#kata">Kata</button>
-                    <br />
-                    <div id="kata" class="collapse">
-                        @for (var index = 1; index <= 7; ++index)
-                        {
-                            var value = Guid.NewGuid();
-                            <div>
-                                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#@value">Kata nr. @index</button>
+                    <td>
+                        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#kata">Kata</button>
+                    </td>
 
-                                <div id="@value" class="collapse">
-                                    @foreach (var file in Service.GetAllFiles("Kata", index.ToString()))
+                    var user = UserManager.GetUserAsync(User).Result;
+                    var currentUser = user.FirstName + user.LastName;
+                    var kataList = new List<Guid>();
+
+                    <td style="font-size: 16px;">
+                        <div id="kata" class="collapse">
+                            <ul style="list-style-type: none;">
+                                @for (var index = 1; index <= 7; ++index)
+                                {
+                                    var value = Guid.NewGuid();
+                                    kataList.Add(value);
+
+                                    <li><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#@value">Kata nr. @index</button></li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    <td>
+                        @{
+                            for (var index = 0; index < kataList.Count; ++index)
+                            {
+                                <div id="@kataList[index]" class="collapse">
+                                    @foreach (var file in Service.GetAllFiles("Kata", (index + 1).ToString(), currentUser))
                                     {
-                                        using (Html.BeginForm("Download", "Uploads", new { seminarName = "Kata", seminarNumber = index.ToString(), fileName = @file }, FormMethod.Post, null, new { }))
+                                        using (Html.BeginForm("Download", "Uploads", new { seminarName = "Kata", week = (index + 1).ToString(), fileName = @file, teacher = @currentUser }, FormMethod.Post, null, new { }))
                                         {
                                             <button class="btn btn-default">@file</button>
                                         }
                                     }
                                 </div>
-                            </div>
+                            }
                         }
-                    </div>
-                    
-                }
+                    </td>
 
-            </td>
-            <td>
-                @if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                }
+                else
                 {
-                    
-                    <button type="button" class="btn btn-info headbutton" data-toggle="collapse" data-target="#lecture">Laboratory</button>
+                    var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == UserManager.GetUserId(User));
+                    var teachers = new List<string>();
+                    var userFound = currentUser.FirstName + "" + currentUser.LastName + "" + currentUser.Group;
 
-                    <br />
-                    <div id="lecture" class="collapse">
-                        @for (var index = 1; index <= 7; ++index)
+                    foreach (var user in UserManager.GetUsersInRoleAsync("Assistant").Result)
+                    {
+                        teachers.Add(@user.FirstName + @user.LastName);
+                    }
+
+                    <td style="font-size: 16px;">Kata</td>
+                    <td style="font-size: 16px;">
+                        @foreach (var teacher in teachers)
                         {
-                            var value = Guid.NewGuid();
-                            <div>
-                            <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#@value">Laboratory nr. @index</button>
-
-                                <div id="@value" class="collapse">
-                                    @foreach (var file in Service.GetAllFiles("Laboratory", index.ToString()))
+                            for (var index = 1; index <= 7; ++index)
+                            {
+                                foreach (var file in Service.GetFiles("Kata", index.ToString(), userFound, teacher))
+                                {
+                                    using (Html.BeginForm("Download", "Uploads", new { seminarName = "Kata", week = index.ToString(), fileName = @file, teacher = @teacher }, FormMethod.Post, null, new { }))
                                     {
-                                        using (Html.BeginForm("Download", "Uploads", new { seminarName = "Laboratory", seminarNumber = index.ToString(), fileName = @file }, FormMethod.Post, null, new { }))
-                                        {
-                                            <button class="btn btn-default">@file</button>
-                                        }
+                                        <button class="btn btn-default">Kata @index: @file</button>
                                     }
-                                </div>
-                            </div>
+                                }
+                            }
                         }
-                    </div>
-
+                    </td>
                 }
-            </td>
+                                   
+            }
         </tr>
+        <tr>
+            @{
+                if (User.IsInRole("Assistant") || User.IsInRole("Owner"))
+                {
+                    <td>
+                        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#laboratory">Laboratory</button>
+                    </td>
+
+                    var user = UserManager.GetUserAsync(User).Result;
+                    var currentUser = user.FirstName + user.LastName;
+                    var labList = new List<Guid>();
+
+                    <td style="font-size: 16px;">
+                        <div id="laboratory" class="collapse">
+                            <ul style="list-style-type: none;">
+                                @for (var index = 1; index <= 7; ++index)
+                                {
+                                    var value = Guid.NewGuid();
+                                    labList.Add(value);
+
+                                    <li><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#@value">Laboratory nr. @index</button></li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    <td>
+                        @{
+                            for (var index = 0; index < labList.Count; ++index)
+                            {
+                                <div id="@labList[index]" class="collapse">
+                                        @foreach (var file in Service.GetAllFiles("Laboratory", (index + 1).ToString(), currentUser))
+                                        {
+                                            using (Html.BeginForm("Download", "Uploads", new {seminarName = "Laboratory", week = (index + 1).ToString(), fileName = @file, teacher = @currentUser }, FormMethod.Post, null, new {}))
+                                            {
+                                                <button class="btn btn-default">@file</button>
+                                            }
+                                        }
+                                </div>
+                            }
+                        }
+                    </td>
+                }
+                else
+                {
+                    var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == UserManager.GetUserId(User));
+                    var teachers = new List<string>();
+                    var userFound = currentUser.FirstName + "" + currentUser.LastName + "" + currentUser.Group;
+
+                    foreach (var user in UserManager.GetUsersInRoleAsync("Assistant").Result)
+                    {
+                        teachers.Add(@user.FirstName + @user.LastName);
+                    }
+
+                    <td style="font-size: 16px;">Laboratory</td>
+                    <td style="font-size: 16px;">
+                        @foreach (var teacher in teachers)
+                        {
+                            for (var index = 1; index <= 7; ++index)
+                            {
+                                foreach (var file in Service.GetFiles("Laboratory", index.ToString(), userFound, teacher))
+                                {
+                                    using (Html.BeginForm("Download", "Uploads", new { seminarName = "Laboratory", week = index.ToString(), fileName = @file, teacher = @teacher }, FormMethod.Post, null, new { }))
+                                    {
+                                        <button class="btn btn-default">Laboratory @index: @file</button>
+                                    }
+                                }
+                            }
+                        }
+                    </td>
+                }
+            }
+       </tr>
     </tbody>
 </table>

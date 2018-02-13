@@ -68,8 +68,8 @@ namespace ServiceTests
             {
                 UserStatuses = new List<UserStatus>
                 {
-                    UserStatus.CreateUsersStatus(new Guid().ToString(), new Guid()),
-                    UserStatus.CreateUsersStatus(new Guid().ToString(), new Guid())
+                    UserStatus.CreateUsersStatus(new Guid().ToString(), new Guid(), false),
+                    UserStatus.CreateUsersStatus(new Guid().ToString(), new Guid(), false)
                 };
             }
 

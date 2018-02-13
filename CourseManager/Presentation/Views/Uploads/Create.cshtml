@@ -15,33 +15,75 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        @{
-            var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == UserManager.GetUserId(User));
-            using (Html.BeginForm("Create", "Uploads", new { userGroup = currentUser.Group, userFirstName = currentUser.FirstName, userLastName = currentUser.LastName }, FormMethod.Post, null, new { enctype = "multipart/form-data" }))
-            {
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Type" class="control-label"></label>
-                    <input asp-for="Type" class="form-control" />
-                    <span asp-validation-for="Type" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Seminar" class="control-label"></label>
-                    <input asp-for="Seminar" class="form-control" />
-                    <span asp-validation-for="Seminar" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="File" class="control-label"></label>
-                    <input enctype="multipart/form-data" type="file" multiple="multiple" asp-for="File" class="form-control" />
-                </div>  
-                <div class="form-group">
-                    <input type="submit" value="Submit" class="btn btn-default" />
-                </div>
-              }
-            <h3>Only archives allowed for uploading homework!</h3>
-            <p>Make sure the type is "Laboratory" or "Seminary"!</p>
+    @{
+        var currentUser = UserManager.Users.SingleOrDefault(user => user.Id == UserManager.GetUserId(User));
+        var listTeachers = new List<SelectListItem>();
+        var listWeek = new List<SelectListItem>();
+        var listTypes= new List<SelectListItem>()
+        {
+            new SelectListItem { Text = "Laboratory", Value = "Laboratory" },
+            new SelectListItem { Text = "Kata", Value = "Kata", Selected = true }
+        };
 
-       }
+        foreach (var user in UserManager.GetUsersInRoleAsync("Assistant").Result)
+        {
+            listTeachers.Add(new SelectListItem
+            {
+                Text = @user.FirstName + " " + @user.LastName,
+                Value = @user.FirstName + @user.LastName
+            });
+        }
+
+        foreach (var user in UserManager.GetUsersInRoleAsync("Owner").Result)
+        {
+            listTeachers.Add(new SelectListItem
+            {
+                Text = @user.FirstName + " " + @user.LastName,
+                Value = @user.FirstName + @user.LastName
+            });
+        }
+
+        for (var index = 1; index <= 7; ++index)
+        {
+            listWeek.Add(new SelectListItem
+            {
+                Text = "Week " + index.ToString(),
+                Value = index.ToString()
+            });
+        }
+
+
+        using (Html.BeginForm("Create", "Uploads", new { userGroup = currentUser.Group, userFirstName = currentUser.FirstName, userLastName = currentUser.LastName }, FormMethod.Post, null, new { enctype = "multipart/form-data" }))
+        {
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Type" class="control-label"></label>
+                <br />
+                @Html.DropDownListFor(model => model.Type, listTypes, new { @class = "btn btn-default" })
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Week" class="control-label"></label>
+                <br />
+                @Html.DropDownListFor(model => model.Week, listWeek, new { @class = "btn btn-default" })
+                <span asp-validation-for="Week" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Teacher" class="control-label"></label>
+                <br />
+                @Html.DropDownListFor(model => model.Teacher, listTeachers, new { @class = "btn btn-default" })
+                <span asp-validation-for="Teacher" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="File" class="control-label"></label>
+                <input enctype="multipart/form-data" type="file" multiple="multiple" asp-for="File" class="form-control" />
+            </div>  
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-default" />
+            </div>
+            }
+        <span class="text-danger"><strong>Reminder: </strong>Only archives are allowed to upload!</span>
+    }
 </div>
 </div>
 

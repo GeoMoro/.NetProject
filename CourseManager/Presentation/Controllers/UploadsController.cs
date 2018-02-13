@@ -37,9 +37,10 @@ namespace Presentation.Controllers
         // POST: Uploads/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string userGroup, string userFirstName, string userLastName, [Bind("Type,Seminar,File")] UploadsCreateModel uploadCreateModel)
+        public async Task<IActionResult> Create(string userGroup, string userFirstName, string userLastName, [Bind("Type, Week, Teacher, File")] UploadsCreateModel uploadCreateModel)
         {
             await _service.CreateUploads(userGroup, userFirstName, userLastName, uploadCreateModel);
+
             return RedirectToAction(nameof(Index));           
         }
 
@@ -90,10 +91,10 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Download(string seminarName, string group, string seminarNumber, string fileName)
+        public IActionResult Download(string seminarName, string group, string week, string fileName, string teacher)
         {
             {
-                var file = _service.DownloadFile(seminarName, group, seminarNumber, fileName);
+                var file = _service.DownloadFile(seminarName, group, week, fileName, teacher);
 
                 return File(file, "application/octet-stream", fileName);
             }
